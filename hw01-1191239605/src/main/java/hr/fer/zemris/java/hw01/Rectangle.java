@@ -20,9 +20,9 @@ public class Rectangle {
 		
 		if(args.length != 2) {
 			
-			input(width, height);
-			
-//			System.out.format("Pravokutnik širine %f i visine %f ima površinu %f i opseg %f.", width, height, area(width, height), circumference(width, height));
+			width = input("width");
+			height = input("height");
+		
 		}
 		else {
 			try {
@@ -38,6 +38,12 @@ public class Rectangle {
 				System.out.format("'%s' se ne može protumačiti kao broj.%n", args[1]);
 				return;
 			}
+			
+			if(height < 0 || width < 0) {
+				System.out.format("Unijeli ste negativnu vrijednost.%n");
+				return;
+			}
+			
 		}
 		System.out.format("Pravokutnik širine %f i visine %f ima površinu %f i opseg %f.", width, height, area(width, height), circumference(width, height));
 
@@ -47,57 +53,45 @@ public class Rectangle {
 	
 	/**
 	 * Deals with the input of the values. Checks for input until the input can be converted to doubles and converts it to double.
-	 * @param width Variable where the width is to be saved.
-	 * @param height Variable where the height is to be saved.
+	 * @param string "width" or "height" depending on what you want to input.
+	 * @exception IllegalArgumentException Throws an exception when the argument is not one of the specified.
 	 */
-	public static void input(Double width, Double height) {
+	public static double input(String string) {
+		
+		String printHelp;
+		
+		if(string.equals("width")) {
+			printHelp= "širinu";
+		}
+		else if(string.equals("height")) {
+			printHelp = "visinu";
+		}
+		else {
+			throw new IllegalArgumentException("Wrong input.");
+		}
+		
 		Scanner sc = new Scanner(System.in);
-				
+		double returnValue = 0.0;
+		
 		while(true) {
-			System.out.format("Unesite širinu > ");
-			String input = sc.next();
+			//zasto ovaj kod ne radi?
+			System.out.format("Unesite %s > ", printHelp);
+			String scannerInput = sc.next();
 			try {
-				width = makeDouble(input);
-			} catch(IllegalArgumentException ex) {
-				System.out.format("'%s' se ne može protumačiti kao broj.%n", input);
+				returnValue = Double.parseDouble(scannerInput);
+			} catch(NullPointerException | NumberFormatException ex) {
+				System.out.format("'%s' se ne može protumačiti kao broj.%n", scannerInput);
+				continue;
+			}
+			if(returnValue<0) {
+				System.out.format("Unijeli ste negativnu vrijednost.%n");
 				continue;
 			}
 			break;
 		}
 
-		while(true) {
-			System.out.format("Unesite visinu > ");
-			String input = sc.next();
-			try {
-				height = Double.parseDouble(input);
-			} catch(NullPointerException | NumberFormatException ex) {
-				System.out.format("'%s' se ne može protumačiti kao broj.%n", input);
-				continue;
-			}
-			break;
-		}
-		
 		sc.close();
-		return;
-	}
-	
-	/**
-	 * Returns the input as as double.
-	 * @param input String that needs to be returned as double.
-	 * @exception IllegalArgumentException If the input string can not be converted to double.
-	 */
-	public static double makeDouble(String input) {
-		
-		double inputDouble = 0.0;
-		
-		try {
-			inputDouble = Double.parseDouble(input);
-		} catch(NullPointerException | NumberFormatException ex) {
-//			System.out.format("'%s' se ne može protumačiti kao broj.%n", input);
-			throw new IllegalArgumentException();
-		}
-		
-		return inputDouble;
+		return returnValue;
 	}
 	
 	
