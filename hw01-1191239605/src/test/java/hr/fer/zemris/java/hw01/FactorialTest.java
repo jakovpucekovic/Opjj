@@ -6,26 +6,31 @@ import org.junit.jupiter.api.Test;
 public class FactorialTest {
 
 	@Test
-	void testirajbroj3() {
+	void test0() {
+		long result = Factorial.factorial(0);
+		assertEquals(1, result);
+	}
+	
+	@Test
+	void test3() {
 		long result = Factorial.factorial(3);
 		assertEquals(6l, result);
 	}
 	
 	@Test
-	void testirajbroj10() {
+	void test10() {
 		long result = Factorial.factorial(10);
 		assertEquals(3628800l, result);
 	}
 	
-	
 	@Test 
-	void testirajbroj20() {
+	void test20() {
 		long result = Factorial.factorial(20);
 		assertEquals(2432902008176640000l, result);
 	}
 	
 	@Test
-	void upperBound() {
-		assertThrows(IllegalArgumentException.class,()-> Factorial.factorial(21));
+	void negativeNumber() {
+		assertThrows(IllegalArgumentException.class,()-> Factorial.factorial(-7));
 	}
 }

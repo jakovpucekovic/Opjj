@@ -12,9 +12,22 @@ public class RectangleTest {
 	}
 	
 	@Test
+	void circumferenceTestLesserThanZero() {
+		assertThrows(IllegalArgumentException.class, ()->Rectangle.circumference(-3.0d, 7.0d));
+		assertThrows(IllegalArgumentException.class, ()->Rectangle.circumference(-3.0d, -7.0d));
+		assertDoesNotThrow(()->Rectangle.circumference(0.0d, 0.0d));
+	}
+	
+	@Test
 	void areaTest() {
 		double result = Rectangle.area(3.14d, 1.41d);
 		assertEquals(4.4274, result);
 	}
-	
+
+	@Test
+	void areaTestLesserThanZero() {
+		assertThrows(IllegalArgumentException.class, ()->Rectangle.area(-3.0d, 7.0d));
+		assertThrows(IllegalArgumentException.class, ()->Rectangle.area(-3.0d, -7.0d));
+		assertDoesNotThrow(()->Rectangle.area(0.0d, 0.0d));	
+	}
 }
