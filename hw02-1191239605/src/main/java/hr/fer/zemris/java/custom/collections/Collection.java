@@ -16,7 +16,7 @@ public class Collection {
 	 * 	@return true if the collection is empty, false if not.
 	 */
 	public boolean isEmpty() {
-		return this.size() > 0 ? true : false;
+		return !(size() > 0);
 	}
 	
 	/**
@@ -31,9 +31,7 @@ public class Collection {
 	 *	Adds the given object into this collection. 
 	 *	Does nothing.
 	 */
-	public void add(Object value) {
-		
-	}
+	public void add(Object value) {}
 	
 	/**
 	 * 	Checks if the collection contains a given value.
@@ -92,6 +90,7 @@ public class Collection {
 		
 	}
 	
-	//jel treba i kako napraviti toString(), equals() i hashCode()
+	
+	//jel treba i kako napraviti toString(), equals() i hashCode() NE.
 
 }

@@ -57,7 +57,7 @@ public class StackDemo {
 			}
 		}
 		if(stack.size() != 1) {
-			System.out.println("An error hass occured has occured.");
+			System.out.println("An error has occured has occured.");
 		} else {
 			System.out.format("The expression evaluates to %d.%n", stack.peek());
 		}

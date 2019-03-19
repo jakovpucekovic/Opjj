@@ -5,14 +5,12 @@ import java.util.Objects;
 
 public class ArrayIndexedCollection extends Collection {
 
-	private static final int defaultSize = 16;
-	private static int capacity;
+	private static final int DEFAULT_SIZE= 16;
 	private int size;
 	private Object[] elements;
 	
 	
 	public ArrayIndexedCollection(Collection collection, int initialCapacity) {
-		{
 			if(collection == null) {
 				throw new NullPointerException();
 			}
@@ -20,96 +18,74 @@ public class ArrayIndexedCollection extends Collection {
 				throw new IllegalArgumentException();
 			}
 			if(collection.size() > initialCapacity) {
-				capacity = collection.size();
+				elements = new Object[collection.size()];
 			}
 			else {
-				capacity = initialCapacity;
+				elements = new Object[initialCapacity];
 			}
-			elements = new Object[capacity];
 			size = 0;
 			this.addAll(collection);
-		}
+		
 	}
 
 	public ArrayIndexedCollection(Collection collection) {
-		this(collection, defaultSize);
+		this(collection, DEFAULT_SIZE);
 	}
-	//kako bolje napisati donji konstruktor
+
 	public ArrayIndexedCollection(int initialCapacity) {
 		if(initialCapacity < 1) {
 			throw new IllegalArgumentException();
 		}
-		capacity = initialCapacity;
-		elements = new Object[capacity];
+		elements = new Object[initialCapacity];
 		size = 0;
 	}
 	
 	public ArrayIndexedCollection() {
-		this(defaultSize);
+		this(DEFAULT_SIZE);
 	}
 	
 	@Override
 	public void add(Object value) {
-		insert(value, this.size);
-//		if(value == null) {
-//			throw new NullPointerException();
-//		}
-//		if(this.size == capacity) {
-//			capacity *= 2;
-//			this.reallocate();
-//		}
-//		this.elements[size] = value;
-//		this.size++;			
-	}
-	//moja pomocna fja
-	private void reallocate() {
-		Object[] newArray =  new Object[this.size*2];
-		for(int i = 0, s = this.size; i < s; i++) {
-			newArray[i] = this.elements[i];
-		}
-		this.elements = newArray;
+		insert(value, size);			
 	}
 	
 	public Object get(int index) {
-		if(index < 0 || index > this.size - 1) {
+		if(index < 0 || index > size - 1) {
 			throw new IndexOutOfBoundsException();
 		}
-		return this.elements[index];
+		return elements[index];
 	}
 	
 	@Override
 	public void clear() {
-		for(int i = 0, s = this.size; i < s; i++) {
-			this.elements[i] = null;
+		for(int i = 0, s = size; i < s; i++) {
+			elements[i] = null;
 		}
-		this.size = 0;
+		size = 0;
 	}
 	
 	public void insert(Object value, int position) {
-		if(value == null) {
-			throw new NullPointerException();
-		}
-		if(position < 0 || position > this.size) {
+		Objects.requireNonNull(value);
+		if(position < 0 || position > size) {
 			throw new IndexOutOfBoundsException();
 		}
-		if(this.size == capacity) {
-			capacity *= 2;
-			this.reallocate();
+		if(size == elements.length) {
+			reallocate();
 		}
 		
-		for(int i = this.size; i > position; i--) {
-			this.elements[i] = this.elements[i-1];
+		for(int i = size; i > position; i--) {
+			elements[i] = elements[i-1];
 		}
-		this.elements[position] = value;
-		this.size++;		
+		elements[position] = value;
+		size++;		
 	}
 	
 	public int indexOf(Object value) {
 		if(value == null) {
 			return -1;
 		}
-		for(int i = 0, s = this.size; i< s; i++) {
-			if(this.elements[i].equals(value)) {
+		for(int i = 0, s = size; i< s; i++) {
+			if(elements[i].equals(value)) {
 				return i;
 			}
 		}
@@ -117,31 +93,25 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	public void remove(int index) {
-		if(index < 0 || index > this.size - 1) {
+		if(index < 0 || index > size - 1) {
 			throw new IndexOutOfBoundsException();
 		}
-		for(int i = index, s = this.size - 1; i < s; i++) {
-			this.elements[i] = this.elements[i+1];
+		for(int i = index, s = size - 1; i < s; i++) {
+			elements[i] = elements[i+1];
 		}
-		this.elements[this.size - 1] = null;
-		this.size--;
-	}
-	
-	//potencijalno netreba jer isEmpty ima definiciju u Collection
-	@Override
-	public boolean isEmpty() {
-		return this.size > 0 ? false : true;
+		elements[size - 1] = null;
+		size--;
 	}
 	
 	@Override
 	public int size() {
-		return this.size;
+		return size;
 	}
 	
 	@Override
 	public boolean contains(Object value) {
-		for(int i = 0, s = this.size; i < s; i++) {
-			if(this.elements[i].equals(value)) {
+		for(int i = 0, s = size; i < s; i++) {
+			if(elements[i].equals(value)) {
 				return true;
 			}
 		}
@@ -159,17 +129,17 @@ public class ArrayIndexedCollection extends Collection {
 	
 	@Override
 	public Object[] toArray() {
-		Object[] array = new Object[this.size];
-		for(int i = this.size - 1; i >= 0; i--) {
-			array[i] = this.elements[i];
+		Object[] array = new Object[size];
+		for(int i = size - 1; i >= 0; i--) {
+			array[i] = elements[i];
 		}
 		return array;
 	}
 	
 	@Override
 	public void forEach(Processor processor) {
-		for(int i = 0, s = this.size; i < s; i++) {
-			processor.process(this.elements[i]);
+		for(int i = 0, s = size; i < s; i++) {
+			processor.process(elements[i]);
 		}
 	}
 
@@ -200,9 +170,18 @@ public class ArrayIndexedCollection extends Collection {
 	}
 	
 	public void print() {
-		for(int i = 0; i < this.size; i++) {
-			System.out.format("%d%n", this.elements[i]);
+		for(int i = 0; i < size; i++) {
+			System.out.format("%d%n", elements[i]);
 		}
+	}
+	
+	//moja pomocna fja
+	private void reallocate() {
+		Object[] newArray =  new Object[elements.length * 2];
+		for(int i = 0, s = size; i < s; i++) {
+			newArray[i] = elements[i];
+		}
+		elements = newArray;
 	}
 	
 }

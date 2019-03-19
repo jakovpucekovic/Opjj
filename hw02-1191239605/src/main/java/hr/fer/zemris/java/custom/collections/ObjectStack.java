@@ -20,14 +20,19 @@ public class ObjectStack {
 		array.add(value);
 	}
 	
-	//treba dodati empty stack exception kad se poziva na praznom stacku
 	public Object pop() {
+		if(isEmpty()) {
+			throw new EmptyStackException();
+		}
 		Object value = array.get(array.size() - 1);
 		array.remove(array.size() - 1);
 		return value;
 	}
 	
 	public Object peek() {
+		if(isEmpty()) {
+			throw new EmptyStackException();
+		}
 		return array.get(array.size() - 1);
 	}
 	

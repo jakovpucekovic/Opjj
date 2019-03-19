@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.custom.collections;
 
+import java.util.Objects;
+
 public class LinkedListIndexedCollection extends Collection {
 
 	private static class ListNode{
@@ -14,7 +16,7 @@ public class LinkedListIndexedCollection extends Collection {
 		}
 		
 		public ListNode() {
-			this(null, null, null);
+//			this(null, null, null);
 		}
 	}
 	
@@ -31,26 +33,22 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	public LinkedListIndexedCollection(Collection collection) {
 		this();
-		first = new ListNode();
-		last = first;
-		this.addAll(collection);
-		first = first.next;
-		first.previous = null;
+		addAll(collection);
 	}
 	
 	@Override
 	public int size() {
-		return this.size; 
+		return size; 
 	}
 	
 	@Override
 	public boolean contains(Object value) {
-		ListNode iterator = first;
-		while(iterator != last) {
-			if(iterator.value.equals(value)) {
+		ListNode node = first;
+		while(node != last) {
+			if(node.value.equals(value)) {
 				return true;
 			}
-			iterator = iterator.next;
+			node = node.next;
 		}
 		if(last.value.equals(value)) {
 			return true;
@@ -60,17 +58,17 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	@Override
 	public boolean remove(Object value) {
-		if(!this.contains(value)) {
+		if(!contains(value)) {
 			return false;
 		}
-		ListNode iterator = first;
-		while(iterator != last) {
-			if(iterator.value.equals(value)) {
-				iterator.previous.next = iterator.next;
-				iterator.next.previous = iterator.previous;
+		ListNode node = first;
+		while(node != last) {
+			if(node.value.equals(value)) {
+				node.previous.next = node.next;
+				node.next.previous = node.previous;
 				return true;
 			}
-			iterator = iterator.next;
+			node = node.next;
 		}
 		//ako nije niti jedan prije ocito je zadnji;
 		last = last.previous;
@@ -80,11 +78,11 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	@Override
 	public Object[] toArray() {
-		Object[] objectArray = new Object[this.size];
-		ListNode iterator = first;
-		for(int i = 0, s = this.size; i < s; i++) {
-			objectArray[i] = iterator.value;
-			iterator = iterator.next;
+		Object[] objectArray = new Object[size];
+		ListNode node = first;
+		for(int i = 0, s = size; i < s; i++) {
+			objectArray[i] = node.value;
+			node = node.next;
 		}
 		return objectArray;
 	}
@@ -100,7 +98,7 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	@Override
 	public void clear() {
-		ListNode node = first, nextNode=first.next;
+		ListNode node = first, nextNode = first.next;
 		while(nextNode != last) {
 			node.previous = null;
 			node.next = null;
@@ -113,16 +111,18 @@ public class LinkedListIndexedCollection extends Collection {
 	
 	@Override
 	public void add(Object value) {
-		if(value == null) {
-			throw new NullPointerException();
-		}
+		Objects.requireNonNull(value);
 		last.next = new ListNode(last, null, value);
 		last = last.next;
+		if(first == null) {
+			first = new ListNode(null, null, value);
+			last = first;
+		}
 		size++;
 	}
 	
 	public Object get(int index) {
-		if(index < 0 || index > this.size - 1) {
+		if(index < 0 || index > size - 1) {
 			throw new IndexOutOfBoundsException();
 		}
 		return listNodeAtPosition(index).value;
@@ -142,7 +142,7 @@ public class LinkedListIndexedCollection extends Collection {
 	private ListNode listNodeAtPosition(int position) {
 		if(position > size/2) {
 			ListNode node = last;
-			int counter = this.size - 1;
+			int counter = size - 1;
 			while(counter != position) {
 				node = node.previous;
 				counter--;
@@ -192,10 +192,4 @@ public class LinkedListIndexedCollection extends Collection {
 			node = node.next;
 		}
 	}
-	
-//	private boolean checkIndex(int index) {
-//		if(index < 0 || index > size - 1) {
-//			throw new IndexOutOfBoundsException();
-//		}
-//	}
 }
