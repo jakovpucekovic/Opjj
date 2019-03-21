@@ -1,8 +1,14 @@
-package hr.fer.zemris.java.custom.collections;
+package hr.fer.zemris.java.custom.collections.demo;
 
+import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
+import hr.fer.zemris.java.custom.collections.LinkedListIndexedCollection;
+import hr.fer.zemris.java.custom.collections.Processor;
 import java.util.Arrays;
 
-public class Run {
+/**
+ * 	A demo class which runs the example program from the homework.
+ */
+public class Demo {
 
 	public static void main(String[] args) {
 		ArrayIndexedCollection col = new ArrayIndexedCollection(2);
@@ -17,9 +23,9 @@ public class Run {
 		LinkedListIndexedCollection col2 = new LinkedListIndexedCollection(col);
 		// This is local class representing a Processor which writes objects to System.out
 		class P extends Processor {
-		public void process(Object o) {
-		System.out.println(o);
-		}
+			public void process(Object o) {
+				System.out.println(o);
+			}
 		};
 		System.out.println("col elements:");
 		col.forEach(new P());
@@ -31,8 +37,7 @@ public class Run {
 		System.out.println(Arrays.toString(col2.toArray()));
 		System.out.println(col.contains(col2.get(1))); // true
 		System.out.println(col2.contains(col.get(1))); // true
-		col.remove(Integer.valueOf(20)); // removes 20 from collection (at position 0).
-
+		col.remove(Integer.valueOf(20)); // removes 20 from collection (at position 0)
 	}
 
 }
