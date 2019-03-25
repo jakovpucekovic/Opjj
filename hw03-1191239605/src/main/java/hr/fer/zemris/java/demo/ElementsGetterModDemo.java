@@ -1,7 +1,5 @@
 package hr.fer.zemris.java.demo;
 
-import java.util.concurrent.LinkedBlockingDeque;
-
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 import hr.fer.zemris.java.custom.collections.Collection;
 import hr.fer.zemris.java.custom.collections.ElementsGetter;
