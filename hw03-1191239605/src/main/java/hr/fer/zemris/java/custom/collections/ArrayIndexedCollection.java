@@ -219,7 +219,6 @@ public class ArrayIndexedCollection implements List {
 		}
 		elements[position] = value;
 		size++;	
-//jedan ili 2 modCounta, 1 za realociranje drugi za dodavanje??
 		modificationCount++;
 	}
 	

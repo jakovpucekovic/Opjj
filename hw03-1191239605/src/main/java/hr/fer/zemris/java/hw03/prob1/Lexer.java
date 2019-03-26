@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw03.prob1;
 
+import java.util.Objects;
+
 /**
  *	Class Lexer...
  *	
@@ -23,6 +25,8 @@ public class Lexer {
 	 */
 	private int currentIndex;
 	
+	private LexerState state;
+	
 	/**
 	 * 	Constructs a {@link Lexer} which evaluates the 
 	 * 	given string.
@@ -30,14 +34,20 @@ public class Lexer {
 	 */
 	public Lexer(String text) {
 		data = text.toCharArray();
+		state = LexerState.BASIC;
+	}
+	
+	public void setState(LexerState state) {
+		Objects.requireNonNull(state);
+		this.state = state;
 	}
 	
 	/**
-	 * 	Generates and returns the next {@link Token}.
+	 * 	Generates and returns the next {@link Token} in Basic work mode.
 	 * 	@return The newly generated {@link Token}.
 	 * 	@throws LexerException If an error occurs.
 	 */
-	public Token nextToken() {
+	private Token nextTokenBasic() {
 		if(currentIndex > data.length) {
 			throw new LexerException("Processed all data");
 		}
@@ -45,7 +55,7 @@ public class Lexer {
 		if(eof()) {
 			return token;
 		} else if(spaces()) {
-			if(number()) {
+			if(number()) {//sta s minusom
 				return token;
 			} else if(word()) {
 				return token;
@@ -60,11 +70,46 @@ public class Lexer {
 			}
 			return token;
 		}
-		
-		
-		
+	}
+	
+	/**
+	 * 	Generates and returns the next {@link Token}.
+	 * 	@return The newly generated {@link Token}.
+	 * 	@throws LexerException If an error occurs.
+	 */
+	public Token nextToken() {
+		if(state.equals(LexerState.BASIC)) {
+			return nextTokenBasic();
+		}
+		if(state.equals(LexerState.EXTENDED)) {
+			return nextTokenExtended();
+		}
+		throw new LexerException("Lexer State is neither basic nor extended.");
 	}
 
+	
+	private Token nextTokenExtended() {
+		if(currentIndex > data.length) {
+			throw new LexerException("Processed all data");
+		}
+		
+		if(eof()) {
+			return token;
+		} else if(spaces()) {
+			if(wordExtended()) {
+				return token;
+			} else if(hashtag()){
+				return token;
+			} else{
+				throw new LexerException("nemoguce da nije nista");
+			}
+		} else {
+			if(!eof()) {
+				throw new LexerException("should have been eof");
+			}
+			return token;
+		}
+	}
 	/**
 	 * 	Skips the whitespaces in data[]
 	 * 	@return <code>true</code> if the currentIndex is not at the end of data[],
@@ -110,7 +155,7 @@ public class Lexer {
 	
 	/**
 	 *	Tries to parse word from current position.
-	 *	@return <code>true</code> if it succeded, <code>false</code> if not.
+	 *	@return <code>true</code> if it succeeded, <code>false</code> if not.
 	 *	@throws LexerException If there is an invalid escape sequence. 
 	 */
 	private boolean word() {
@@ -121,8 +166,7 @@ public class Lexer {
 				currentIndex++;
 			} else if(data[currentIndex] == '\\') {
 				if(currentIndex + 1 < data.length) {
-					if(Character.isDigit(data[currentIndex + 1]) || //digit ili simbol
-						(!Character.isLetter(data[currentIndex + 1]) && !Character.isWhitespace(data[currentIndex + 1]))) {
+					if(Character.isDigit(data[currentIndex + 1]) || data[currentIndex + 1] == '\\') {
 						word.append(data[currentIndex + 1]);
 						currentIndex += 2;
 					} else {
@@ -142,6 +186,48 @@ public class Lexer {
 		}
 		return false;
 	}
+	
+	/**
+	 *	Tries to parse word from current position in extended mode.
+	 *	@return <code>true</code> if it succeded, <code>false</code> if not.
+	 *	@throws LexerException If there is an invalid escape sequence. 
+	 */
+	private boolean wordExtended() {
+		StringBuilder word = new StringBuilder();
+		while(currentIndex < data.length) {
+			if(!Character.isWhitespace(data[currentIndex])) {
+				if(data[currentIndex] == '#') {
+					break;
+				}
+				word.append(data[currentIndex]);
+				currentIndex++;
+			} else {
+				break;
+			}
+		}
+		
+		if(word.length() > 0) {
+			token = new Token(TokenType.WORD, word.toString());
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 *	Tries to parse # symbol from current position.
+	 *	@return <code>true</code> if it succeded, <code>false</code> if not. 
+	 */
+	private boolean hashtag() {
+		if(currentIndex < data.length) {
+			if(data[currentIndex] == '#') {
+				token = new Token(TokenType.SYMBOL, data[currentIndex]);
+				currentIndex++;
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	/**
 	 *	Tries to parse symbol from current position.
