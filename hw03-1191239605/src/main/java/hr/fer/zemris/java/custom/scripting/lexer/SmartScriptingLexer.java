@@ -135,6 +135,8 @@ public class SmartScriptingLexer {
 		} else if(parseSpaces()) {
 			if(parseEndTag()) {
 				return token;
+			} else if(parseStartTag()) {
+				return token;
 			} else if(parseEnd()) {
 				return token;
 			} else if(parseEqual()) {
@@ -411,7 +413,7 @@ public class SmartScriptingLexer {
 		if(currentIndex + 3 < data.length) {
 			char c1 = data[currentIndex];
 			char c2 = data[currentIndex + 1];
-			char c3 = data[currentIndex + 3];
+			char c3 = data[currentIndex + 2];
 			
 			if( Character.toUpperCase(c1) == 'F' && Character.toUpperCase(c2) == 'O' && Character.toUpperCase(c3) == 'R' ) { 
 				token = new SmartScriptingToken(SmartScriptingTokenType.FOR, String.format("%c%c%c", c1, c2, c3));
@@ -426,7 +428,7 @@ public class SmartScriptingLexer {
 		if(currentIndex + 3 < data.length) {
 			char c1 = data[currentIndex];
 			char c2 = data[currentIndex + 1];
-			char c3 = data[currentIndex + 3];
+			char c3 = data[currentIndex + 2];
 			
 			if( Character.toUpperCase(c1) == 'E' && Character.toUpperCase(c2) == 'N' && Character.toUpperCase(c3) == 'D' ) {  
 				token = new SmartScriptingToken(SmartScriptingTokenType.END, String.format("%c%c%c", c1, c2, c3));
