@@ -5,6 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import hr.fer.zemris.java.hw03.prob1.Lexer;
+import hr.fer.zemris.java.hw03.prob1.LexerException;
+import hr.fer.zemris.java.hw03.prob1.LexerState;
+import hr.fer.zemris.java.hw03.prob1.Token;
+import hr.fer.zemris.java.hw03.prob1.TokenType;
+
 public class SmartScriptingLexerTest {
 
 
@@ -92,7 +98,7 @@ public class SmartScriptingLexerTest {
 		// We expect the following stream of tokens
 		SmartScriptingToken correctData[] = {
 			new SmartScriptingToken(SmartScriptingTokenType.TEXT, "Example {$=1$}. Now \\actually write one "),
-			new SmartScriptingToken(SmartScriptingTokenType.MODE_SWITCHER, "{$"),
+			new SmartScriptingToken(SmartScriptingTokenType.START_TAG, "{$"),
 			new SmartScriptingToken(SmartScriptingTokenType.TEXT, "=1$}"),			
 			new SmartScriptingToken(SmartScriptingTokenType.EOF, null)
 		};
@@ -103,7 +109,7 @@ public class SmartScriptingLexerTest {
 //	@Disabled
 	@Test
 	public void testInvalidEscape() {
-		SmartScriptingLexer lexer = new SmartScriptingLexer("\\");  // this is three spaces and a single backslash -- 4 letters string
+		SmartScriptingLexer lexer = new SmartScriptingLexer("\\"); 
 
 		// will throw!
 		assertThrows(SmartScriptingLexerException.class, () -> lexer.nextToken());
@@ -112,11 +118,11 @@ public class SmartScriptingLexerTest {
 //	@Disabled
 	@Test
 	public void testWordWithManyEscapes() {
-		SmartScriptingLexer lexer = new SmartScriptingLexer("  ab\\\\\\{cd");
+		SmartScriptingLexer lexer = new SmartScriptingLexer("  ab\\\\\\{$cd$}");
 
 		// We expect the following stream of tokens
 		SmartScriptingToken correctData[] = {
-			new SmartScriptingToken(SmartScriptingTokenType.TEXT, "  ab\\{cd"),
+			new SmartScriptingToken(SmartScriptingTokenType.TEXT, "  ab\\{$cd$}"),
 			new SmartScriptingToken(SmartScriptingTokenType.EOF, null)
 		};
 
@@ -141,42 +147,111 @@ public class SmartScriptingLexerTest {
 	// --------------------- Second part of tests----------------------------------------------------------------
 	// ----------------------------------------------------------------------------------------------------------
 
-	
+//	@Disabled
 	@Test
-	public void testFor() {
-		SmartScriptingLexer lexer = new SmartScriptingLexer("{$ FOR i 1 10 1 $}");
-		lexer.setState(SmartScriptingLexerState.IN_TAG);
-		
-		
-		SmartScriptingToken correctData[] = {
-				new SmartScriptingToken(SmartScriptingTokenType.MODE_SWITCHER, "{$"),
-				new SmartScriptingToken(SmartScriptingTokenType.WORD, "FOR"),
-				new SmartScriptingToken(SmartScriptingTokenType.WORD, "i"),
-				new SmartScriptingToken(SmartScriptingTokenType.NUMBER, 1),
-				new SmartScriptingToken(SmartScriptingTokenType.NUMBER, 10),
-				new SmartScriptingToken(SmartScriptingTokenType.NUMBER, 1),
-				new SmartScriptingToken(SmartScriptingTokenType.MODE_SWITCHER, "$}"),
-				new SmartScriptingToken(SmartScriptingTokenType.EOF, null)
-			};
-
-			checkSmartScriptingTokenStream(lexer, correctData);
+	public void testNullState() {
+		assertThrows(NullPointerException.class, () -> new SmartScriptingLexer("").setState(null));
 	}
 	
+//	@Disabled
 	@Test
-	public void testJednako() {
-		SmartScriptingLexer lexer = new SmartScriptingLexer("{$= i $}");
+	public void testNotNullInExtended() {
+		SmartScriptingLexer lexer = new SmartScriptingLexer("");
 		lexer.setState(SmartScriptingLexerState.IN_TAG);
 		
-		
-		SmartScriptingToken correctData[] = {
-				new SmartScriptingToken(SmartScriptingTokenType.MODE_SWITCHER, "{$"),
-				new SmartScriptingToken(SmartScriptingTokenType.SYMBOL, '='),
-				new SmartScriptingToken(SmartScriptingTokenType.WORD, "i"),
-				new SmartScriptingToken(SmartScriptingTokenType.MODE_SWITCHER, "$}"),
-				new SmartScriptingToken(SmartScriptingTokenType.EOF, null)
-			};
+		assertNotNull(lexer.nextToken(), "Token was expected but null was returned.");
+	}
 
-			checkSmartScriptingTokenStream(lexer, correctData);
+//	@Disabled
+	@Test
+	public void testEmptyInExtended() {
+		SmartScriptingLexer lexer = new SmartScriptingLexer("");
+		lexer.setState(SmartScriptingLexerState.IN_TAG);
+		
+		assertEquals(SmartScriptingTokenType.EOF, lexer.nextToken().getType(), "Empty input must generate only EOF token.");
+	}
+
+//	@Disabled
+	@Test
+	public void testGetReturnsLastNextInExtended() {
+		// Calling getToken once or several times after calling nextToken must return each time what nextToken returned...
+		SmartScriptingLexer lexer = new SmartScriptingLexer("");
+		lexer.setState(SmartScriptingLexerState.IN_TAG);
+		
+		SmartScriptingToken token = lexer.nextToken();
+		assertEquals(token, lexer.getToken(), "getToken returned different token than nextToken.");
+		assertEquals(token, lexer.getToken(), "getToken returned different token than nextToken.");
+	}
+
+//	@Disabled
+	@Test
+	public void testRadAfterEOFInExtended() {
+		SmartScriptingLexer lexer = new SmartScriptingLexer("");
+		lexer.setState(SmartScriptingLexerState.IN_TAG);
+		
+		// will obtain EOF
+		lexer.nextToken();
+		// will throw!
+		assertThrows(SmartScriptingLexerException.class, () -> lexer.nextToken());
+	}
+	
+//	@Disabled
+	@Test
+	public void testNoActualContentInExtended() {
+		// When input is only of spaces, tabs, newlines, etc...
+		SmartScriptingLexer lexer = new SmartScriptingLexer("   \r\n\t    ");
+		lexer.setState(SmartScriptingLexerState.IN_TAG);
+		
+		assertEquals(SmartScriptingTokenType.EOF, lexer.nextToken().getType(), "Input had no content. Lexer should generated only EOF token.");
+	}
+	
+//	@Disabled
+	@Test
+	public void testFORInput1() {
+		// Test input which has parts which are tokenized by different rules...
+		SmartScriptingLexer lexer = new SmartScriptingLexer("{$ FOR i -1 10 1 $}");
+		
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.START_TAG, "{$"));
+		lexer.setState(SmartScriptingLexerState.IN_TAG);
+		
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.FOR, "FOR"));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.VARIABLE, "i"));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.INTEGER, -1));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.INTEGER, 10));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.INTEGER, 1));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.END_TAG, "$}"));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.EOF, null));
+		
+		
+		lexer.setState(SmartScriptingLexerState.IN_TAG);
+	}
+	
+//	@Disabled
+	@Test
+	public void testFORInput2() {
+		// Test input which has parts which are tokenized by different rules...
+		SmartScriptingLexer lexer = new SmartScriptingLexer("{$    FOR\n   sco_re\n	\"- 1\" 10 \"1\" $}");
+		
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.START_TAG, "{$"));
+		lexer.setState(SmartScriptingLexerState.IN_TAG);
+		
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.FOR, "FOR"));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.VARIABLE, "sco_re"));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.STRING, "- 1"));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.INTEGER, 10));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.STRING, "1"));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.END_TAG, "$}"));
+		checkToken(lexer.nextToken(), new SmartScriptingToken(SmartScriptingTokenType.EOF, null));
+		
+		
+		lexer.setState(SmartScriptingLexerState.IN_TAG);
+	}
+	
+	
+	private void checkToken(SmartScriptingToken actual, SmartScriptingToken expected) {
+			String msg = "Token are not equal.";
+			assertEquals(expected.getType(), actual.getType(), msg);
+			assertEquals(expected.getValue(), actual.getValue(), msg);
 	}
 	
 	

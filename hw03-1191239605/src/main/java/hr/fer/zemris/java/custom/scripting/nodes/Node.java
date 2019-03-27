@@ -15,8 +15,8 @@ public class Node {
 	 * 	@param child Node to add as as child.
 	 * 	@throws NullPointerException If given child is <code>null</code>.
 	 */
-	void addChildNode(Node child) {
-		if(children.equals(null)) {
+	public void addChildNode(Node child) {
+		if(children == null) {
 			children = new ArrayIndexedCollection();
 		}
 		children.add(child);
@@ -26,7 +26,7 @@ public class Node {
 	 * 	Returns the number of children this {@link Node} has.
 	 * 	@return Number of children.
 	 */
-	int numberOfChildren() {
+	public int numberOfChildren() {
 		if(children.equals(null)) {
 			return 0;
 		}
@@ -42,7 +42,7 @@ public class Node {
 	 * 	@throws IndexOutOfBoundsException If the {@link Node} doesn't
 	 * 			have a child at the given index.
 	 */
-	Node getChild(int index) {
+	public Node getChild(int index) {
 		if(children.equals(null)) {
 			throw new NullPointerException("Node has no children");
 		}

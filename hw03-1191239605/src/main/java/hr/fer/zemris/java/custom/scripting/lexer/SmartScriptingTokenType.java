@@ -2,9 +2,16 @@ package hr.fer.zemris.java.custom.scripting.lexer;
 
 public enum SmartScriptingTokenType {
 	EOF,
-	WORD,	//doesnt allow whitespace
-	NUMBER,
-	SYMBOL,
 	TEXT, //allows whitespace inside
-	MODE_SWITCHER
+	VARIABLE, 
+	INTEGER,
+	DOUBLE,
+	STRING, //slova, brojevi, znakovi, \\ i \"
+	FUNCTION, //started with @
+	OPERATOR, //+-*/^
+	START_TAG,  //{$
+	END_TAG,	//$}
+	FOR,
+	END,
+	EQUALS
 }

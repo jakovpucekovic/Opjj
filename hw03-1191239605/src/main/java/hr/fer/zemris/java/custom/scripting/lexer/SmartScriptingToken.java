@@ -9,8 +9,7 @@ package hr.fer.zemris.java.custom.scripting.lexer;
 public class SmartScriptingToken {
 
 	/**	
-	 * The type of the {@link SmartScriptingToken}. Can be EOF, WORD, NUMBER
-	 * 	or SYMBOL.
+	 * The type of the {@link SmartScriptingToken}. Can be ...
 	 */
 	private SmartScriptingTokenType type;
 	
