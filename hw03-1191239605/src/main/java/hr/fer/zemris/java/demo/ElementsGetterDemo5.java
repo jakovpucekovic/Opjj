@@ -30,7 +30,6 @@ public class ElementsGetterDemo5 {
 		System.out.println("Ima nepredanih elemenata: " + getter2.getNextElement());
 		System.out.println("Ima nepredanih elemenata: " + getter3.getNextElement());
 		System.out.println("Ima nepredanih elemenata: " + getter3.getNextElement());
-		//Ivo, Ana, Ivo, Jasmina, Štefanija
 	}
-	
 }
+//Ivo, Ana, Ivo, Jasmina, Štefanija

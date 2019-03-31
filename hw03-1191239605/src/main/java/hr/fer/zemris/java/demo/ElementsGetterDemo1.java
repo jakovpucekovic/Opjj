@@ -29,5 +29,5 @@ public class ElementsGetterDemo1 {
 		System.out.println("Ima nepredanih elemenata: " + getter.hasNextElement());
 		System.out.println("Jedan element: " + getter.getNextElement());
 		}
-
 }
+//true, Ivo, true, Ana, true, Jasna, false, NoSuchElementException

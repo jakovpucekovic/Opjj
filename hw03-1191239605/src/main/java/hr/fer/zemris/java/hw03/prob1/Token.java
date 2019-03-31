@@ -1,7 +1,10 @@
 package hr.fer.zemris.java.hw03.prob1;
 
+import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptLexer;
+
 /**
- *	Class Token...
+ *	Class Token which represents tokens to
+ *	which the {@link Lexer} groups the input.
  *	
  *	@author Jakov Pucekovic
  *	@version 1.0
@@ -26,7 +29,6 @@ public class Token {
 	 *	@param value Value to give the {@link Token}.
 	 */
 	public Token(TokenType type, Object value) {
-//dodati provjeru da value odgovara type
 		this.type = type;
 		this.value = value;
 	}
@@ -47,15 +49,9 @@ public class Token {
 		return value;
 	}
 
-	
 	@Override
 	public String toString() {
 		return "(" + type + ", " + value + ")";
 	}
 	
-	
-
-
-
-
 }

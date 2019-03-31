@@ -157,17 +157,6 @@ public class ArrayIndexedCollection implements List {
 		return array;
 	}
 	
-//	/**
-//	 *	Calls processor.process() for each element of 
-//	 *	this ArrayIndexedCollection.
-//	 */
-//	@Override
-//	public void forEach(Processor processor) {
-//		for(int i = 0, s = size; i < s; i++) {
-//			processor.process(elements[i]);
-//		}
-//	}
-	
 	/**
 	 * 	Removes all elements from this ArrayIndexedCollection.
 	 */
@@ -274,16 +263,32 @@ public class ArrayIndexedCollection implements List {
 		elements = newArray;
 	}
 	
+	/**
+	 * 	Implementation of {@link ElementsGetter} for this Collection.
+	 */
 	private static class ArrayElementsGetter implements ElementsGetter{
-		private int currentIndex = 0;
-		private long savedModificationCount;
-		private ArrayIndexedCollection thisCollection; //pamti pokazivac na kolekciju koja ga je napravila
 		
+		/**Current index*/
+		private int currentIndex = 0;
+		/**Number of modifications made to the {@link ArrayIndexedCollection}*/
+		private long savedModificationCount;
+		/**Reference to {@link ArrayIndexedCollection} which made this {@link ElementsGetter}.*/
+		private ArrayIndexedCollection thisCollection;
+		
+		/**
+		 *  Constructs a new {@link ArrayElementsGetter} for this {@link ArrayIndexedCollection}.
+		 *  @param thisCollection {@link ArrayIndexedCollection} on which this {@link ElementsGetter} gets elements.
+		 */
 		public ArrayElementsGetter(ArrayIndexedCollection thisCollection) {
 			this.thisCollection = thisCollection;
 			this.savedModificationCount = thisCollection.modificationCount;
 		}
 		
+		/**
+		 * 	Answers whether there is another element.
+		 * 	@return <code>true</code> if yes, <code>false</code> if no.
+		 * 	@throws ConcurrentModificationException If the collection has been modified in the meanwhile.
+		 */
 		@Override
 		public boolean hasNextElement() {
 			if(savedModificationCount != thisCollection.modificationCount ) {
@@ -292,6 +297,12 @@ public class ArrayIndexedCollection implements List {
 			return thisCollection.size > currentIndex;
 		}
 		
+		/**
+		 * 	Returns the next element.
+		 * 	@return Next element.
+		 * 	@throws ConcurrentModificationException If the collection has been modified in the meanwhile.
+		 * 	@throws NoSuchElementException If there are no more elements.
+		 */
 		@Override
 		public Object getNextElement() {
 			if(savedModificationCount != thisCollection.modificationCount ) {
@@ -304,6 +315,10 @@ public class ArrayIndexedCollection implements List {
 		}
 	}
 
+	/**
+	 * 	Creates an {@link ElementsGetter} for this {@link Collection}.
+	 * 	@return {@link ElementsGetter} for this {@link Collection}.
+	 */
 	@Override
 	public ElementsGetter createElementsGetter() {
 		return new ArrayElementsGetter(this);

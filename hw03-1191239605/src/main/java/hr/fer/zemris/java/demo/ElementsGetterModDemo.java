@@ -23,5 +23,5 @@ public class ElementsGetterModDemo {
 		col.clear();
 		System.out.println("Jedan element: " + getter.getNextElement());
 	}
-
 }
+//Ivo, Ana, ConcurrentModificationException

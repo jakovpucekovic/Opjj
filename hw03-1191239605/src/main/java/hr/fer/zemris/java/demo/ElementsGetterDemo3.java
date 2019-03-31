@@ -22,5 +22,5 @@ public class ElementsGetterDemo3 {
 	System.out.println("Jedan element: " + getter.getNextElement());
 	System.out.println("Jedan element: " + getter.getNextElement());
 	}
-	
 }
+//Ivo, Ana, Jasna, NoSuchElementException

@@ -3,70 +3,87 @@ package hr.fer.zemris.java.custom.scripting.lexer;
 import java.util.Objects;
 
 /**
- *	Class SmartScriptingLexer...
+ *	Class SmartScriptLexer which performs the grouping
+ *	of the input into {@link SmartScriptToken} with the rules
+ *	described in the third homework.
  *	
  *	@author Jakov Pucekovic
  *	@version 1.0
  */
-public class SmartScriptingLexer {
+public class SmartScriptLexer {
 
 	/**
-	 * 	The inputted text.
+	 * 	Text that needs to be tokenized.
 	 */
 	private char[] data;
 	
 	/**
-	 * 	The current {@link Token}.
+	 * 	The current {@link SmartScriptToken}.
 	 */
-	private SmartScriptingToken token;
+	private SmartScriptToken token;
 	
 	/**
 	 * 	The index of the next character to evaluate.
 	 */
 	private int currentIndex;
 		
-	private SmartScriptingLexerState state;
+	private SmartScriptLexerState state;
 	
 	/**
-	 * 	Constructs a {@link SmartScriptingLexer} which evaluates the 
+	 * 	Constructs a {@link SmartScriptLexer} which evaluates the 
 	 * 	given string.
 	 * 	@param text Text to evaluate.
 	 */
-	public SmartScriptingLexer(String text) {
+	public SmartScriptLexer(String text) {
 		data = text.toCharArray();
-		state = SmartScriptingLexerState.TEXT;
+		state = SmartScriptLexerState.TEXT;
 	}
 	
-	public void setState(SmartScriptingLexerState state) {
+	/**
+	 *	Sets the state of the {@link SmartScriptLexer}.
+	 *	@param state State to set the {@link SmartScriptLexer} to.
+	 *	@throws NullPointerException If given state is null.
+	 */
+	public void setState(SmartScriptLexerState state) {
 		Objects.requireNonNull(state);
 		this.state = state;
 	}
 	
 	/**
-	 * 
+	 * 	Returns the last {@link SmartScriptToken} made with
+	 * 	the <code>nextToken</code> method.
+	 * 	@return Last generated token.
 	 */
-	public SmartScriptingToken getToken() {
+	public SmartScriptToken getToken() {
 		return token;
 	}
 
 	/**
-	 * 	
+	 * 	Return the next {@link SmartScriptToken}.
+	 * 	@return The next {@link SmartScriptToken}.
 	 */
-	public SmartScriptingToken nextToken() {
-		if(state.equals(SmartScriptingLexerState.TEXT)) {
+	public SmartScriptToken nextToken() {
+		if(state.equals(SmartScriptLexerState.TEXT)) {
 			return nextTokenText();
 		}
-		if(state.equals(SmartScriptingLexerState.IN_TAG)) {
+		if(state.equals(SmartScriptLexerState.IN_TAG)) {
 			return nextTokenInTag();
 		}
-		throw new SmartScriptingLexerException("SmartScriptingLexer State is not ALL_TEXT.");
+		throw new SmartScriptLexerException("SmartScriptLexerState is not set");
 	}
 
-	private SmartScriptingToken nextTokenText() {
+	/**
+	 *	Method which returns the nextToken when the {@link SmartScriptLexer} is 
+	 *	in TEXT state.
+	 *	@return The next {@link SmartScriptToken}.
+	 *	@throws SmartScriptLexerException If called after tokenizing the whole data.
+	 */
+	private SmartScriptToken nextTokenText() {
 			if(currentIndex > data.length) {
-				throw new SmartScriptingLexerException("Processed all data");
+				throw new SmartScriptLexerException("Processed all data already");
 			}
 			
+			/*In TEXT mode, we can only get EOF, TEXT or START_TAG.*/
 			if(parseEof()) {
 				return token;
 			} else {
@@ -76,63 +93,71 @@ public class SmartScriptingLexer {
 					return token;
 				} 
 				else{
-					throw new SmartScriptingLexerException("nemoguce da nije nista");
+					throw new SmartScriptLexerException("Cannot parse text.");
 				}
 			} 
 		}
 
 	/**
-	 *	Tries to parse word from current position in TEXT mode.
+	 *	Tries to parse TEXT token from current position in TEXT mode.
 	 *	@return <code>true</code> if it succeded, <code>false</code> if not.
 	 */
 	private boolean parseText() {
 		StringBuilder text = new StringBuilder();
+		
 		while(currentIndex < data.length) {
 			if(Character.isWhitespace(data[currentIndex])) {
 				text.append(data[currentIndex]);
 				currentIndex++;
-			} else if(data[currentIndex] == '{') { 
+			} 
+			/*Allow { in text if it's not part of a START_TAG*/
+			else if(data[currentIndex] == '{') { 
 				if(currentIndex + 1 < data.length) {
-					if(data[currentIndex + 1] == '$') {	//{$
+					if(data[currentIndex + 1] == '$') {
 						break;							
 					}
 				}
-			} else if(data[currentIndex] == '\\') {
+			} 
+			/*Allow escaping a backslash or { with a backslash.*/
+			else if(data[currentIndex] == '\\') {
 				if(currentIndex + 1 < data.length) {
-					if(data[currentIndex + 1] == '\\' || data[currentIndex + 1] == '{') {	// \ ili { kao dio stringa
+					if(data[currentIndex + 1] == '\\' || data[currentIndex + 1] == '{') {	
 						text.append(data[currentIndex + 1]);
 						currentIndex+=2;					
 					} else {
-						throw new SmartScriptingLexerException("\\ at the end of file.");
+						throw new SmartScriptLexerException("\\ at the end of file.");
 					}
 				} else {
-					throw new SmartScriptingLexerException("Invalid escape seqeunce");
+					throw new SmartScriptLexerException("Invalid escape seqeunce");
 				}
-			} else {
+			} 
+			else {
 				text.append(data[currentIndex]);
 				currentIndex++;
 			}
-			
 		}
-		
+		/*If parsed something.*/
 		if(text.length() > 0) {
-			token = new SmartScriptingToken(SmartScriptingTokenType.TEXT, text.toString());
+			token = new SmartScriptToken(SmartScriptTokenType.TEXT, text.toString());
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * 
+	 *	Method which returns the nextToken when the {@link SmartScriptLexer} is 
+	 *	in IN_TAG state.
+	 *	@return The next {@link SmartScriptToken}.
+	 *	@throws SmartScriptLexerException If called after tokenizing the whole data.
 	 */
-	private SmartScriptingToken nextTokenInTag() {
+	private SmartScriptToken nextTokenInTag() {
 		if(currentIndex > data.length) {
-			throw new SmartScriptingLexerException("Processed all data");
+			throw new SmartScriptLexerException("Processed all data already");
 		}
 		
 		if(parseEof()) {
 			return token;
-		} else if(parseSpaces()) {
+		} else if(parseSpaces()) { /*First parse all whitespace*/
 			if(parseEndTag()) {
 				return token;
 			} else if(parseStartTag()) {
@@ -156,22 +181,22 @@ public class SmartScriptingLexer {
 			} else if(parseString()) {
 				return token;
 			} else {
-				throw new SmartScriptingLexerException("nemoguce da nije nista");
+				throw new SmartScriptLexerException("Cannot parse tag");
 			}
-		} else if(parseEof()) { //moze se dogoditi da parseSpaces() dode do kraja
+		} else if(parseEof()) { /*If input ends only in whitespace.*/
 			return token;
 		} else {
-			throw new SmartScriptingLexerException("should never execute");
+			throw new SmartScriptLexerException("Cannot parse tag");
 		}
 	}
 
 	/**
-	 *	Checks if currentIndex is at the end of data.
+	 *	Tries to parse EOF token from current position.
 	 *	@return <code>true</code> if yes, <code>false</code> if no. 
 	 */
 	private boolean parseEof() {
 		if(currentIndex == data.length) {
-			token = new SmartScriptingToken(SmartScriptingTokenType.EOF, null);
+			token = new SmartScriptToken(SmartScriptTokenType.EOF, null);
 			currentIndex++;
 			return true;
 		}
@@ -195,9 +220,10 @@ public class SmartScriptingLexer {
 	}
 
 	/**
-	 *	Tries to parse variable from current position.
+	 *	Tries to parse VARIABLE token from current position in IN_TAG mode.
+	 *	VARIABLE must start with a letter which can be followed by more letters, numbers or underscores.
 	 *	@return <code>true</code> if it succeeded, <code>false</code> if not.
-	 *	@throws LexerException If there is an invalid escape sequence. 
+	 *	@throws SmartScriptLexerException If there is an invalid escape sequence. 
 	 */
 	private boolean parseVariable() {
 		if(!Character.isLetter(data[currentIndex])) {
@@ -218,14 +244,14 @@ public class SmartScriptingLexer {
 		}
 		
 		if(variable.length() > 0) {
-			token = new SmartScriptingToken(SmartScriptingTokenType.VARIABLE, variable.toString());
+			token = new SmartScriptToken(SmartScriptTokenType.VARIABLE, variable.toString());
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * 	Tries to parse integer from current position.
+	 *	Tries to parse INTEGER token from current position in IN_TAG mode.
 	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
 	 * 	@throws LexerException If the number cannot be parsed as {@link Long}.
 	 */
@@ -251,17 +277,17 @@ public class SmartScriptingLexer {
 		
 		if(number.length() > 0) {
 			try {
-				token = new SmartScriptingToken(SmartScriptingTokenType.INTEGER, Integer.parseInt(number.toString()));	
+				token = new SmartScriptToken(SmartScriptTokenType.INTEGER, Integer.parseInt(number.toString()));	
 				return true;
 			} catch(NumberFormatException ex) {
-				throw new SmartScriptingLexerException("Cannot parse Integer");
+				throw new SmartScriptLexerException("Cannot parse Integer");
 			}
 		}
 		return false;
 	}
 	
 	/**
-	 * 	Tries to parse double from current position.
+	 *	Tries to parse DOUBLE token from current position in IN_TAG mode. Double must be in digit-dot-digit format.
 	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
 	 * 	@throws LexerException If the number cannot be parsed as {@link Long}.
 	 */
@@ -281,7 +307,8 @@ public class SmartScriptingLexer {
 				number.append(data[currentIndex]);
 				currentIndex++;
 			} else if (data[currentIndex] == '.'){ 
-				if(number.length() >= 1 && number.indexOf(".") == -1 ) { //nasao je tocku i ne sadrzi ju vec
+				/*Found a . and hasn't already parsed one.*/
+				if(number.length() >= 1 && number.indexOf(".") == -1 ) {
 					if(currentIndex + 1 < data.length) { 
 						if(Character.isDigit(data[currentIndex])) {
 							number.append(data[currentIndex]);
@@ -297,17 +324,22 @@ public class SmartScriptingLexer {
 		
 		if(number.length() > 0) {
 			try {
-				token = new SmartScriptingToken(SmartScriptingTokenType.DOUBLE, Double.parseDouble(number.toString()));
+				token = new SmartScriptToken(SmartScriptTokenType.DOUBLE, Double.parseDouble(number.toString()));
 				return true;
 			} catch(NumberFormatException ex) {
-				throw new SmartScriptingLexerException("Cannot parse double");
+				throw new SmartScriptLexerException("Cannot parse double");
 			}
 		}
 		return false;
 	}
 	
 	
-	//string moze sadrzavati slova, brojeve pocinje i zavrsava sa ""
+	/**
+	 *	Tries to parse STRING token from current position in IN_TAG mode. STRING starts 
+	 *	and ends with "" and can have letters and numbers in it. Also supports backslash
+	 *	escape character on backslash and ".
+	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
+	 */
 	private boolean parseString() {
 		if(data[currentIndex] != '\"') {
 			return false;
@@ -334,51 +366,58 @@ public class SmartScriptingLexer {
 		}
 		
 		if(string.length() > 0) {
-			token = new SmartScriptingToken(SmartScriptingTokenType.STRING, string.toString());
+			token = new SmartScriptToken(SmartScriptTokenType.STRING, string.toString());
 			return true;
 		}
 		return false;
 		
 		}
 
+	/**
+	 *	Tries to parse FUNCTION token from current position in IN_TAG mode.
+	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
+	 */
 	private boolean parseFunction() {
-	/*Function starts with @*/
-	if(data[currentIndex] != '@') {
+		/*Function starts with @*/
+		if(data[currentIndex] != '@') {
+				return false;
+		}
+		/*@ isn't part of the functions name*/
+		currentIndex++;
+	
+		StringBuilder function = new StringBuilder();
+			
+		/*Must start with letter*/
+		if(!Character.isLetter(data[currentIndex])) {
 			return false;
-	}		
-	currentIndex++; //@ ne ulazi u ime funkcije
-
-	StringBuilder function = new StringBuilder();
+		}
+		function.append(data[currentIndex]);
+		currentIndex++;
+		/*Same rules as VARIABLE*/
+		while(currentIndex < data.length) {
+			if(Character.isLetterOrDigit(data[currentIndex]) || data[currentIndex] == '_' ) {
+				function.append(data[currentIndex]);
+				currentIndex++;
+			} else {
+				break;
+			}
+		}
 		
-	/*Must start with letter*/
-	if(!Character.isLetter(data[currentIndex])) {
+		if(function.length() > 0) {
+			token = new SmartScriptToken(SmartScriptTokenType.FUNCTION, function.toString());
+			return true;
+		}
 		return false;
 	}
-	function.append(data[currentIndex]);
-	currentIndex++;
-
-	while(currentIndex < data.length) {
-		if(Character.isLetterOrDigit(data[currentIndex]) || data[currentIndex] == '_' ) {
-			function.append(data[currentIndex]);
-			currentIndex++;
-		} else {
-			break;
-		}
-	}
 	
-	if(function.length() > 0) {
-		token = new SmartScriptingToken(SmartScriptingTokenType.FUNCTION, function.toString());
-		return true;
-	}
-	
-	return false;
-	}
-	
-	
+	/**
+	 *	Tries to parse OPERATOR token from current position in IN_TAG mode.
+	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
+	 */
 	private boolean parseOperator() {
 		if(currentIndex < data.length) {
 			if("+-*/^".indexOf(data[currentIndex]) != -1) {
-				token = new SmartScriptingToken(SmartScriptingTokenType.OPERATOR, data[currentIndex]);
+				token = new SmartScriptToken(SmartScriptTokenType.OPERATOR, data[currentIndex]);
 				currentIndex++;
 				return true;
 			}
@@ -386,10 +425,14 @@ public class SmartScriptingLexer {
 		return false;
 	}
 	
+	/**
+	 *	Tries to parse START_TAG token from current position.
+	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
+	 */
 	private boolean parseStartTag() {
 		if(currentIndex + 1 < data.length) {
-			if(data[currentIndex] == '{' && data[currentIndex + 1] == '$' ) { // checks for {$
-				token = new SmartScriptingToken(SmartScriptingTokenType.START_TAG, "{$");
+			if(data[currentIndex] == '{' && data[currentIndex + 1] == '$' ) {
+				token = new SmartScriptToken(SmartScriptTokenType.START_TAG, "{$");
 				currentIndex += 2;
 				return true;
 			} 
@@ -397,11 +440,15 @@ public class SmartScriptingLexer {
 		return false;
 	}
 	
-	
+	/**
+	 *	Tries to parse END_TAG token from current position.
+	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
+	 * 	@throws LexerException If the number cannot be parsed as {@link Long}.
+	 */
 	private boolean parseEndTag() {
 		if(currentIndex + 1 < data.length) {
-			if(data[currentIndex] == '$' && data[currentIndex + 1] == '}' ) { // checks for $}
-				token = new SmartScriptingToken(SmartScriptingTokenType.END_TAG, "$}");
+			if(data[currentIndex] == '$' && data[currentIndex + 1] == '}' ) { 
+				token = new SmartScriptToken(SmartScriptTokenType.END_TAG, "$}");
 				currentIndex += 2;
 				return true;
 			} 
@@ -409,14 +456,18 @@ public class SmartScriptingLexer {
 		return false;
 	}
 	
-		private boolean parseFor() {
+	/**
+	 *	Tries to parse FOR token from current position in IN_TAG mode. For is case insensitive.
+	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
+	 */
+	private boolean parseFor() {
 		if(currentIndex + 3 < data.length) {
 			char c1 = data[currentIndex];
 			char c2 = data[currentIndex + 1];
 			char c3 = data[currentIndex + 2];
 			
 			if( Character.toUpperCase(c1) == 'F' && Character.toUpperCase(c2) == 'O' && Character.toUpperCase(c3) == 'R' ) { 
-				token = new SmartScriptingToken(SmartScriptingTokenType.FOR, String.format("%c%c%c", c1, c2, c3));
+				token = new SmartScriptToken(SmartScriptTokenType.FOR, String.format("%c%c%c", c1, c2, c3));
 				currentIndex += 3;
 				return true;
 			} 
@@ -424,6 +475,10 @@ public class SmartScriptingLexer {
 		return false;
 	}
 	
+	/**
+	 *	Tries to parse END token from current position in IN_TAG mode. End is case insensitive.
+	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
+	 */
 	private boolean parseEnd() {
 		if(currentIndex + 3 < data.length) {
 			char c1 = data[currentIndex];
@@ -431,7 +486,7 @@ public class SmartScriptingLexer {
 			char c3 = data[currentIndex + 2];
 			
 			if( Character.toUpperCase(c1) == 'E' && Character.toUpperCase(c2) == 'N' && Character.toUpperCase(c3) == 'D' ) {  
-				token = new SmartScriptingToken(SmartScriptingTokenType.END, String.format("%c%c%c", c1, c2, c3));
+				token = new SmartScriptToken(SmartScriptTokenType.END, String.format("%c%c%c", c1, c2, c3));
 				currentIndex += 3;
 				return true;
 			} 
@@ -439,10 +494,14 @@ public class SmartScriptingLexer {
 		return false;
 	}
 	
+	/**
+	 *	Tries to parse EQUALS token from current position in IN_TAG mode.
+	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
+	 */
 	private boolean parseEqual() {
 		if(currentIndex < data.length) {
 			if(data[currentIndex] == '=') { 
-				token = new SmartScriptingToken(SmartScriptingTokenType.EQUALS, "=");
+				token = new SmartScriptToken(SmartScriptTokenType.EQUALS, "=");
 				currentIndex++;
 				return true;
 			} 

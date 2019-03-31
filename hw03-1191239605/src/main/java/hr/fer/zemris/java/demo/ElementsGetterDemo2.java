@@ -38,3 +38,4 @@ public class ElementsGetterDemo2 {
 		System.out.println("Ima nepredanih elemenata: " + getter.hasNextElement());
 		}
 }
+//5 puta true, Ivo, 2 puta true, Ana, 4 puta true, Jasna, 2 puta false

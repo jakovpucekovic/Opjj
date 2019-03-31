@@ -87,9 +87,16 @@ public interface Collection {
 	 */
 	abstract void clear();
 
-
+	/**
+	 * 	Creates an {@link ElementsGetter} for this {@link Collection}.
+	 */
 	abstract ElementsGetter createElementsGetter();
 	
+	/**
+	 * 	Adds all elements that satisfy the test to the {@link Collection}.
+	 * 	@param col The {@link Collection} from which elements are added.
+	 * 	@param tester Tester which performs the test on the elements.
+	 */
 	default void addAllSatisfying(Collection col, Tester tester) {
 		ElementsGetter getter = col.createElementsGetter();
 		while(getter.hasNextElement()) {
@@ -101,6 +108,4 @@ public interface Collection {
 	
 	}
 
-	
-	
 }

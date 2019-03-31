@@ -2,8 +2,14 @@ package hr.fer.zemris.java.hw03.prob1;
 
 import java.util.Objects;
 
+import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptLexerException;
+import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptToken;
+import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptTokenType;
+
 /**
- *	Class Lexer...
+ *	Class Lexer which performs the grouping
+ *	of the input into {@link Token}s with the rules
+ *	described in the third homework.
  *	
  *	@author Jakov Pucekovic
  *	@version 1.0
@@ -37,41 +43,25 @@ public class Lexer {
 		state = LexerState.BASIC;
 	}
 	
+	/**
+	 * 	Sets the state of the {@link Lexer}.
+	 * 	@param state The state to set the {@link Lexer} into.	
+	 * 	@throws NullPointerException If the given state is null.
+	 */
 	public void setState(LexerState state) {
 		Objects.requireNonNull(state);
 		this.state = state;
 	}
 	
 	/**
-	 * 	Generates and returns the next {@link Token} in Basic work mode.
-	 * 	@return The newly generated {@link Token}.
-	 * 	@throws LexerException If an error occurs.
+	 * 	Returns the last generated {@link Token}. Doesn't
+	 * 	generate a new {@link Token}.
+	 * 	@return The last generated {@link Token}.
 	 */
-	private Token nextTokenBasic() {
-		if(currentIndex > data.length) {
-			throw new LexerException("Processed all data");
-		}
-		
-		if(eof()) {
-			return token;
-		} else if(spaces()) {
-			if(number()) {//sta s minusom
-				return token;
-			} else if(word()) {
-				return token;
-			} else if(symbol()) {
-				return token;
-			} else {
-				throw new LexerException("nemoguce da nije nista");
-			}
-		} else {
-			if(!eof()) {
-				throw new LexerException("should have been eof");
-			}
-			return token;
-		}
+	public Token getToken() {
+		return token;
 	}
-	
+
 	/**
 	 * 	Generates and returns the next {@link Token}.
 	 * 	@return The newly generated {@link Token}.
@@ -87,7 +77,41 @@ public class Lexer {
 		throw new LexerException("Lexer State is neither basic nor extended.");
 	}
 
+	/**
+	 * 	Generates and returns the next {@link Token} in Basic work mode.
+	 * 	@return The newly generated {@link Token}.
+	 * 	@throws LexerException If an error occurs.
+	 */
+	private Token nextTokenBasic() {
+		if(currentIndex > data.length) {
+			throw new LexerException("Processed all data");
+		}
+		
+		if(eof()) {
+			return token;
+		} else if(spaces()) {
+			if(number()) {
+				return token;
+			} else if(word()) {
+				return token;
+			} else if(symbol()) {
+				return token;
+			} else {
+				throw new LexerException("Input is invalid.");
+			}
+		} else {
+			if(!eof()) {
+				throw new LexerException("Invalid input.");
+			}
+			return token;
+		}
+	}
 	
+	/**
+	 * 	Generates and returns the next {@link Token} in Extended work mode.
+	 * 	@return The newly generated {@link Token}.
+	 * 	@throws LexerException If an error occurs.
+	 */
 	private Token nextTokenExtended() {
 		if(currentIndex > data.length) {
 			throw new LexerException("Processed all data");
@@ -111,7 +135,7 @@ public class Lexer {
 		}
 	}
 	/**
-	 * 	Skips the whitespaces in data[]
+	 * 	Skips the whitespace in data[]
 	 * 	@return <code>true</code> if the currentIndex is not at the end of data[],
 	 * 			<code>false</code> if it is.
 	 */
@@ -128,11 +152,12 @@ public class Lexer {
 	
 	/**
 	 * 	Tries to parse number from current position.
-	 * 	@return <code>true</code> if it succeded, <code>false</code> otherwise
+	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
 	 * 	@throws LexerException If the number cannot be parsed as {@link Long}.
 	 */
 	private boolean number() {
 		StringBuilder number = new StringBuilder();
+		
 		while(currentIndex < data.length) {
 			if(Character.isDigit(data[currentIndex])) {
 				number.append(data[currentIndex]);
@@ -189,7 +214,7 @@ public class Lexer {
 	
 	/**
 	 *	Tries to parse word from current position in extended mode.
-	 *	@return <code>true</code> if it succeded, <code>false</code> if not.
+	 *	@return <code>true</code> if it succeeded, <code>false</code> if not.
 	 *	@throws LexerException If there is an invalid escape sequence. 
 	 */
 	private boolean wordExtended() {
@@ -215,7 +240,7 @@ public class Lexer {
 	
 	/**
 	 *	Tries to parse # symbol from current position.
-	 *	@return <code>true</code> if it succeded, <code>false</code> if not. 
+	 *	@return <code>true</code> if it succeeded, <code>false</code> if not. 
 	 */
 	private boolean hashtag() {
 		if(currentIndex < data.length) {
@@ -231,7 +256,7 @@ public class Lexer {
 	
 	/**
 	 *	Tries to parse symbol from current position.
-	 *	@return <code>true</code> if it succeded, <code>false</code> if not. 
+	 *	@return <code>true</code> if it succeeded, <code>false</code> if not. 
 	 */
 	private boolean symbol() {
 		if(currentIndex < data.length) {
@@ -255,15 +280,6 @@ public class Lexer {
 			return true;
 		}
 		return false;
-	}
-	
-	/**
-	 * 	Returns the last generated {@link Token}. Doesn't
-	 * 	generate a new {@link Token}.
-	 * 	@return The last generated {@link Token}.
-	 */
-	public Token getToken() {
-		return token;
 	}		
 	
 }

@@ -21,7 +21,6 @@ public class CollectionAddAllSatisfyingDemo {
 		col2.addAllSatisfying(col1, new EvenIntegerTester());
 		
 		col2.forEach(System.out::println);
-	}
-
-	
+	}	
 }
+//12, 2, 4, 6

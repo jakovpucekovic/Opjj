@@ -26,9 +26,7 @@ public class ArrayAndLinkedListImplementListDemo {
 		col1.forEach(System.out::println); //Ivana
 		col2.forEach(System.out::println); //Jasna
 		col3.forEach(System.out::println); //Ivana
-		col4.forEach(System.out::println); //Jasna
-
-		
+		col4.forEach(System.out::println); //Jasna	
 	}
 	
 }

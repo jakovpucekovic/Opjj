@@ -20,5 +20,5 @@ public class ElementsGetterProcessDemo {
 		
 		getter.processRemaining(System.out::println);
 	}
-
 }
+//Ana, Jasna

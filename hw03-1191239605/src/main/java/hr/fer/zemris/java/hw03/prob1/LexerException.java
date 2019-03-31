@@ -2,7 +2,8 @@ package hr.fer.zemris.java.hw03.prob1;
 
 /**
  *	Class which describes the exception which
- *	is thrown when ... 
+ *	is thrown when the {@link Lexer} encounters
+ *	unexpected behavior. 
  *	
  *	@author Jakov Pucekovic
  *	@version 1.0

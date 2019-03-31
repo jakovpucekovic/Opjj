@@ -1,7 +1,7 @@
 package hr.fer.zemris.java.hw03.prob1;
 
 /**
- *	Enum which describes the tokens of which
+ *	Enumeration which describes the tokens of which
  *	the {@link Token} is made.
  *	
  *	@author Jakov Pucekovic

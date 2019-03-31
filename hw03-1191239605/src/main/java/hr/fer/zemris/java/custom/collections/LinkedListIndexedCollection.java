@@ -165,18 +165,6 @@ public class LinkedListIndexedCollection implements List {
 		return objectArray;
 	}
 	
-//	/**
-//	 * 	Calls processor.process() for each element of this {@link LinkedListIndexedCollection}.
-//	 */
-//	@Override
-//	public void forEach(Processor processor) {
-//		ListNode node = first;
-//		for(int i = 0, s = size; i < s; i++) {
-//			processor.process(node.value);
-//			node = node.next;
-//		}
-//	}
-	
 	/**
 	 * 	Removes all elements from this {@link LinkedListIndexedCollection}.
 	 */
@@ -340,20 +328,33 @@ public class LinkedListIndexedCollection implements List {
 		}
 	}
 	
-	
+	/**
+	 * 	Implementation of {@link ElementsGetter} for this Collection.
+	 */
 	private static class LinkedListElementsGetter implements ElementsGetter{
 		
-		private ListNode current = null; //pointer na onoga kojeg treba iduceg pokazati
+		/**Next element to get*/
+		private ListNode current = null;
+		/**Number of modifications made to the {@link LinkedListIndexedCollection}*/
 		private long savedModificationCount;
+		/**Reference to {@link LinkedListIndexedCollection} which made this {@link ElementsGetter}.*/
 		LinkedListIndexedCollection thisCollection;
 		
-		
+		/**
+		 *  Constructs a new {@link LinkedListElementsGetter} for this {@link LinkedListIndexedCollection}.
+		 *  @param thisCollection {@link LinkedListIndexedCollection} on which this {@link ElementsGetter} gets elements.
+		 */
 		public LinkedListElementsGetter(LinkedListIndexedCollection thisCollection) {
 			current = thisCollection.first;
 			this.savedModificationCount = thisCollection.modificationCount;
 			this.thisCollection = thisCollection;
 		}
 		
+		/**
+		 * 	Answers whether there is another element.
+		 * 	@return <code>true</code> if yes, <code>false</code> if no.
+		 * 	@throws ConcurrentModificationException If the collection has been modified in the meanwhile.
+		 */
 		@Override
 		public boolean hasNextElement() {
 			if(savedModificationCount != thisCollection.modificationCount ) {
@@ -362,6 +363,12 @@ public class LinkedListIndexedCollection implements List {
 			return current != null;
 		}
 		
+		/**
+		 * 	Returns the next element.
+		 * 	@return Next element.
+		 * 	@throws ConcurrentModificationException If the collection has been modified in the meanwhile.
+		 * 	@throws NoSuchElementException If there are no more elements.
+		 */
 		@Override
 		public Object getNextElement() {
 			if(savedModificationCount != thisCollection.modificationCount ) {
@@ -376,7 +383,11 @@ public class LinkedListIndexedCollection implements List {
 		}
 	
 	}
-
+	
+	/**
+	 * 	Creates an {@link ElementsGetter} for this {@link Collection}.
+	 * 	@return {@link ElementsGetter} for this {@link Collection}.
+	 */
 	@Override
 	public ElementsGetter createElementsGetter() {
 		return new LinkedListElementsGetter(this);

@@ -17,4 +17,5 @@ class EvenIntegerTester implements Tester {
 		System.out.println(t.test(3));
 	}	
 }
+//false true false
 

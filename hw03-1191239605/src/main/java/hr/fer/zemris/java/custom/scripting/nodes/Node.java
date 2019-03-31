@@ -2,6 +2,11 @@ package hr.fer.zemris.java.custom.scripting.nodes;
 
 import hr.fer.zemris.java.custom.collections.ArrayIndexedCollection;
 
+/**
+ *	Base class for all graph nodes.
+ *	@author Jakov Pucekovic
+ *	@version 1.0 
+ */
 public class Node {
 
 	/**
@@ -27,7 +32,7 @@ public class Node {
 	 * 	@return Number of children.
 	 */
 	public int numberOfChildren() {
-		if(children.equals(null)) {
+		if(children == null) {
 			return 0;
 		}
 		return children.size();
@@ -43,7 +48,7 @@ public class Node {
 	 * 			have a child at the given index.
 	 */
 	public Node getChild(int index) {
-		if(children.equals(null)) {
+		if(children == null) {
 			throw new NullPointerException("Node has no children");
 		}
 		return (Node) children.get(index);

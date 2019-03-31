@@ -25,6 +25,6 @@ public class ElementsGetterDemo4 {
 		System.out.println("Jedan element: " + getter2.getNextElement());
 		System.out.println("Jedan element: " + getter1.getNextElement());
 		System.out.println("Jedan element: " + getter2.getNextElement());
-		//Ivo, Ana, Ivo, Jasna, Ana
 		}
 }
+//Ivo, Ana, Ivo, Jasna, Ana
