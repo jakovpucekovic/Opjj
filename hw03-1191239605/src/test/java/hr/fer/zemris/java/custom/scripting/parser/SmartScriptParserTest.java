@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.scripting.parser;
+package hr.fer.zemris.java.custom.scripting.parser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,9 +20,9 @@ public class SmartScriptParserTest {
 	
 	@Test
 	public void testWrongNumberOfEndTags() {
-		String docBody1 = loader("endtag-toParse1.txt");	
-		String docBody2 = loader("endtag-toParse2.txt");	
-		String docBody3 = loader("endtag-toParse3.txt");	
+		String docBody1 = loader("endtag1.txt");	
+		String docBody2 = loader("endtag2.txt");	
+		String docBody3 = loader("endtag3.txt");	
 		
 		assertThrows(SmartScriptParserException.class,()-> new SmartScriptParser(docBody1));
 		assertThrows(SmartScriptParserException.class,()-> new SmartScriptParser(docBody2));
@@ -32,14 +32,27 @@ public class SmartScriptParserTest {
 	
 	@Test
 	public void testValidForTags() {
-		String docBody = loader("for-toParse.txt");
+		String docBody = loader("for.txt");
 		SmartScriptParser parser = new SmartScriptParser(docBody);
 		DocumentNode document = parser.getDocumentNode();
 		String originalDocumentBody = SmartScriptTester.createOriginalDocumentBody(document);
 		
-		assertEquals(loader("for-result.txt"), originalDocumentBody);
+		SmartScriptParser parser2 = new SmartScriptParser(originalDocumentBody);
+		DocumentNode document2 = parser2.getDocumentNode();
+		String originalDocumentBody2 = SmartScriptTester.createOriginalDocumentBody(document2);
+		
+		assertEquals(originalDocumentBody, originalDocumentBody2);
 	}
 	
+	@Test
+	public void testWeirdForTag() {
+		String docBody = loader("weirdFor.txt");
+		SmartScriptParser parser = new SmartScriptParser(docBody);
+		DocumentNode document = parser.getDocumentNode();
+		String originalDocumentBody = SmartScriptTester.createOriginalDocumentBody(document);
+		
+		assertEquals("{$FOR i -1.35 bbb \"1\" $} {$END$}", originalDocumentBody);
+	}
 	
 	@Test
 	public void testValidVariableNames() {
@@ -51,7 +64,23 @@ public class SmartScriptParserTest {
 		assertEquals(loader("variable-result.txt"), originalDocumentBody);
 	}
 	
+	@Test
+	public void testEscapingInString() {
+		SmartScriptParser parser = new SmartScriptParser("A tag follows {$= \"Joe \\\"Long\\\" Smith\"$}.");
+		DocumentNode document = parser.getDocumentNode();
+		String originalDocumentBody = SmartScriptTester.createOriginalDocumentBody(document);
+		
+		assertEquals("A tag follows {$=\"Joe \\\"Long\\\" Smith\" $}.", originalDocumentBody);
+	}
 	
+	@Test
+	public void testEscapingInString2() {
+		SmartScriptParser parser = new SmartScriptParser("Example \\{$=1$}. Now actually write one {$=1$}");
+		DocumentNode document = parser.getDocumentNode();
+		String originalDocumentBody = SmartScriptTester.createOriginalDocumentBody(document);
+		
+		assertEquals("Example \\{$=1$}. Now actually write one {$=1 $}", originalDocumentBody);
+	}
 	
 	@Test
 	public void testGivenExample() {
@@ -64,11 +93,8 @@ public class SmartScriptParserTest {
 		DocumentNode document2 = parser2.getDocumentNode();
 		String originalDocumentBody2 = SmartScriptTester.createOriginalDocumentBody(document2);
 		
-		
 		assertEquals(originalDocumentBody, originalDocumentBody2);
 	}
-	
-	
 	
 	private String loader(String filename) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();

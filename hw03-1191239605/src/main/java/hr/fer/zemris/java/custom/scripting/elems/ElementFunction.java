@@ -30,8 +30,8 @@ public class ElementFunction extends Element {
 	}
 	
 	/**
-	 *	Returns the stored expression as string.
-	 *	@return Stored value as string.
+	 *	Returns the stored expression as text.
+	 *	@return Stored value as text.
 	 */
 	@Override
 	public String asText() {

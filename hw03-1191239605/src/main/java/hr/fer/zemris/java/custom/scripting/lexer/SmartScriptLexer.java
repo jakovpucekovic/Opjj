@@ -168,9 +168,7 @@ public class SmartScriptLexer {
 				return token;
 			} else if(parseFor()) {
 				return token;
-			} else if(parseInteger()) {
-				return token;
-			} else if(parseDouble()) {
+			} else if(parseNumber()) {
 				return token;
 			} else if(parseOperator()) {
 				return token;
@@ -249,49 +247,13 @@ public class SmartScriptLexer {
 		}
 		return false;
 	}
-
-	/**
-	 *	Tries to parse INTEGER token from current position in IN_TAG mode.
-	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
-	 * 	@throws LexerException If the number cannot be parsed as {@link Long}.
-	 */
-	private boolean parseInteger() {
-		StringBuilder number = new StringBuilder();
-		/*Negative numbers*/
-		if(currentIndex + 1 < data.length) { 
-			if(data[currentIndex] == '-' && Character.isDigit(data[currentIndex + 1])) {
-				number.append(data[currentIndex]);
-				number.append(data[currentIndex + 1]);
-				currentIndex += 2;
-			}
-		}
-		
-		while(currentIndex < data.length) {
-			if(Character.isDigit(data[currentIndex])) {
-				number.append(data[currentIndex]);
-				currentIndex++;
-			} else {
-				break;
-			}
-		}
-		
-		if(number.length() > 0) {
-			try {
-				token = new SmartScriptToken(SmartScriptTokenType.INTEGER, Integer.parseInt(number.toString()));	
-				return true;
-			} catch(NumberFormatException ex) {
-				throw new SmartScriptLexerException("Cannot parse Integer");
-			}
-		}
-		return false;
-	}
 	
 	/**
-	 *	Tries to parse DOUBLE token from current position in IN_TAG mode. Double must be in digit-dot-digit format.
+	 *	Tries to parse DOUBLE and INTEGER token from current position in IN_TAG mode. Double must be in digit-dot-digit format.
 	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
-	 * 	@throws LexerException If the number cannot be parsed as {@link Long}.
+	 * 	@throws LexerException If the number cannot be parsed as {@link Double} or {@link Integer}.
 	 */
-	private boolean parseDouble() {
+	private boolean parseNumber() {
 		StringBuilder number = new StringBuilder();
 		/*Negative numbers*/
 		if(currentIndex + 1 < data.length) { 
@@ -309,13 +271,16 @@ public class SmartScriptLexer {
 			} else if (data[currentIndex] == '.'){ 
 				/*Found a . and hasn't already parsed one.*/
 				if(number.length() >= 1 && number.indexOf(".") == -1 ) {
+					/*There is digits after .*/
 					if(currentIndex + 1 < data.length) { 
-						if(Character.isDigit(data[currentIndex])) {
+						if(Character.isDigit(data[currentIndex + 1])) {
 							number.append(data[currentIndex]);
 							number.append(data[currentIndex + 1]);
 							currentIndex += 2;
 						}
 					}
+				} else {
+					break;
 				}
 			} else {
 				break;
@@ -324,10 +289,14 @@ public class SmartScriptLexer {
 		
 		if(number.length() > 0) {
 			try {
-				token = new SmartScriptToken(SmartScriptTokenType.DOUBLE, Double.parseDouble(number.toString()));
+				if(number.indexOf(".")!=-1) {
+					token = new SmartScriptToken(SmartScriptTokenType.DOUBLE, Double.parseDouble(number.toString()));
+				} else {
+					token = new SmartScriptToken(SmartScriptTokenType.INTEGER, Integer.parseInt(number.toString()));
+				}
 				return true;
 			} catch(NumberFormatException ex) {
-				throw new SmartScriptLexerException("Cannot parse double");
+				throw new SmartScriptLexerException("Cannot parse number");
 			}
 		}
 		return false;
@@ -357,7 +326,11 @@ public class SmartScriptLexer {
 					if(data[currentIndex + 1] == '\\' || data[currentIndex + 1] == '\"') {
 						string.append(data[currentIndex + 1]);
 						currentIndex += 2;
+					} else {
+						throw new SmartScriptLexerException("Invalid escape sequence.");
 					}
+				} else{
+					throw new SmartScriptLexerException("Invalid escape sequence.");
 				}
 			} else {
 				string.append(data[currentIndex]);
@@ -461,7 +434,7 @@ public class SmartScriptLexer {
 	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
 	 */
 	private boolean parseFor() {
-		if(currentIndex + 3 < data.length) {
+		if(currentIndex + 2 < data.length) {
 			char c1 = data[currentIndex];
 			char c2 = data[currentIndex + 1];
 			char c3 = data[currentIndex + 2];
@@ -480,7 +453,7 @@ public class SmartScriptLexer {
 	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
 	 */
 	private boolean parseEnd() {
-		if(currentIndex + 3 < data.length) {
+		if(currentIndex + 2 < data.length) {
 			char c1 = data[currentIndex];
 			char c2 = data[currentIndex + 1];
 			char c3 = data[currentIndex + 2];

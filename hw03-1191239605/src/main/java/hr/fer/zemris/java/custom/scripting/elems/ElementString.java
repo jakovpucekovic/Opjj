@@ -30,12 +30,20 @@ public class ElementString extends Element {
 	}
 	
 	/**
-	 *	Returns the stored string.
-	 *	@return Stored string.
+	 *	Returns the stored string as text.
+	 *	@return Stored string as text.
 	 */
 	@Override
 	public String asText() {
-		return value;
+		if(value.equals("")) {
+			return "";
+		}
+		StringBuilder builder = new StringBuilder();
+		builder.append('\"');
+		builder.append(value.replace("\\", "\\\\").replace("\"", "\\\""));
+		builder.append('\"');
+
+		return builder.toString();
 	}
 	
 }

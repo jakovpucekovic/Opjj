@@ -121,11 +121,7 @@ public class SmartScriptTester {
 		echoOutput.append("{$=");
 		Element[] elements = node.getElements();
 		for(int i = 0; i < elements.length; i++) {
-			if(elements[i].getClass().equals(ElementString.class)) {
-				echoOutput.append("\"").append(elements[i].asText()).append("\" ");
-			}else {
-				echoOutput.append(elements[i].asText()).append(" ");
-			}
+			echoOutput.append(elements[i].asText()).append(" ");
 		}
 		echoOutput.append("$}");
 		return echoOutput.toString();

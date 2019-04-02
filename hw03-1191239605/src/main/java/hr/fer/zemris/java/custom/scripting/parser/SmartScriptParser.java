@@ -205,7 +205,8 @@ public class SmartScriptParser {
 			}
 			token = lexer.nextToken();			
 		}
-		lexer.setState(SmartScriptLexerState.TEXT); //ocito nismo vise u tagu
+		/*End of echo tag, switch state*/
+		lexer.setState(SmartScriptLexerState.TEXT);
 		return new EchoNode(objectArrayToElementArray(elements.toArray()));
 		
 	}
