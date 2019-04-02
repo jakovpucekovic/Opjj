@@ -38,42 +38,13 @@ public class StackDemo {
 				try {
 					second = (int)stack.pop();
 					first = (int)stack.pop();
+					stack.push(calculate(first, second, str[i]));
 				} catch(EmptyStackException ex2){
 					System.out.println("The expression can't be evaluated.");
 					return;
-				}
-				switch(str[i]) {
-					case ("+"): { 
-						stack.push(first + second);
-						break;
-					}
-					case("-"): {
-						stack.push(first - second);
-						break;
-					}
-					case("*"): {
-						stack.push(first * second);
-						break;
-					}
-					case("/"): {
-						if(second == 0) {
-							System.out.println("Error. Division by zero has occured.");
-							return;
-						}
-						stack.push(first / second );
-						break;
-					}
-					case("%"):{
-						if(second == 0) {
-							System.out.println("Error. Division by zero has occured.");
-							return;
-						}
-						stack.push(first % second);
-						break;
-					}
-					default:{
-						System.out.println("Wrong input.");
-					}
+				} catch(IllegalArgumentException ex) {
+					System.out.println(ex.getMessage());
+					return;
 				}
 			}
 		}
@@ -81,6 +52,35 @@ public class StackDemo {
 			System.out.println("The expression can't be evaluated.");
 		} else {
 			System.out.format("The expression evaluates to %d.%n", stack.peek());
+		}
+	}
+	
+	private static int calculate(int a, int b, String operator) {
+		switch(operator) {
+			case ("+"): { 
+				return a+b;
+			}
+			case("-"): {
+				return a-b;
+			}
+			case("*"): {
+				return a*b;
+			}
+			case("/"): {
+				if(b == 0) {
+					throw new IllegalArgumentException("Division by zero occured.");
+				}
+				return a/b;
+			}
+			case("%"):{
+				if(b == 0) {
+					throw new IllegalArgumentException("Division by zero occured.");
+				}
+				return a%b;
+			}
+			default:{
+				throw new IllegalArgumentException("Invalid operator in expression.");
+			}
 		}
 	}
 }

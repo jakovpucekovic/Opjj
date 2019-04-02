@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.custom.collections;
+package hr.fer.zemris.java.custom.collections.copy;
 
 import java.util.Objects;
 
@@ -106,6 +106,37 @@ public class LinkedListIndexedCollection extends Collection {
 		}
 		return false;
 		
+//		if(!contains(value)) {
+//			return false;
+//		}
+//		if(first == last) {
+//			first.next = null;
+//			first = null;
+//			last.previous = null;
+//			last = null;
+//			size--;
+//			return true;
+//		}
+//		if(first.value.equals(value)) {
+//			first = first.next;
+//			first.previous = null;
+//			size--;
+//			return true;
+//		}
+//		ListNode node = first.next;
+//		while(node != last) {
+//			if(node.value.equals(value)) {
+//				node.previous.next = node.next;
+//				node.next.previous = node.previous;
+//				size--;
+//				return true;
+//			}
+//			node = node.next;
+//		}
+//		last = last.previous;
+//		last.next = null;
+//		size--;
+//		return true;
 	}
 	
 	/**

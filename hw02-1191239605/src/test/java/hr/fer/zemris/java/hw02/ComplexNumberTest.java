@@ -267,8 +267,13 @@ public class ComplexNumberTest {
 	
 	@Test
 	public void toStringTest() {
-		assertEquals("1.0+0.0i", ComplexNumber.parse("1").toString());
-		assertEquals("0.0-1.0i", ComplexNumber.parse("-i").toString());
+		assertEquals("1.0", ComplexNumber.parse("1").toString());
+		assertEquals("0.0", ComplexNumber.parse("0").toString());
+		assertEquals("-i", ComplexNumber.parse("-i").toString());
+		assertEquals("i", ComplexNumber.parse("i").toString());
+		assertEquals("0.1-i", ComplexNumber.parse("0.1-i").toString());
+		assertEquals("0.1+i", ComplexNumber.parse("0.1+i").toString());
+		assertEquals("0.1+7.0i", ComplexNumber.parse("0.1+7.0i").toString());
 		assertEquals("0.1-3.0i", ComplexNumber.parse("0.1-3i").toString());
 	}
 	

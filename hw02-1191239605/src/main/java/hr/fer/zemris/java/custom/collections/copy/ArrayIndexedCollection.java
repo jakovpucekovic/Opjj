@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.custom.collections;
+package hr.fer.zemris.java.custom.collections.copy;
 
 import java.util.Arrays;
 import java.util.Objects;

@@ -1,0 +1,180 @@
+######## 1. recenzija ##########################################################
+
+Puceković, Jakov (1191239605)
+
+1.zadatak minimalno prihvatljivo rješenje:
+Minimalni uvjeti:
+1. DA
+2. DA
+3. DA
+4. DA
+5. NE (demo ne daje očekivani rezultat)
+
+===============================================================================
+1.ZADATAK
+
+sve pet
+-------------------------------------------------------------------------------
+2. i 3. ZADATAK
+
+Bolja je praksa umjesto
+    if(collection == null) {
+        throw new NullPointerException();
+    }
+pisati
+    Objects.requireNonNull(collection);
+
+također za:
+    if(index < 0 || index > size - 1) {
+        throw new IndexOutOfBoundsException();
+    }
+možeš pisati (kraće i preglednije):
+    Objects.checkIndex(index, size);
+
+Testovi su pristojni i inače izgleda sve okej..
+-------------------------------------------------------------------------------
+4.ZADATAK
+
+sve okej
+-------------------------------------------------------------------------------
+5.ZADATAK
+
+Metoda za vaditi korjene nije dobra pa i demo daje kriva rješenja:
+
+Demo:
+    ComplexNumber c1 = new ComplexNumber(2, 3);
+    ComplexNumber c2 = ComplexNumber.parse("2.5-3i");
+    ComplexNumber c3 = c1.add(ComplexNumber.fromMagnitudeAndAngle(2, 1.57))
+    .div(c2).power(3).root(2)[1];
+    System.out.println(c3);
+    
+    //Očekivano: 1.618175-0.068786i
+    //Dobiveno: 0.999097751471934-0.04246978930634814i
+
+Demo je bio minimalni uvjet, a on daje krive rezultate pa moram dati ocjenu 1 :(
+
+Izdebugirao sam zašto ne radi - ova linija:
+        double r = Math.pow(getMagnitude(), 1 / n);
+Bi trebala biti ovakva:
+        double r = Math.pow(getMagnitude(), 1d / n);
+jer u intovima 1/2 dadne 0, a sve na nultu dadne 1. Tako ti je radijus r uvijek bio 1...
+
+Testove za korjen si napisao ali ali pogodilo se da je kod njih radijus 1 pa se nije primjetilo...
+=======================================================================================
+Rješenja su sasvim dobra i valjana, samo se pogreška potkrala negdje u metodi root klase ComplexNumber. 
+Nadam se da ćeš imati priliku ispraviti jer pogreška je stvarno sitna...
+
+
+######## komentar 1. recenzije #################################################
+
+Sve od gore navedenog je ispravljeno na taj način. Znači, koriste se Objects.requireNotNull() i Objects.checkIndex() umjesto if naredbi u 2. i 3. zadatku. U 5. zadatku broj 1 je promjenjen u double pa više nema cjelobrojnog djeljenja.
+
+######## 2. recenzija ##########################################################
+MINIMALNI UVJETI:
+   nisu zadovoljeni u 5. zadatku
+
+
+1. zadatak
+    Sve je u redu. U metodi addAll ti ne treba varijabla proc, možeš other.forEach(new MyProcessor());
+
+2. zadatak
+    Postoji metoda Arrays.copyOf koja prima polje i veličinu te će ti vratit kopiju polja zadane veličine. Mislim da je bolje remove(Object value) napraviti da ne ispituje contains, nego da ispita povratnu vrijednost od indexOf.
+
+3. zadatak
+    U konstruktoru imaš nepotrebnu inicijalizaciju članskih varijabli na defaultne vrijednosti, to se ionako samo događa. Ista stvar je i s praznim konstruktorom u ListNode. U contains metodi si u while petlji mogao ići dok je node != null, onda ti ne bi trebao zadnji if. Također, mogao si samo ispitati je li povratna vrijednost od indexOf različita od -1. U remove(Object value) si mogao koristiti indexOf umjesto contains i onda remove(index). Metoda listNodeAtPosition je dobro zamišljena, odnosno njena svrha. while petlju si mogao ljepše napisati sa for. Nedostaje dokumentacija za članske varijable.
+
+4. zadatak
+    Mogao si iskoristiti peek metodu u pop metodi da nemaš dupliciranje. Demo iako nema ni jedne pomoćne metode, kod je poprilično čitak i jako dobro napisan. Možda bi bilo još bolje da si radi semantike neke stvari odvojio u zasebne metode.
+
+5. zadatak
+    Mislim da bi bilo bolje da si magnitude i angle držao kao članske varijable i izračunao ih samo jednom. Metoda roots ne radi dobro jer imaš cjelobrojno dijeljenje, u testu ti slučajno radi jer ti je amplituda jednaka 1. Iz tog razloga, demo program ti ne ispisuje ono što bi trebao pa ova zadaća NE ZADOVOLJAVA minimalne uvjete. Metoda toString nema dobar ispis za neke vrijednosti, npr. parse("0").toString() vraća "0.0+0.0i" što je svakako loše.
+
+######## komentar 2. recenzije #################################################
+
+U 1. zadatku se new MyProcessor poziva kao argument funckije forEach, umjesto da se radi dodatna varijabla.
+U 2. zadatku je maknuta metoda reallocate() i umjesto nje se koristi Arrays.copyOf(), koji je također dodan kod metode toArray(). Metoda remove(Object value) je napisana na predložen način.
+U 3. zadatku maknuta inicijalizacija varijabli na defaultne vrijednosti u konstruktorima. Metoda contains() napisana preko indexOf na predložen način. Metoda remove(Object value) također. U metodi listNodeAtPosition while petlje zamijenjene sa for-petljama. Dodana dokumentacija za članske varijable. U metodu indexOf() je na pocetak dodana provjera je li lista prazna.
+U 4. zadatku je metoda peek() iskorištena unutar metode pop(). Također, dio sa switch naredbom je izdvojen u posebnu metodu.
+U 5. zadatku dodao magnitude i angle kao članske varijable. Popravio root metodu. Ne slažem se sa mišljenjem oko metode toString, no popravljeno.
+
+######## 3. recenzija ##########################################################
+
+Puceković, Jakov (1191239605)
+ 
+5.zadatak minimalni uvjeti: 
+ REZULTAT:       0.999097751471934-0.04246978930634814i
+ TREBAO BI BITI: 1.6181754193833349-0.06878563085611379i
+ 
+ krivo 225. redak: double r = Math.pow(getMagnitude(), 1. / n);
+ imao si cijelobrojno dijeljenje umjesto double...
+ 
+===================================================================
+1.ZADATAK
+
+ -> Processor i Collection sve OK
+-------------------------------------------------------------------
+2.ZADATAK
+
+ -> Svi moji i tvoji testovi su prošli
+ 
+ -> umjesto sveukupno 6 redova za if i else (konkretno mislim na red 44), mogao biš napisati termarni operator:
+    uvjet ? što napraviti ako true : što napraviti ako je false
+    
+ -> za contains si mogao koristiti već napisanu metodu indexOf koja ako value ne postoji, vraća -1
+ 
+ -> ostalo sve dosta dobro implementirano
+
+-------------------------------------------------------------------
+3.ZADATAK
+
+ -> kad radim insert na 0. poziciju, npr: col1.insert("Početnik", 0);
+    i onda nakon toga col1.remove(0);
+    baca mi NullPointerException (295. red)
+    
+ -> Čupić kaže da je dobro imati javadoc za atribute klase
+ 
+ -> umjesto da baš implementiraš cijelu metodu contains(Object value) mogao si samo: return indexOf(value) != -1;
+
+ -> Testovi i sve ostalo je dosta dobro napisano, samo bih ti predložio da inače testiraš i svoju privatnu metodu koja ti koristi kao pomoć... u nekom slučaju da je krivo napisana, bilo bi relativno zeznuto naći grešku ;)
+
+-------------------------------------------------------------------
+4.ZADATAK
+
+ -> Klasa za exception nice napisana
+ 
+ -> Metoda push(Object value); citiram: "null value must not be allowed to be placed on stack"
+                => zaključio sam da ako je value == null da moramo već u samoj metodi push baciti NullPointerException
+                    npr: 
+                    public void push(Object value) {
+                        adaptor.add(Objects.requireNonNull(value, "Null value cannot be placed on stack!"));
+                    }
+
+ -> StackDemo prošao sve vrste inputova koje je Čupić rekao BRAVOO!
+ 
+ -> Ja bih samo na tvom mjestu izdvojio dio sa switchom u novu metodu!
+ 
+-------------------------------------------------------------------
+5.ZADATAK
+ 
+ -> mogao si umjesto 0.0000000001 pisati 1E-(na potenciju), nekako je preglednije
+ 
+ -> parsanje odlično napravljeno. Svi primjeri koji su dani u pripremi prolaze!
+ 
+ -> metoda power: vraćaš new ComplexNumber i pritom računaš realni i imaginarni dio umjesto da pozoveš već napisanu metodu fromMagnitudeAndAngle
+ 
+ -> isto vrijedi i za metodu root
+ 
+ -> testovi su okej i ostalo je dosta dobro napisano!
+ 
+-------------------------------------------------------------------
+ POHVALE ZA package-info
+ 
+ SVE je jako dobro napisao i baš mi žao zbog tog minimalnog uvjeta. Brzo ćeš ga ispraviti!!
+ Samo tako kolega nastavite dalje
+
+######## komentar 3. recenzije #################################################
+
+U 2. zadatku koristen ternarni operator u liniji 44. Upotrebljena metoda indexOf u metodi contains.
+U 3. zadatku je popravljena metoda remove(index) da radi kako treba jer nije radila za slučajave kada je index = 0 ili size, te kada se lista sastoji od samo 1 elementa. Dodan javadoc za atribute klase. Metoda contains je implementirana preko metode indexOf.
+U 4. zadatku dodano da metoda push baca NullPointerException. U Demo programu je dio sa switchom izdvojen u novu metodu.
+U 5. zadatku metode power i root popravljene na komentirani način. Popravljeno cjelobrojno djeljenje u metodi root. Konstanta napisana u 1E-10 obliku.

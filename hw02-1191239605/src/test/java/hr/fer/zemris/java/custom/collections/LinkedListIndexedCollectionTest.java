@@ -176,6 +176,14 @@ public class LinkedListIndexedCollectionTest {
 		assertFalse(list.contains(1));
 	}
 	
+	@Test
+	public void removeIndexTestOnlyOneElementInList() {
+		LinkedListIndexedCollection list = new LinkedListIndexedCollection();
+		list.add(2);
+		list.remove(0);
+		assertTrue(list.isEmpty());
+	}
+	
 	/**
 	 *	Makes an {@link ArrayIndexedCollection} for testing purposes.
 	 *	It has 3 elements: 0, 1 and 2 and their value is equal to their

@@ -17,20 +17,36 @@ public class ComplexNumber {
 	 * 	difference between two numbers is smaller that this, 
 	 * 	the numbers are considered equal.
 	 */
-	private static final double DIFFERENCE_TO_IGNORE = 0.0000000001;
+	private static final double DIFFERENCE_TO_IGNORE = 1E-10;
 
+	/**Real part of the {@link ComplexNumber}*/
 	private double real;
+	/**Imaginary part of the {@link ComplexNumber}*/
 	private double imaginary;
+	/**Magnitude of the {@link ComplexNumber}*/
+	private double magnitude;
+	/**Angle of the {@link ComplexNumber}*/
+	private double angle;
 	
 	/**
 	 * 	Creates a new {@link ComplexNumber} with given real and 
-	 * 	imaginary values.
+	 * 	imaginary values. Also calculates magnitude and angle and stores them.
 	 * 	@param real Value of the real part of the complex number.
 	 * 	@param imaginary Value of the imaginary part of the complex number.
 	 */
 	public ComplexNumber(double real, double imaginary) {
 		this.real = real;
 		this.imaginary = imaginary;
+		
+		this.magnitude = Math.sqrt(real * real + imaginary * imaginary);		
+		if(Math.abs(imaginary)< DIFFERENCE_TO_IGNORE ) {
+			this.angle = real > 0 ? 0 : Math.PI;
+		} else {
+			this.angle = Math.atan2(imaginary, real);
+			if(this.angle < 0) {
+				this.angle += 2 * Math.PI;
+			}
+		}
 	}
 	
 	/**
@@ -138,7 +154,7 @@ public class ComplexNumber {
 	 *  @return The magnitude of the {@link ComplexNumber}.
 	 */
 	public double getMagnitude() {
-		return Math.sqrt(real * real + imaginary * imaginary);
+		return magnitude;
 	}
 	
 	/**
@@ -147,16 +163,6 @@ public class ComplexNumber {
 	 * 	@return The angle of the {@link ComplexNumber} in radians.
 	 */
 	public double getAngle() {
-		if(Math.abs(imaginary)< DIFFERENCE_TO_IGNORE ) {
-			if(real > 0) {
-				return 0;
-			}
-			return Math.PI;
-		}
-		double angle = Math.atan2(imaginary, real);
-		if(angle < 0) {
-			angle += 2 * Math.PI;
-		}
 		return angle;	
 	}
 	
@@ -206,9 +212,7 @@ public class ComplexNumber {
 			throw new IllegalArgumentException();
 		}
 		//de Moivre's formula
-		double r = Math.pow(getMagnitude(), n);
-		double angle = getAngle() * n;
-		return new ComplexNumber(r * Math.cos(angle), r * Math.sin(angle));
+		return fromMagnitudeAndAngle(Math.pow(magnitude, n), angle * n);
 	}
 	
 	/**
@@ -222,10 +226,10 @@ public class ComplexNumber {
 			throw new IllegalArgumentException();
 		}
 		ComplexNumber[] roots = new ComplexNumber[n];
-		double r = Math.pow(getMagnitude(), 1 / n);
+		double r = Math.pow(magnitude, 1d / n);
 		for(int k = 0; k < n; k++) {
-			double angle = (getAngle() + 2 * k * Math.PI)/n;
-			roots[k] = new ComplexNumber(r * Math.cos(angle), r * Math.sin(angle));
+			double newAngle = (angle + 2 * k * Math.PI)/n;
+			roots[k] = fromMagnitudeAndAngle(r, newAngle);
 		}
 		return roots;
 	}
@@ -237,10 +241,23 @@ public class ComplexNumber {
 	 */
 	@Override
 	public String toString() {
-		if(imaginary >= 0) {
-			return String.valueOf(real) + "+" + String.valueOf(imaginary) + "i";
+		if(imaginary == 0) {
+			return String.valueOf(real);
 		}
-		return String.valueOf(real) + String.valueOf(imaginary) + "i";
+		if(real == 0) {
+			if(imaginary == 1) {
+				return "i";
+			}
+			if(imaginary == -1) {
+				return "-i";
+			}
+			return String.valueOf(imaginary) + "i";
+		}
+		StringBuilder str = new StringBuilder();
+		str.append(real);
+		str.append(imaginary > 0 ? "+" : ""); //append +
+		str.append( Math.abs(imaginary) == 1 ? (imaginary == 1 ? "i" :"-i") : imaginary + "i"); //append i,-i or (imaginary)i
+		return str.toString();
 	}
 
 	/**
@@ -261,9 +278,6 @@ public class ComplexNumber {
 		ComplexNumber other = (ComplexNumber) obj;
 		return  Math.abs(real - other.real) < DIFFERENCE_TO_IGNORE && Math.abs(imaginary - other.imaginary) < DIFFERENCE_TO_IGNORE;
 		}
-	
-	
-	
 }
 
 

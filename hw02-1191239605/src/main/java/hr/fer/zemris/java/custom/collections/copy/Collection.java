@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.custom.collections;
+package hr.fer.zemris.java.custom.collections.copy;
 /**
  *	A class that represents some general collection of objects.
  *
