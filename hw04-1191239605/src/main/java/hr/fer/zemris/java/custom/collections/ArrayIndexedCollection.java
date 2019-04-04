@@ -10,7 +10,7 @@ import java.util.Objects;
  *	manipulate stored Objects.
  *
  *	@author Jakov Pucekovic
- *	@version 1.1
+ *	@version 3.0
  */
 public class ArrayIndexedCollection<T> implements List<T> {
 
@@ -21,9 +21,11 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 */
 	private static final int DEFAULT_SIZE = 16;
 	
+	/**Number of currently stored elements.*/
 	private int size;
-	private T[] elements;
-	
+	/**Actual element storage.*/
+	private T[] elements;	
+	/**The number of modifications(insertions, deletions,...) made.*/
 	private long modificationCount = 0;
 	
 	/**
@@ -39,7 +41,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 *	@throws IllegalArgumentException If the given initialCapacity is < 1.
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayIndexedCollection(Collection<T> collection, int initialCapacity) {
+	public ArrayIndexedCollection(Collection<? extends T> collection, int initialCapacity) {
 			Objects.requireNonNull(collection);
 			if(initialCapacity < 1) {
 				throw new IllegalArgumentException();
@@ -64,7 +66,7 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	 *	@param collection Collection whose elements should be added.
 	 *	@throws NullPointerException If the given collection is null.
 	 */
-	public ArrayIndexedCollection(Collection<T> collection) {
+	public ArrayIndexedCollection(Collection<? extends T> collection) {
 		this(collection, DEFAULT_SIZE);
 	}
 
@@ -243,6 +245,15 @@ public class ArrayIndexedCollection<T> implements List<T> {
 	}
 	
 	/**
+	 * 	Creates an {@link ElementsGetter} for this {@link Collection}.
+	 * 	@return {@link ElementsGetter} for this {@link Collection}.
+	 */
+	@Override
+	public ElementsGetter<T> createElementsGetter() {
+		return new ArrayElementsGetter<T>(this);
+	}
+
+	/**
 	 * 	Implementation of {@link ElementsGetter} for this Collection.
 	 */
 	private static class ArrayElementsGetter<T> implements ElementsGetter<T>{
@@ -292,15 +303,6 @@ public class ArrayIndexedCollection<T> implements List<T> {
 			}
 			return thisCollection.elements[currentIndex++];
 		}
-	}
-
-	/**
-	 * 	Creates an {@link ElementsGetter} for this {@link Collection}.
-	 * 	@return {@link ElementsGetter} for this {@link Collection}.
-	 */
-	@Override
-	public ElementsGetter<T> createElementsGetter() {
-		return new ArrayElementsGetter<T>(this);
 	}
 
 }

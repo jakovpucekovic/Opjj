@@ -4,12 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 public class DictionaryTest {
-
-	@Test
-	public void testConstructor() {
-		Dictionary<String, Integer> dic = new Dictionary<>();
-	
-	}
 	
 	@Test
 	public void testIsEmpty() {
@@ -87,6 +81,4 @@ public class DictionaryTest {
 		assertEquals(2, dic.get("2"));
 		
 	}
-	
-	
 }

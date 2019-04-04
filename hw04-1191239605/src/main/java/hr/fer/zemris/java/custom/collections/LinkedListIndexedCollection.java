@@ -9,7 +9,7 @@ import java.util.Objects;
  *	manipulate stored objects.
  *
  *	@author Jakov Pucekovic
- *	@version 1.1
+ *	@version 3.0
  */
 public class LinkedListIndexedCollection<T> implements List<T> {
 
@@ -47,14 +47,8 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	private ListNode<T> first;
 	/**Last node in this {@link LinkedListIndexedCollection}.*/
 	private ListNode<T> last;
-	
+	/**The number of modifications(insertions, deletions,...) made.*/
 	private long modificationCount = 0;
-	
-	/**
-	 * 	Constructs an empty {@link LinkedListIndexedCollection}.
-	 */
-	public LinkedListIndexedCollection() {
-	}
 	
 	/**
 	 * 	Constructs a new {@link LinkedListIndexedCollection} from and
@@ -63,9 +57,14 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * 	unchanged.
 	 * 	@param collection The collection whose values should be stored.
 	 */
-	public LinkedListIndexedCollection(Collection<T> collection) {
-		this();
+	public LinkedListIndexedCollection(Collection<? extends T> collection) {
 		addAll(collection);
+	}
+	
+	/**
+	 * 	Constructs a new {@link LinkedListIndexedCollection}.
+	 */
+	public LinkedListIndexedCollection() {
 	}
 	
 	/**
@@ -118,6 +117,7 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 	 * 	content of this {@link LinkedListIndexedCollection}.
 	 * 	@return The newly allocated array. Never returns null.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public T[] toArray() {
 		T[] objectArray = (T[]) new Object[size];
@@ -269,7 +269,6 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 		modificationCount++;
 	}
 	
-	
 	/**
 	 * 	Returns the {@link ListNode} at the given position in this {@link LinkedListIndexedCollection}.
 	 * 	Legal positions are from 0 to size - 1.
@@ -302,6 +301,15 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 		}
 	}
 	
+	/**
+	 * 	Creates an {@link ElementsGetter} for this {@link Collection}.
+	 * 	@return {@link ElementsGetter} for this {@link Collection}.
+	 */
+	@Override
+	public ElementsGetter<T> createElementsGetter() {
+		return new LinkedListElementsGetter<>(this);
+	}
+
 	/**
 	 * 	Implementation of {@link ElementsGetter} for this Collection.
 	 */
@@ -355,16 +363,6 @@ public class LinkedListIndexedCollection<T> implements List<T> {
 			current = current.next;
 			return returnValue;
 		}
-	
-	}
-	
-	/**
-	 * 	Creates an {@link ElementsGetter} for this {@link Collection}.
-	 * 	@return {@link ElementsGetter} for this {@link Collection}.
-	 */
-	@Override
-	public ElementsGetter<T> createElementsGetter() {
-		return new LinkedListElementsGetter<>(this);
 	}
 	
 }

@@ -4,7 +4,7 @@ package hr.fer.zemris.java.custom.collections;
  *	Interface that represents some general collection of objects.
  *
  * 	@author Jakov Pucekovic
- * 	@version 2.0
+ * 	@version 3.0
  */
 public interface Collection<T>{
 	
@@ -56,7 +56,7 @@ public interface Collection<T>{
 	/**
 	 *	Calls processor.process() for each element of this {@link Collection}.
 	 */
-	default void forEach(Processor<T> processor) {
+	default void forEach(Processor<? super T> processor) {
 		ElementsGetter<T> getter = createElementsGetter();
 		while(getter.hasNextElement()) {
 			processor.process(getter.getNextElement());
@@ -70,7 +70,7 @@ public interface Collection<T>{
 	 *  @param other The {@link Collection} whose elements need to 
 	 *  			 be added.
 	 */
-	default void addAll(Collection<T> other) {
+	default void addAll(Collection<? extends T> other) {
 		class MyProcessor implements Processor<T>{
 			@Override
 			public void process(T value) {
@@ -97,15 +97,15 @@ public interface Collection<T>{
 	 * 	@param col The {@link Collection} from which elements are added.
 	 * 	@param tester Tester which performs the test on the elements.
 	 */
-	default void addAllSatisfying(Collection<T> col, Tester<T> tester) {
-		ElementsGetter<T> getter = col.createElementsGetter();
+	@SuppressWarnings("unchecked")
+	default void addAllSatisfying(Collection<? extends T> col, Tester<? super T> tester) {
+		ElementsGetter<T> getter = (ElementsGetter<T>) col.createElementsGetter();
 		while(getter.hasNextElement()) {
 			T obj = getter.getNextElement();
 			if(tester.test(obj)) {
 				add(obj);
 			}
 		}
-	
 	}
 
 }

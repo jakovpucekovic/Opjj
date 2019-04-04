@@ -5,7 +5,7 @@ package hr.fer.zemris.java.custom.collections;
  * 	It's a LIFO (last in first out) structure.
  * 
  * 	@author Jakov Pucekovic
- * 	@version 1.0
+ * 	@version 3.0
  */
 public class ObjectStack<T> {
 	

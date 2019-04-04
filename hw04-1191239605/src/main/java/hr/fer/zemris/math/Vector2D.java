@@ -1,6 +1,7 @@
 package hr.fer.zemris.math;
 
 import java.lang.Math;
+import java.util.Objects;
 
 /**
  *	Class which represents a vector in 2 dimensions.
@@ -14,6 +15,10 @@ public class Vector2D {
 	private double x;
 	/**The y coordinate of the {@link Vector2D}.*/
 	private double y;
+	/**Used for comparing numbers, if their difference is smaller that this,
+	 * they are considered equal.*/
+	private static final double EPSILON = 1E-8;
+	
 	
 	/**
 	 * 	Constructs a new {@link Vector2D} with the given coordinates.
@@ -24,9 +29,6 @@ public class Vector2D {
 		super();
 		this.x = x;
 		this.y = y;
-	}
-	
-	public Vector2D() {
 	}
 
 	/**
@@ -108,4 +110,35 @@ public class Vector2D {
 	public Vector2D copy() {
 		return new Vector2D(x, y);
 	}
+	
+	/**
+	 * 	Returns the hashCode of this {@link Vector2D}.
+	 * 	@return The hashCode of this {@link Vector2D}.
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y);
+	}
+
+	/**
+	 *	Indicates whether some other object is "equal to" this one.
+	 *	The object is considered equal if it's an instance of {@link Vector2D}
+	 *	and the differences between the x and y coordinates of this {@link Vector2D}
+	 *	and the x and y coordinates of the given object are smaller than EPSILON.
+	 *	@param obj Object which should be compared to this {@link Vector2D}.
+	 *	@return <code>true</code> if the object is equal, <code>false</code> otherwise.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Vector2D))
+			return false;
+		Vector2D other = (Vector2D) obj;
+		return Math.abs(x - other.x) < EPSILON && Math.abs(y - other.y) < EPSILON;
+	}
+	
+	
 }

@@ -4,7 +4,7 @@ package hr.fer.zemris.java.custom.collections;
  * 	one by one.
  * 
  *	@author Jakov Pucekovic
- *	@version 1.0 
+ *	@version 2.0 
  */
 public interface ElementsGetter<T> {
 
