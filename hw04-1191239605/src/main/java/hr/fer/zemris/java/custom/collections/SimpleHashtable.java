@@ -81,6 +81,12 @@ public class SimpleHashtable<K,V> implements Iterable<SimpleHashtable.TableEntry
 	 *	{@link SimpleHashtable} is constructed. 
 	 */
 	private static final int DEFAULT_SIZE = 16;
+	/**
+	 *	The default occupation of the {@link SimpleHashtable},
+	 *	which means if the {@link SimpleHashtable} is filled more 
+	 *	than 75% its size is doubled. 
+	 */
+	private static final double OCCUPATION = 0.75;
 	/**Actual storage of {@link TableEntry}s.*/
 	private TableEntry<K,V>[] table;
 	/**Number of stored elements. */
@@ -184,7 +190,7 @@ public class SimpleHashtable<K,V> implements Iterable<SimpleHashtable.TableEntry
 	 * 	@param value The value.
 	 */
 	public void put(K key, V value) {
-		if((double)size / table.length >= 0.75 ) {
+		if(size + 1 >= OCCUPATION * table.length) {
 			reallocate();
 		}
 		if(addToTable(key, value, table)) {
@@ -495,37 +501,6 @@ public class SimpleHashtable<K,V> implements Iterable<SimpleHashtable.TableEntry
 			SimpleHashtable.this.remove(currentEntry.key);
 			currentEntry = null;
 			initialModificationCount++;
-//			if(initialModificationCount != modificationCount) {
-//				throw new ConcurrentModificationException();
-//			}
-//			if(currentEntry == null) {
-//				throw new IllegalStateException();
-//			}
-//			int ind = hash(currentEntry.key);
-//			if(table[ind].equals(currentEntry)) {
-//				if(currentEntry.next == null) {
-//					table[ind] = null;
-////					currentEntry = null;
-//				} else {
-//					table[ind] = currentEntry.next;
-//				}
-//				
-//			} else {
-//				TableEntry<K,V> entry = table[ind];
-//				//finds the entry before the currentEntry
-//				while(!entry.next.equals(currentEntry)) {
-//					entry = entry.next;
-//				}
-//				if(currentEntry.next != null) {
-//					entry.next = currentEntry.next;
-//				} else {
-//					entry.next = null;
-//				}
-//			}
-//			currentEntry = null;
-//			size--;
-//			modificationCount++;
-//			initialModificationCount++;
 		}
 		
 	}
