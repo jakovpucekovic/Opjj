@@ -2,21 +2,36 @@ package hr.fer.zemris.lsystems.impl;
 
 import hr.fer.zemris.java.custom.collections.ObjectStack;
 
+/**
+ * 	Class which TODO
+ * 
+ * 	@author Jakov Pucekovic
+ * 	@version 1.0
+ */
 public class Context {
 	
+	/**Stack which stores the {@link TurtleState}s.*/
 	private ObjectStack<TurtleState> stack;
 
-	// vraća stanje s vrha stoga bez uklanjanja
+	/**
+	 * 	Returns the current state of the turtle.
+	 * 	@return The current state of the turtle.
+	 */
 	public TurtleState getCurrentState() {
 		return stack.peek();
 	}
-	
-	// na vrh gura predano stanje
+
+	/**
+	 * 	Sets the new state of the turtle.
+	 * 	@param state The new state of the turtle.
+	 */
 	public void pushState(TurtleState state) {
 		stack.push(state);
 	} 
 	
-	// briše jedno stanje s vrha
+	/**
+	 *	Deletes the current state of the turtle. 
+	 */
 	public void popState() {
 		stack.pop();
 	}

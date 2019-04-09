@@ -1,7 +1,18 @@
 package hr.fer.zemris.java.hw05.db;
 
+/**
+ *  Class which implements {@link IComparisonOperator} used
+ *  for comparing {@link String}s in {@link StudentDatabase}.
+ *   
+ *  @author Jakov Pucekovic
+ *  @version 1.0
+ */
 public class ComparisonOperators {
 
+	/**
+	 *  {@link IComparisonOperator} which signals that the first {@link String}
+	 *  is smaller than the second {@link String}.
+	 */
 	public static final IComparisonOperator LESS = new IComparisonOperator() {
 		
 		@Override
@@ -10,6 +21,10 @@ public class ComparisonOperators {
 		}
 	};
 	
+	/**
+	 *  {@link IComparisonOperator} which signals that the first {@link String}
+	 *  is smaller than or equal to the second {@link String}.
+	 */
 	public static final IComparisonOperator LESS_OR_EQUAL = new IComparisonOperator() {
 		
 		@Override
@@ -18,6 +33,10 @@ public class ComparisonOperators {
 		}
 	};
 
+	/**
+	 *  {@link IComparisonOperator} which signals that the first {@link String}
+	 *  is greater than the second {@link String}.
+	 */
 	public static final IComparisonOperator GREATER = new IComparisonOperator() {
 		
 		@Override
@@ -26,6 +45,10 @@ public class ComparisonOperators {
 		}
 	};
 	
+	/**
+	 *  {@link IComparisonOperator} which signals that the first {@link String}
+	 *  is greater than or equal to the second {@link String}.
+	 */
 	public static final IComparisonOperator GREATER_OR_EQUAL = new IComparisonOperator() {
 		
 		@Override
@@ -34,6 +57,10 @@ public class ComparisonOperators {
 		}
 	};
 	
+	/**
+	 *  {@link IComparisonOperator} which signals that the first {@link String}
+	 *  is equal to the second {@link String}.
+	 */
 	public static final IComparisonOperator EQUALS = new IComparisonOperator() {
 		
 		@Override
@@ -42,6 +69,10 @@ public class ComparisonOperators {
 		}
 	};
 	
+	/**
+	 *  {@link IComparisonOperator} which signals that the first {@link String}
+	 *  is not equal to the second {@link String}.
+	 */
 	public static final IComparisonOperator NOT_EQUALS = new IComparisonOperator() {
 		
 		@Override
@@ -50,6 +81,14 @@ public class ComparisonOperators {
 		}
 	};
 	
+	/**
+	 *	{@link IComparisonOperator} which signals that the first {@link String}
+	 * 	is like the second {@link String}. A {@link String} is like another {@link String}
+	 * 	if it has the same characters at the same places except for "*" which can be any 
+	 * 	number of any characters. E.g. "abcde" is like "ab*e", but "abcde" is not like "ab*a".
+	 * 	Only 1 use of "*" in the second {@link String} is permitted.
+	 * 	@throws IllegalArgumentException If the second {@link String} contains more than 1 "*".
+	 */
 	public static final IComparisonOperator LIKE = new IComparisonOperator() {
 		
 		@Override
