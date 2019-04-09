@@ -101,7 +101,7 @@ public class TurtleState {
 	}
 
 	/**
-	 *  Sets the length of the turtle.
+	 *  Sets the length of the turtle.rgb
 	 *  @param length The new length.
 	 */
 	public void setLength(double length) {
@@ -113,7 +113,7 @@ public class TurtleState {
 	 * 	@return A copy of the current {@link TurtleState}.
 	 */
 	public TurtleState copy() {
-		return new TurtleState(currentPosition, direction, color, length);
+		return new TurtleState(currentPosition.copy(), direction.copy(), new Color(color.getRGB()) , length);
 	}
 	
 }

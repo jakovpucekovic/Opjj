@@ -1,7 +1,10 @@
 package hr.fer.zemris.java.hw05.db;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import com.sun.source.doctree.AttributeTree.ValueKind;
 
 /**
  *	Class which represents a simple query parser.
@@ -15,8 +18,6 @@ public class QueryParser {
 	 *	Enum which lists all the types of the {@link QueryToken}.
 	 */
 	private enum QueryTokenType{
-		/**Command, e.g. "query", "exit" (without the ")*/
-		COMMAND,
 		/**Name of an attribute.*/
 		ATTRIBUTE_NAME,
 		/**<,<=,>,>=,=,!=,LIKE*/
@@ -54,7 +55,7 @@ public class QueryParser {
 	 *	Class which represents a simple lexer used for
 	 *	grouping character into {@link QueryToken}s. 
 	 */
-	public static class QueryLexer{
+	private static class QueryLexer{
 		
 		/**Variable which holds the text that needs to be grouped.*/
 		private char[] input;
@@ -91,16 +92,14 @@ public class QueryParser {
 		/**
 		 *	Groups the next {@link QueryToken}.
 		 *	@return The next {@link QueryToken}.
-		 *	@throws IndexOutOfBoundsException If there is no more input.
-		 *	@throws RuntimeException If the next token cannot be grouped. 
+		 *	@throws IndexOutOfBoundsException If there is no more input.//TODO maknuti ovaj exception i vracati samo lexer?
+		 *	@throws QueryLexerException If the next token cannot be grouped. 
 		 */
 		public QueryToken nextToken() {
 			checkIndex(1);
 			index++;
 			eatSpaces();
-			if(groupCommand()) {
-				return token;
-			} else if(groupOperator()) {
+			if(groupOperator()) {
 				return token;
 			} else if(groupStringLiteral()) {
 				return token;
@@ -109,7 +108,7 @@ public class QueryParser {
 			} else if(groupAttributeName()) {
 				return token;
 			} else {
-				throw new RuntimeException("Invalid input.");
+				throw new QueryLexerException("Input cannot be grouped.");
 			}
 		}
 		
@@ -188,36 +187,6 @@ public class QueryParser {
 		}
 		
 		/**
-		 *	Groups a {@link QueryToken} of type COMMAND.
-		 *	@return <code>true</code> if successful, <code>false</code> otherwise. 
-		 *  @throws IndexOutOfBoundsException If there is no more input.
-		 */
-		private boolean groupCommand() {
-			if(input[index] == 'q') {
-				checkIndex(4);
-				if(input[index + 1] == 'u' &&
-				   input[index + 2] == 'e' &&
-			       input[index + 3] == 'r' &&
-			       input[index + 4] == 'y') {
-					token = new QueryToken(QueryTokenType.COMMAND, "query");
-					index +=4;
-					return true;
-				}
-			}
-			if(input[index] == 'e') {
-				checkIndex(3);
-				if(input[index + 1] == 'x' &&
-			       input[index + 2] == 'i' &&
-			       input[index + 3] == 't') {
-					token = new QueryToken(QueryTokenType.COMMAND, "exit");
-					index +=3;
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		/**
 		 *	Groups a {@link QueryToken} of type STRING_LITERAL.
 		 *	@return <code>true</code> if successful, <code>false</code> otherwise. 
 		 *  @throws IndexOutOfBoundsException If there is no more input.
@@ -264,7 +233,7 @@ public class QueryParser {
 		 *  @throws IndexOutOfBoundsException If there is no more input.
 		 */
 		private void eatSpaces() {
-			while(Character.isWhitespace(input[index])) {//TODO jel samo razmake ili sve whitespaceove?
+			while(Character.isWhitespace(input[index])) {
 				checkIndex(1);
 				index++;
 			}	
@@ -282,6 +251,35 @@ public class QueryParser {
 				throw new IndexOutOfBoundsException("No more input");
 			}
 		}
+		
+		/**
+		 * 	Class which describes the exception which
+		 *	is thrown when {@link QueryLexer}
+		 *	encounters unexpected behavior.
+		 */
+		public static class QueryLexerException extends RuntimeException{
+			
+			private static final long serialVersionUID = 1L;
+
+			/**
+			 *	Constructs a new {@link QueryLexerException} with {@code null}
+			 *	as its detail message.
+			 */
+			public QueryLexerException() {
+				super();
+			}
+
+			/**
+			 *	Constructs a new {@link QueryLexerException} with the given 
+			 *	message.
+			 *	@param message The detail message. 
+			 */
+			public QueryLexerException(String message) {
+				super(message);
+			}
+			
+		}
+		
 	}
 	
 	/**Lexer used for grouping of character.*/
@@ -320,16 +318,82 @@ public class QueryParser {
 		return false;
 	}
 	
+	//TODO provjeri ovo jos jednom na kraju
+	/**
+	 *	Returns the jmbag given in the direct query.
+	 *	@return The string literal given in the direct query which equals jmbag.
+	 *	@throws IllegalStateException If the query is not a direct query. 
+	 */
 	public String getQueriedJMBAG() {
 		if(!isDirectQuery()) {
 			throw new IllegalStateException("Query isn't a direct query.");
 		}
-		//TODO nekako doci do StudentDatabase i pozvati forJMBAG
-		
-		
-		
-		return null;
+		return array.get(2).content;
 	}
 	
+	public List<ConditionalExpression> getQuery(){
+		List<ConditionalExpression> list = new ArrayList<>();
+		int i = 0;
+		/*Each expression has 3 parts.*/
+		while(i + 2 < array.size()) {
+			var name = array.get(i);
+			var operator = array.get(i + 1);
+			var literal = array.get(i + 2);
+			
+			if(name.type == QueryTokenType.ATTRIBUTE_NAME &&
+			   operator.type == QueryTokenType.OPERATOR &&
+			   literal.type == QueryTokenType.STRING_LITERAL) {
+				
+				IFieldValueGetter getter;
+				switch (name.content) {
+				case "jmbag"   : getter = FieldValueGetters.JMBAG; 		break;
+				case "lastName": getter = FieldValueGetters.LAST_NAME;  break;
+				case "firstName": getter = FieldValueGetters.FIRST_NAME; break;
+				default  	   : throw new QueryParserException();		
+				}
+				
+				IComparisonOperator comparisonOperator;
+				switch(operator.content) {
+					case "="   : comparisonOperator = ComparisonOperators.EQUALS;			break;
+					case "!="  : comparisonOperator = ComparisonOperators.NOT_EQUALS; 	  	break;
+					case "<"   : comparisonOperator = ComparisonOperators.LESS; 			break;
+					case "<="  : comparisonOperator = ComparisonOperators.LESS_OR_EQUAL;	break;
+					case ">"   : comparisonOperator = ComparisonOperators.GREATER; 	      	break;
+					case ">="  : comparisonOperator = ComparisonOperators.GREATER_OR_EQUAL;	break;
+					case "LIKE": comparisonOperator = ComparisonOperators.LIKE; 		  	break;
+					default	   : throw new QueryParserException();
+				}
+
+				list.add(new ConditionalExpression(getter, literal.content, comparisonOperator));
+				i +=3;
+				if(i >= array.size() || array.get(i).type != QueryTokenType.AND) {
+					break;
+				}
+				i++;
+			}
+			throw new QueryParserException("Cannot parse query.");
+		}
+		if(list.size() != 0) {
+			return list;
+		}
+		throw new QueryParserException("Cannot parse query.");
+	}
+	
+	
+	public class QueryParserException extends RuntimeException{
+
+		private static final long serialVersionUID = 1L;
+
+		public QueryParserException() {
+			super();
+		}
+
+		public QueryParserException(String message) {
+			super(message);
+		}
+
+		
+		
+	}
 	
 }

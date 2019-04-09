@@ -32,13 +32,9 @@ public class StudentDatabase {
 		list = new ArrayList<>();
 		index = new HashMap<>();
 		
-//		index = list.stream()
-//			.map(x -> new StudentRecord(x))
-//			.collect(Collectors.toMap(StudentRecord::getJmbag, x->x ));
-		
 		for(var x : inputList) {
 			if( x.equals("") ) {
-				continue; //TODO je li continue ili return?
+				continue;
 			}
 			StudentRecord rec = new StudentRecord(x);
 			if(index.containsKey(rec.getJmbag())) {

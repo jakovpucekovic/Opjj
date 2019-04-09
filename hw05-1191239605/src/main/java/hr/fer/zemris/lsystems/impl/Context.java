@@ -3,7 +3,7 @@ package hr.fer.zemris.lsystems.impl;
 import hr.fer.zemris.java.custom.collections.ObjectStack;
 
 /**
- * 	Class which TODO
+ * 	Class which TODO javadoc
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

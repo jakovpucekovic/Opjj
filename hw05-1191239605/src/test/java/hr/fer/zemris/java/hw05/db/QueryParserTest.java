@@ -7,12 +7,7 @@ public class QueryParserTest {
 
 	@Test
 	public void test() {
-		QueryParser p = new QueryParser();
-		var l = p.getLexer("query jmbag=\"1\"");
 		
-		while(l.hasNext()) {
-			System.out.println(l.nextToken());
-		}
 	}
 	
 	
