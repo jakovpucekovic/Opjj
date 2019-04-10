@@ -2,6 +2,7 @@ package hr.fer.zemris.lsystems.impl;
 
 import java.awt.Color;
 import java.util.Arrays;
+
 import hr.fer.zemris.java.custom.collections.Dictionary;
 import hr.fer.zemris.lsystems.LSystem;
 import hr.fer.zemris.lsystems.LSystemBuilder;
@@ -24,14 +25,14 @@ import hr.fer.zemris.math.Vector2D;
 public class LSystemBuilderImpl implements LSystemBuilder{
 	
 	/**Dictionary which holds production rules.*/
-	private Dictionary<Character, String> productions;
+	private Dictionary<Character, String> productions = new Dictionary<>();
 	/**Dictionary which holds commands.*/
-	private Dictionary<Character, Command> commands;
+	private Dictionary<Character, Command> commands = new Dictionary<>();;
 	
 	/**Starting sequence.*/
 	private String axiom = "";
 //TODO javadoc
-	private double angle = 0;//TODO STUPNJEVI
+	private double angle = 0;
 	private double unitLength = 0.1;
 	private double unitLengthDegreeScaler = 1;
 	private Vector2D origin = new Vector2D(0, 0);
@@ -39,18 +40,22 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	/**
 	 *	Class which implements {@link LSystem}.
 	 */
-	private class LSystemImpl implements LSystem{
-
+	public class LSystemImpl implements LSystem{
+ 
 		/**Context in which we're working.*/
 		private Context ctx;
 		@Override
 		public void draw(int arg0, Painter arg1) {
 			ctx = new Context();
-			ctx.pushState(new TurtleState());
+			ctx.pushState(new TurtleState(origin, new Vector2D(1, 0).rotated(angle), Color.black, unitLength));
 			String generated = generate(arg0);
-			//TODO za svaki znak u generated se izvrsi command
+			for(int i = 0; i < generated.length(); i++) {
+				Command toExcecute = commands.get(generated.charAt(i));
+				if(toExcecute != null) {
+					toExcecute.execute(ctx, arg1);
+				}
+			}
 		}
-
 		
 		/**
 		 *	Generates a new sequence from the starting sequence
@@ -64,19 +69,25 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 			StringBuilder gen = new StringBuilder();
 			for(int i = 0; i < arg0; i++) {
 				for(int j = 0; j < generated.length(); j++) {
-					gen.append(productions.get(generated.charAt(j)));
+					String production = productions.get(generated.charAt(j));
+					if(production != null) {
+						gen.append(production);
+					} else {
+						gen.append(generated.charAt(j));
+					}
 				}
 				generated = gen.toString();
+				gen.delete(0, gen.length());
 			}
 			return generated;
 		}
 		
 	}
 	
+	//TODO javadoc
 	@Override
 	public LSystem build() {
-		// TODO Auto-generated method stub
-		return null;
+		return new LSystemImpl();
 	}
 
 	/**
@@ -272,7 +283,7 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	}
 	
 	
-	//TODO radijani
+	//TODO javadoc
 	private boolean configureAngle(String[] data) {
 		if(data.length != 2 || !data[0].equals("angle")) {
 			return false;
@@ -283,7 +294,7 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 		} catch(NumberFormatException ex) {
 			throw new IllegalArgumentException("Wrong angle input."); 
 		}
-		angle = newAngle;
+		angle = Math.toRadians(newAngle);
 		return true;
 	}
 
@@ -332,7 +343,7 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 			case("draw")  : return new DrawCommand  (Double.parseDouble(command[1]));
 			case("skip")  : return new SkipCommand  (Double.parseDouble(command[1]));
 			case("scale") : return new ScaleCommand (Double.parseDouble(command[1]));
-			case("rotate"): return new RotateCommand(Double.parseDouble(command[1]));
+			case("rotate"): return new RotateCommand(Math.toRadians(Double.parseDouble(command[1])));
 			case("push")  : return new PushCommand  ();
 			case("pop")   : return new PopCommand   ();
 			case("color") : return new ColorCommand (new Color(Integer.parseInt(command[1], 16)));
@@ -367,10 +378,14 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 		return this;
 	}
 
-	//TODO radijani
+	/**
+	 *	Sets the angle. Given angle should be in degrees.
+	 *	@param arg0 Angle in degrees.
+	 *	@return this. 
+	 */
 	@Override
 	public LSystemBuilder setAngle(double arg0) {
-		angle = arg0;
+		angle = Math.toRadians(arg0);
 		return this;
 	}
 

@@ -11,7 +11,7 @@ import hr.fer.zemris.java.custom.collections.ObjectStack;
 public class Context {
 	
 	/**Stack which stores the {@link TurtleState}s.*/
-	private ObjectStack<TurtleState> stack;
+	private ObjectStack<TurtleState> stack = new ObjectStack<>();
 
 	/**
 	 * 	Returns the current state of the turtle.

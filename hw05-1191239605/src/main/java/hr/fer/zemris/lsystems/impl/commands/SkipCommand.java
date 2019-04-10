@@ -36,13 +36,12 @@ public class SkipCommand implements Command{
 	@Override
 	public void execute(Context ctx, Painter painter) {
 		TurtleState currentState = ctx.getCurrentState();
-		Color color = new Color(0, 0, 0, 255);
 		painter.drawLine(
 				currentState.getCurrentPosition().getX(),
 				currentState.getCurrentPosition().getY(),
 				currentState.getDirection().getX(),
 				currentState.getDirection().getY(),
-				color,
+				Color.white,
 				(float) (currentState.getLength() * step));
 		
 	}

@@ -41,7 +41,7 @@ public class TurtleState {
 	 *  length is 1.
 	 */
 	public TurtleState() {
-		this(new Vector2D(0, 0), new Vector2D(1, 0), new Color(0xffffff), 1.0);
+		this(new Vector2D(0, 0), new Vector2D(1, 0), Color.black, 1.0);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class TurtleState {
 	 *  @return The direction of the turtle.
 	 */
 	public Vector2D getDirection() {
-		return direction;
+		return currentPosition.scaled(length);
 	}
 
 	/**

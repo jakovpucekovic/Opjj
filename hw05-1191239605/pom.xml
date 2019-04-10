@@ -5,7 +5,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>hr.fer.zemris.java.jmbag1191239605</groupId>
-  <artifactId>hw04-1191239605</artifactId>
+  <artifactId>hw05-1191239605</artifactId>
   <version>1.0.0</version>
 
   <!-- configuration of basic properties -->
@@ -39,11 +39,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>lsysyems</groupId>
+      <groupId>lsystems</groupId>
       <artifactId>lsystems</artifactId>
       <version>1</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/lsystems.jar</systemPath>
     </dependency>
   </dependencies>
 

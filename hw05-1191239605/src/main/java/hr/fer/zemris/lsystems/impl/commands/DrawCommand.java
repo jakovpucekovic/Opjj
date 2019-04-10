@@ -1,5 +1,7 @@
 package hr.fer.zemris.lsystems.impl.commands;
 
+import java.awt.Color;
+
 import hr.fer.zemris.lsystems.Painter;
 import hr.fer.zemris.lsystems.impl.Command;
 import hr.fer.zemris.lsystems.impl.Context;
@@ -36,10 +38,11 @@ public class DrawCommand implements Command{
 		painter.drawLine(
 				currentState.getCurrentPosition().getX(),
 				currentState.getCurrentPosition().getY(),
-				currentState.getDirection().getX(),
-				currentState.getDirection().getY(),
+				currentState.getDirection().getX() * step,
+				0.1,
+//				currentState.getDirection().getY(),
 				currentState.getColor(),
-				(float) (currentState.getLength() * step));
+				1f);
 		
 	}
 

@@ -11,7 +11,7 @@ import hr.fer.zemris.lsystems.Painter;
 public interface Command {
 
 	/**
-	 *  Method which executes the commad.
+	 *  Method which executes the command.
 	 *  @param ctx	The {@link Context}. //TODO javadoc
 	 *	@param painter The {@link Painter} which paints the command if needed.  
 	 */
