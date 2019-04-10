@@ -6,6 +6,7 @@ import hr.fer.zemris.lsystems.Painter;
 import hr.fer.zemris.lsystems.impl.Command;
 import hr.fer.zemris.lsystems.impl.Context;
 import hr.fer.zemris.lsystems.impl.TurtleState;
+import hr.fer.zemris.math.Vector2D;
 
 /**
  *  Class which implements a {@link Command} which
@@ -36,14 +37,15 @@ public class SkipCommand implements Command{
 	@Override
 	public void execute(Context ctx, Painter painter) {
 		TurtleState currentState = ctx.getCurrentState();
+		Vector2D newPosition = currentState.getCurrentPosition().translated(currentState.getDirection().scaled(step * currentState.getLength()));
 		painter.drawLine(
 				currentState.getCurrentPosition().getX(),
 				currentState.getCurrentPosition().getY(),
-				currentState.getDirection().getX(),
-				currentState.getDirection().getY(),
+				newPosition.getX(),
+				newPosition.getY(),
 				Color.white,
-				(float) (currentState.getLength() * step));
-		
+				1f);
+		currentState.setCurrentPosition(newPosition);
 	}
 
 }

@@ -5,6 +5,7 @@ import hr.fer.zemris.lsystems.LSystemBuilderProvider;
 import hr.fer.zemris.lsystems.gui.LSystemViewer;
 import hr.fer.zemris.lsystems.impl.LSystemBuilderImpl;
 
+//TODO napravit ove klase jos treba
 public class Glavni1 {
 
 	private static LSystem createKochCurve(LSystemBuilderProvider provider) {

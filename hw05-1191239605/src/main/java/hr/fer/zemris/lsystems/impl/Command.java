@@ -12,7 +12,7 @@ public interface Command {
 
 	/**
 	 *  Method which executes the command.
-	 *  @param ctx	The {@link Context}. //TODO javadoc
+	 *  @param ctx	The {@link Context} in which we're currently working.
 	 *	@param painter The {@link Painter} which paints the command if needed.  
 	 */
 	void execute(Context ctx, Painter painter);

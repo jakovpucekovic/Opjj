@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,7 +48,38 @@ public class StudentDB {
 			}
 		});
 
-		trueList.stream().forEach(System.out::println);
+//		trueList.stream().forEach(System.out::println);
+		
+		mainloop();
+		
+	}
+	
+	private static void mainloop() {
+		Scanner sc = new Scanner(System.in);
+		while(true) {
+			System.out.print("> ");
+			String userInput = sc.next();
+			if(userInput.equals("end")) {
+				System.out.println("Goodbye!");
+				break;
+			} else if(userInput.startsWith("query")) {
+				System.out.println("process query"); //TODO
+			} else {
+				System.out.println("Unknown command given.");
+			}
+		}
+		sc.close();
+	}
+	
+	
+	//TODO obraduje query
+	private void obradiQuery() {
+		
+	}
+	
+	//TODO vraca formatirani output ili ispisuje
+	private void formattedOutput() {
+		
 		
 	}
 	

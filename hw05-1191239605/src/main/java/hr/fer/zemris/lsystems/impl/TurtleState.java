@@ -65,7 +65,7 @@ public class TurtleState {
 	 *  @return The direction of the turtle.
 	 */
 	public Vector2D getDirection() {
-		return currentPosition.scaled(length);
+		return direction;
 	}
 
 	/**

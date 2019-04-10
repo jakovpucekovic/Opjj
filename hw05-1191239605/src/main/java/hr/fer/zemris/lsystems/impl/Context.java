@@ -3,7 +3,8 @@ package hr.fer.zemris.lsystems.impl;
 import hr.fer.zemris.java.custom.collections.ObjectStack;
 
 /**
- * 	Class which TODO javadoc
+ * 	Class which describes the states of the turtle
+ * 	in the current "workspace".
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

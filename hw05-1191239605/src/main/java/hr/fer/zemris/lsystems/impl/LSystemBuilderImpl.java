@@ -31,10 +31,13 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	
 	/**Starting sequence.*/
 	private String axiom = "";
-//TODO javadoc
+	/**Angle of drawing.*/
 	private double angle = 0;
+	/**Length which should be drawn.*/
 	private double unitLength = 0.1;
+	/**For scaling the length as we go into deeper iterations.*/
 	private double unitLengthDegreeScaler = 1;
+	/**Origin of drawing.*/
 	private Vector2D origin = new Vector2D(0, 0);
 
 	/**
@@ -44,10 +47,17 @@ public class LSystemBuilderImpl implements LSystemBuilder{
  
 		/**Context in which we're working.*/
 		private Context ctx;
+		
+		/**
+		 *	Draws a new image on the given {@link Painter}.
+		 *	@param arg0 The iteration of the image to be drawn.
+		 *	@param arg1 The {@link Painter} on which the image should be drawn.
+		 * TODO javadoc exceptioni?
+		 */
 		@Override
 		public void draw(int arg0, Painter arg1) {
 			ctx = new Context();
-			ctx.pushState(new TurtleState(origin, new Vector2D(1, 0).rotated(angle), Color.black, unitLength));
+			ctx.pushState(new TurtleState(origin, new Vector2D(1, 0).rotated(angle), Color.black, unitLength * Math.pow(unitLengthDegreeScaler, arg0)));
 			String generated = generate(arg0);
 			for(int i = 0; i < generated.length(); i++) {
 				Command toExcecute = commands.get(generated.charAt(i));
@@ -84,14 +94,22 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 		
 	}
 	
-	//TODO javadoc
+	/**
+	 *	Builds a new {@link LSystem} from the current
+	 *	{@link LSystemBuilder}.
+	 *	@return The new {@link LSystem}. 
+	 */
 	@Override
 	public LSystem build() {
 		return new LSystemImpl();
 	}
 
 	/**
-	 *	 TODO javadoc
+	 *	Configures the {@link LSystemBuilderImpl} from the
+	 *	given text.
+	 *	@param arg0 String[] where each line of the configuration
+	 *				is a new slot in String[].
+	 *	@throws IllegalArgumentException If the given configuration is invalid.
 	 */
 	@Override
 	public LSystemBuilder configureFromText(String[] arg0) {
@@ -100,6 +118,7 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 			if(i.isBlank()) {
 				continue;
 			}
+			i = i.replaceAll("\\s+", " ");
 			String[] split = i.split("\\s");
 			if(configureAngle(split)) {
 				continue;
@@ -133,7 +152,7 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	 *									 already exists.
 	 */
 	private boolean configureCommand(String[] data) {
-		if(data.length != 3 || data.length != 4 || !data[0].equals("command")) {
+		if((data.length != 3 && data.length != 4) || !data[0].equals("command")) {
 			return false;
 		}
 		if(data[1].length() != 1) {
@@ -153,7 +172,8 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
 	 *	@throws IllegalArgumentException If the given data describes a 
 	 *									 a configuration of unitLengthDegreeScalar
-	 *									 which is invalid, e.g. length <= 0.
+	 *									 which is invalid, e.g. length <= 0 or unable
+	 *									 to be parsed as double.
 	 */
 	private boolean configureUnitLengthDegreeScaler(String[] data) {
 		if(data.length < 2 || data.length > 4 || !data[0].equals("unitLengthDegreeScaler")) {
@@ -234,7 +254,7 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 		if(data[1].length() != 1) {
 			throw new IllegalArgumentException("Production doesn't describe 1 character.");
 		}
-		if(commands.get(data[1].charAt(0)) != null) {
+		if(productions.get(data[1].charAt(0)) != null) {
 			throw new IllegalArgumentException("Cannot have 2 production rules which use the same character.");
 		}
 		productions.put(data[1].charAt(0), data[2]);
@@ -282,8 +302,16 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 		return true;
 	}
 	
-	
-	//TODO javadoc
+	/**
+	 *	Checks whether the given data describes a
+	 *	configuration of angle and configures it if yes.
+	 *	Angle should be given in degrees.
+	 *	@param data The data to check.
+	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
+	 *	@throws IllegalArgumentException If the given data describes a 
+	 *									 configuration of angle which is
+	 *									 invalid, e.g. angle cannot be parsed as double. 
+	 */	
 	private boolean configureAngle(String[] data) {
 		if(data.length != 2 || !data[0].equals("angle")) {
 			return false;
@@ -412,14 +440,22 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 		return this;
 	}
 
-	//TODO javadoc
+	/**
+	 *	Sets the unitLenght.
+	 *	@param arg0 The new unitLength.
+	 *	@return this. 
+	 */
 	@Override
 	public LSystemBuilder setUnitLength(double arg0) {
 		unitLength = arg0;
 		return this;
 	}
 	
-	//TODO javadoc
+	/**
+	 *	Sets the unitLenghtDegreeScaler.
+	 *	@param arg0 The new unitLengthDegreeScaler.
+	 *	@return this. 
+	 */
 	@Override
 	public LSystemBuilder setUnitLengthDegreeScaler(double arg0) {
 		unitLengthDegreeScaler = arg0;
