@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import hr.fer.zemris.java.hw05.db.QueryParser.QueryParserException;
+import hr.fer.zemris.java.hw05.db.parser.utils.QueryParserException;
 
 public class QueryParserTest {
 	

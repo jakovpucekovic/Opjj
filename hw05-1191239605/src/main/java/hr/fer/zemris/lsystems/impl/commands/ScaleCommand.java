@@ -35,7 +35,6 @@ public class ScaleCommand implements Command{
 
 		double currentLenght = ctx.getCurrentState().getLength();
 		ctx.getCurrentState().setLength(currentLenght * factor);
-		
 	}
 
 }

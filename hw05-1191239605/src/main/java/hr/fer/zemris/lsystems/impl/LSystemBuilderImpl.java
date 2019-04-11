@@ -39,25 +39,6 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	private double unitLengthDegreeScaler = 1;
 	/**Origin of drawing.*/
 	private Vector2D origin = new Vector2D(0, 0);
-
-//	public LSystemBuilderImpl() {
-////		List<String> lines = new ArrayList<>();
-////		try {
-////			lines = Files.readAllLines(
-////				Paths.get("src/main/resources/examples/kochCurve.txt"),
-////				StandardCharsets.UTF_8); 
-////		} catch (IOException e) {
-////			System.out.println("Can't read file");
-////			System.exit(-1);
-////		}
-////		
-////		String[] data = new String[lines.size()];
-////		for(int i = 0; i < lines.size(); ++i) {
-////			data[i] = lines.get(i);
-////		}
-////		
-////		return provider.createLSystemBuilder().configureFromText(data).build();
-//		}
 	
 	/**
 	 *	Class which implements {@link LSystem}.
@@ -71,7 +52,6 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 		 *	Draws a new image on the given {@link Painter}.
 		 *	@param arg0 The iteration of the image to be drawn.
 		 *	@param arg1 The {@link Painter} on which the image should be drawn.
-		 * TODO javadoc exceptioni?
 		 */
 		@Override
 		public void draw(int arg0, Painter arg1) {
@@ -162,166 +142,6 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	
 	
 	/**
-	 *	Checks whether the given data describes a command and adds it if yes.
-	 *	@param data The data to check.
-	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
-	 *	@throws IllegalArgumentException If the given data describes a 
-	 *									 a command which has more that 1 character
-	 *									 or if a command which uses this character
-	 *									 already exists.
-	 */
-	private boolean configureCommand(String[] data) {
-		if((data.length != 3 && data.length != 4) || !data[0].equals("command")) {
-			return false;
-		}
-		if(data[1].length() != 1) {
-			throw new IllegalArgumentException("Command doesn't have 1 character.");
-		}
-		if(commands.get(data[1].charAt(0)) != null) {
-			throw new IllegalArgumentException("Cannot have 2 commands which use the same character.");
-		}
-		commands.put(data[1].charAt(0), makeCommand(Arrays.copyOfRange(data, 2, data.length)));
-		return true;
-	}
-	
-	/**
-	 *	Checks whether the given data describes a configuration 
-	 *	of unitLengthDegreeScaler and configures it if yes.
-	 *	@param data The data to check.
-	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
-	 *	@throws IllegalArgumentException If the given data describes a 
-	 *									 a configuration of unitLengthDegreeScalar
-	 *									 which is invalid, e.g. length <= 0 or unable
-	 *									 to be parsed as double.
-	 */
-	private boolean configureUnitLengthDegreeScaler(String[] data) {
-		if(data.length < 2 || data.length > 4 || !data[0].equals("unitLengthDegreeScaler")) {
-			return false;
-		}
-		double newLength;
-		if(data.length == 2) {
-			/*Only 1 number, no "/".*/
-			if(data[1].indexOf('/') == -1) {
-				try {
-					newLength = Double.parseDouble(data[1]);
-				} catch(NumberFormatException ex) {
-					throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");	//TODO mogu staviti newLength=-1 pa se na kraju baca exeception					
-				}			
-			} else {
-			/*2 numbers separated with "/" without spaces*/
-				String[] numbers = data[1].split("/");
-				try {
-					newLength = Double.parseDouble(numbers[0]) / 
-								Double.parseDouble(numbers[1]);
-				} catch(NumberFormatException ex) {
-					throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");						
-				}
-			}
-		} else if(data.length == 3) {
-			/*1. number, space, /, no space, 2. number*/
-			if(data[1].indexOf('/') == -1) {
-				try {
-					newLength = Double.parseDouble(data[1])/
-								Double.parseDouble(data[2].substring(1));
-				} catch(NumberFormatException ex) {
-					throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");						
-				}
-			/*1. number, no space, /, space, 2. number*/
-			} else if(data[2].indexOf('/') == -1) {
-				try {
-					newLength = Double.parseDouble(data[1].substring(0, data[1].length() - 1))/
-								Double.parseDouble(data[2]);
-				} catch(NumberFormatException ex) {
-					throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");											
-				}
-			} else {
-				throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");
-			}
-		} else if(data.length == 4) {
-			/*2 numbers separated with "/" with spaces everywhere.*/
-			try {
-				newLength = Double.parseDouble(data[1]) / 
-							Double.parseDouble(data[3]);
-			} catch(NumberFormatException ex) {
-				throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");						
-			}
-		} else {
-			newLength = -1;
-		}
-		
-		if(newLength <= 0) {
-			throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");					
-		}
-		unitLengthDegreeScaler = newLength;
-		return true;
-	}
-	
-	/**
-	 *	Checks whether the given data describes 
-	 *	a production rule and adds it if yes.
-	 *	@param data The data to check.
-	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
-	 *	@throws IllegalArgumentException If the given data describes a 
-	 *									 a production rule which has more
-	 *									 than 1 character or uses a character
-	 *									 which already has a production rule.
-	 */
-	private boolean configureProduction(String[] data) {
-		if(data.length != 3 || !data[0].equals("production")) {
-			return false;
-		}
-		if(data[1].length() != 1) {
-			throw new IllegalArgumentException("Production doesn't describe 1 character.");
-		}
-		if(productions.get(data[1].charAt(0)) != null) {
-			throw new IllegalArgumentException("Cannot have 2 production rules which use the same character.");
-		}
-		productions.put(data[1].charAt(0), data[2]);
-		return true;
-	}
-	
-	
-	/**
-	 *	Checks whether the given data describes 
-	 *	a configuration of axiom and configures it if yes.
-	 *	@param data The data to check.
-	 *	@return <code>true</code> if yes, <code>false</code> otherwise. 
-	 */
-	private boolean configureAxiom(String[] data) {
-		if(data.length != 2 || !data[0].equals("axiom")) {
-			return false;
-		}
-		axiom = data[1];
-		return true;
-	}
-	
-	/**
-	 *	Checks whether the given data describes 
-	 *	a configuration of unitLength and configures it if yes.
-	 *	@param data The data to check.
-	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
-	 *	@throws IllegalArgumentException If the given data describes a 
-	 *									 a configuration of unitLength which
-	 *									 is invalid, e.g. length <= 0
-	 */
-	private boolean configureUnitLength(String[] data) {
-		if(data.length != 2 || !data[0].equals("unitLength")) {
-			return false;
-		}
-		double newLength;
-		try {
-			newLength = Double.parseDouble(data[1]);
-		} catch(NumberFormatException ex) {
-			throw new IllegalArgumentException("Wrong unitLeghth input."); 
-		}
-		if(newLength <= 0) {
-			throw new IllegalArgumentException("Wrong unitLeghth input."); 
-		}	
-		unitLength = newLength;
-		return true;
-	}
-	
-	/**
 	 *	Checks whether the given data describes a
 	 *	configuration of angle and configures it if yes.
 	 *	Angle should be given in degrees.
@@ -347,6 +167,20 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 
 	/**
 	 *	Checks whether the given data describes 
+	 *	a configuration of axiom and configures it if yes.
+	 *	@param data The data to check.
+	 *	@return <code>true</code> if yes, <code>false</code> otherwise. 
+	 */
+	private boolean configureAxiom(String[] data) {
+		if(data.length != 2 || !data[0].equals("axiom")) {
+			return false;
+		}
+		axiom = data[1];
+		return true;
+	}
+
+	/**
+	 *	Checks whether the given data describes 
 	 *	a configuration of origin and configures origin if yes.
 	 *	@param data The data to check.
 	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
@@ -365,14 +199,146 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 		} catch(NumberFormatException ex) {
 			throw new IllegalArgumentException("Wrong origin coordinates."); 
 		}
-		if(x < 0 || y < 0) {
-			throw new IllegalArgumentException("Wrong origin coordinates.");
+		setOrigin(x, y);
+		return true;
+	}
+
+	/**
+	 *	Checks whether the given data describes 
+	 *	a production rule and adds it if yes.
+	 *	@param data The data to check.
+	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
+	 *	@throws IllegalArgumentException If the given data describes a 
+	 *									 a production rule which has more
+	 *									 than 1 character or uses a character
+	 *									 which already has a production rule.
+	 */
+	private boolean configureProduction(String[] data) {
+		if(data.length != 3 || !data[0].equals("production")) {
+			return false;
 		}
-		origin = new Vector2D(x, y);
+		if(data[1].length() != 1) {
+			throw new IllegalArgumentException("Production doesn't describe 1 character.");
+		}
+		registerProduction(data[1].charAt(0), data[2]);
+		return true;
+	}
+
+	/**
+	 *	Checks whether the given data describes 
+	 *	a configuration of unitLength and configures it if yes.
+	 *	@param data The data to check.
+	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
+	 *	@throws IllegalArgumentException If the given data describes a 
+	 *									 a configuration of unitLength which
+	 *									 is invalid, e.g. length <= 0
+	 */
+	private boolean configureUnitLength(String[] data) {
+		if(data.length != 2 || !data[0].equals("unitLength")) {
+			return false;
+		}
+		double newLength;
+		try {
+			newLength = Double.parseDouble(data[1]);
+		} catch(NumberFormatException ex) {
+			throw new IllegalArgumentException("Wrong unitLeghth input."); 
+		}
+		setUnitLength(newLength);
+		return true;
+	}
+
+	/**
+	 *	Checks whether the given data describes a configuration 
+	 *	of unitLengthDegreeScaler and configures it if yes.
+	 *	@param data The data to check.
+	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
+	 *	@throws IllegalArgumentException If the given data describes a 
+	 *									 a configuration of unitLengthDegreeScalar
+	 *									 which is invalid, e.g. length <= 0 or unable
+	 *									 to be parsed as double.
+	 */
+	private boolean configureUnitLengthDegreeScaler(String[] data) {
+		if(data.length < 2 || data.length > 4 || !data[0].equals("unitLengthDegreeScaler")) {
+			return false;
+		}
+		double newLength;
+		if(data.length == 2) {
+			/*Only 1 number*/
+			if(data[1].indexOf('/') == -1) {
+				try {
+					newLength = Double.parseDouble(data[1]);
+				} catch(NumberFormatException ex) {
+					throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");					
+				}			
+			} else {
+			/*number/number*/
+				String[] numbers = data[1].split("/");
+				try {
+					newLength = Double.parseDouble(numbers[0]) / 
+								Double.parseDouble(numbers[1]);
+				} catch(NumberFormatException ex) {
+					throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");						
+				}
+			}
+		} else if(data.length == 3) {
+			/*number /number*/
+			if(data[1].indexOf('/') == -1) {
+				try {
+					newLength = Double.parseDouble(data[1])/
+								Double.parseDouble(data[2].substring(1));
+				} catch(NumberFormatException ex) {
+					throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");						
+				}
+			/*number/ number*/
+			} else if(data[2].indexOf('/') == -1) {
+				try {
+					newLength = Double.parseDouble(data[1].substring(0, data[1].length() - 1))/
+								Double.parseDouble(data[2]);
+				} catch(NumberFormatException ex) {
+					throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");											
+				}
+			} else {
+				throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");
+			}
+		} else if(data.length == 4) {
+			/*number / number*/
+			try {
+				newLength = Double.parseDouble(data[1]) / 
+							Double.parseDouble(data[3]);
+			} catch(NumberFormatException ex) {
+				throw new IllegalArgumentException("Wrong unitLengthDegreeScaler input.");						
+			}
+		} else {
+			newLength = -1;
+		}
+		
+		setUnitLengthDegreeScaler(newLength);
 		return true;
 	}
 	
-	
+	/**
+	 *	Checks whether the given data describes a command and adds it if yes.
+	 *	@param data The data to check.
+	 *	@return <code>true</code> if yes, <code>false</code> otherwise.
+	 *	@throws IllegalArgumentException If the given data describes a 
+	 *									 a command which has more that 1 character
+	 *									 or if a command which uses this character
+	 *									 already exists.
+	 */
+	private boolean configureCommand(String[] data) {
+		if((data.length != 3 && data.length != 4) || !data[0].equals("command")) {
+			return false;
+		}
+		if(data[1].length() != 1) {
+			throw new IllegalArgumentException("Command doesn't have 1 character.");
+		}
+		if(commands.get(data[1].charAt(0)) != null) {
+			throw new IllegalArgumentException("Cannot have 2 commands which use the same character.");
+		}
+		commands.put(data[1].charAt(0), makeCommand(Arrays.copyOfRange(data, 2, data.length)));
+		return true;
+	}
+
 	/**
 	 * 	Private method which deduces the correct {@link Command}
 	 * 	from the given input and returns a new instance of it.
@@ -418,9 +384,14 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	 * 	@param arg0 Character which needs to be swapped.
 	 * 	@param arg1 Sequence for which the Character should be swapped.
 	 * 	@return this.
+	 * 	@throws IllegalArgumentException If a production rule for the given
+	 * 									 character already exists.
 	 */
 	@Override
 	public LSystemBuilder registerProduction(char arg0, String arg1) {
+		if(productions.get(arg0) != null) {
+			throw new IllegalArgumentException("Cannot have 2 production rules which use the same character.");
+		}
 		productions.put(arg0, arg1);
 		return this;
 	}
@@ -452,9 +423,14 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	 * 	@param The x-coordinate of the new origin point.
 	 * 	@param The y-coordinate of the new origin point.
 	 * 	@return this.
+	 *  @throws IllegalArgumentException If the given coordinates
+	 *  								 are less than 0.
 	 */
 	@Override
 	public LSystemBuilder setOrigin(double arg0, double arg1) {
+		if(arg0 < 0 || arg1 < 0) {
+			throw new IllegalArgumentException("Origin coordinates cannot be < 0.");
+		}
 		origin = new Vector2D(arg0, arg1);
 		return this;
 	}
@@ -463,9 +439,13 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	 *	Sets the unitLenght.
 	 *	@param arg0 The new unitLength.
 	 *	@return this. 
+	 *	@throws IllegalArgumentException If the new unitLength is less than 0.
 	 */
 	@Override
 	public LSystemBuilder setUnitLength(double arg0) {
+		if(arg0 <= 0) {
+			throw new IllegalArgumentException("Unit Length cannot be <= 0"); 
+		}
 		unitLength = arg0;
 		return this;
 	}
@@ -474,9 +454,13 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	 *	Sets the unitLenghtDegreeScaler.
 	 *	@param arg0 The new unitLengthDegreeScaler.
 	 *	@return this. 
+	 *	@throws IllegalArgumentException If the given data is lees than 0.
 	 */
 	@Override
 	public LSystemBuilder setUnitLengthDegreeScaler(double arg0) {
+		if(arg0 <= 0) {
+			throw new IllegalArgumentException("Unit Length Degree Scaler cannot be <= 0.");					
+		}
 		unitLengthDegreeScaler = arg0;
 		return this;
 	}

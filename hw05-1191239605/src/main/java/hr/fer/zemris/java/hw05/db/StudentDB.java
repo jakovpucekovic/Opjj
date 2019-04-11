@@ -7,8 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import hr.fer.zemris.java.hw05.db.QueryParser.QueryParserException;
+import hr.fer.zemris.java.hw05.db.parser.utils.QueryParserException;
 
 /**
  *	Class which reads data from current file
@@ -29,7 +28,6 @@ public class StudentDB {
 	public static void main(String[] args) {
 
 		StudentDatabase db = new StudentDatabase(readDatabase());
-		
 		Scanner sc = new Scanner(System.in);
 		sc.useDelimiter("\n");
 		
@@ -40,6 +38,10 @@ public class StudentDB {
 				System.out.println("Goodbye!");
 				break;
 			} else if(userInput.startsWith("query")) {
+				if(userInput.equals("query")) {
+					System.out.println("Query is invalid.");
+					continue;
+				}
 				try {
 					processQuery(userInput.substring(6), db);
 				} catch(QueryParserException ex) {
@@ -81,9 +83,15 @@ public class StudentDB {
 	private static void processQuery(String query, StudentDatabase db) {
 		QueryParser parser = new QueryParser(query);
 		List<String> toPrint;
+		boolean usingIndex = false;
 		if(parser.isDirectQuery()) {
 			StudentRecord r = db.forJMBAG(parser.getQueriedJMBAG());
+			if(r == null) {
+				System.out.println("Records selected: 0");
+				return;
+			}
 			toPrint = formatList(new ArrayList<StudentRecord>(List.of(r)));
+			usingIndex = true;
 		} else {
 			List<StudentRecord> listOfRecords = getFromDatabase(parser.getQuery(), db);
 			toPrint = formatList(listOfRecords);
@@ -91,6 +99,9 @@ public class StudentDB {
 		if(toPrint == null) {
 			System.out.println("Records selected: 0");
 			return;
+		}
+		if(usingIndex) {
+			System.out.println("Using index for record retrieval.");
 		}
 		toPrint.stream().forEach(System.out::println);
 		System.out.println("Records selected: " + (toPrint.size() - 2));
