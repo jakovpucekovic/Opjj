@@ -1,4 +1,4 @@
-package Demo;
+package demo;
 
 import hr.fer.zemris.lsystems.LSystem;
 import hr.fer.zemris.lsystems.LSystemBuilderProvider;
@@ -7,9 +7,15 @@ import hr.fer.zemris.lsystems.impl.LSystemBuilderImpl;
 
 public class Glavni2 {
 
-	private static LSystem createKochCurve2(LSystemBuilderProvider provider) {
+	public static void main(String[] args) {
+		
+		LSystemViewer.showLSystem(createKochCurve(LSystemBuilderImpl::new));	
+		
+	}
+
+	private static LSystem createKochCurve(LSystemBuilderProvider provider) {
 		String[] data = new String[] {
-			"origin 0.05 0.4",
+			"origin		0.05 0.4",
 			"angle		0",
 			"unitLength		0.9",
 			"unitLengthDegreeScaler 1.0 / 3.0",
@@ -25,13 +31,6 @@ public class Glavni2 {
 		
 		return provider.createLSystemBuilder().configureFromText(data).build();
 	}
-	
-	
-	
-	public static void main(String[] args) {
-		
-		LSystemViewer.showLSystem(createKochCurve2(LSystemBuilderImpl::new));
-		
-	}
-	
+
+
 }

@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw05.db;
 
+import java.util.Objects;
+
 /**
  *	Class which represents a conditional expression which can
  *	be executed to return <code>true</code> or <code>false</code>.
@@ -53,6 +55,33 @@ public class ConditionalExpression {
 		return comparisonOperator;
 	}
 
-	
-	
+	/**
+	 * 	{@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(comparisonOperator, fieldGetter, stringLiteral);
+	}
+
+	/**
+	 *	Indicates whether some other object is "equal to" this one.
+	 *	Objects are considered equal if they have the same type of 
+	 *	{@link ComparisonOperators}, {@link IFieldValueGetter}s and
+	 *	{@link String} literals.
+	 *	@param obj Object to check.
+	 *	@return <code>true</code> if yes, <code>false</code> if not.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof ConditionalExpression))
+			return false;
+		ConditionalExpression other = (ConditionalExpression) obj;
+		return Objects.equals(comparisonOperator, other.comparisonOperator)
+				&& Objects.equals(fieldGetter, other.fieldGetter) && Objects.equals(stringLiteral, other.stringLiteral);
+	}
+
 }

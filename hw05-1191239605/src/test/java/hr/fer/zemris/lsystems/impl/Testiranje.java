@@ -3,9 +3,6 @@ package hr.fer.zemris.lsystems.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import hr.fer.zemris.lsystems.impl.LSystemBuilderImpl.LSystemImpl;
-
-
 public class Testiranje {
 
 	@Test

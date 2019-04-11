@@ -40,6 +40,25 @@ public class LSystemBuilderImpl implements LSystemBuilder{
 	/**Origin of drawing.*/
 	private Vector2D origin = new Vector2D(0, 0);
 
+//	public LSystemBuilderImpl() {
+////		List<String> lines = new ArrayList<>();
+////		try {
+////			lines = Files.readAllLines(
+////				Paths.get("src/main/resources/examples/kochCurve.txt"),
+////				StandardCharsets.UTF_8); 
+////		} catch (IOException e) {
+////			System.out.println("Can't read file");
+////			System.exit(-1);
+////		}
+////		
+////		String[] data = new String[lines.size()];
+////		for(int i = 0; i < lines.size(); ++i) {
+////			data[i] = lines.get(i);
+////		}
+////		
+////		return provider.createLSystemBuilder().configureFromText(data).build();
+//		}
+	
 	/**
 	 *	Class which implements {@link LSystem}.
 	 */

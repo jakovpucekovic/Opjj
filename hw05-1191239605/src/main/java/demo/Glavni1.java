@@ -1,12 +1,16 @@
-package Demo;
+package demo;
 
 import hr.fer.zemris.lsystems.LSystem;
 import hr.fer.zemris.lsystems.LSystemBuilderProvider;
 import hr.fer.zemris.lsystems.gui.LSystemViewer;
 import hr.fer.zemris.lsystems.impl.LSystemBuilderImpl;
 
-//TODO napravit ove klase jos treba
 public class Glavni1 {
+	
+	public static void main(String[] args) {
+
+		LSystemViewer.showLSystem(createKochCurve(LSystemBuilderImpl::new));	
+	}
 
 	private static LSystem createKochCurve(LSystemBuilderProvider provider) {
 		return provider.createLSystemBuilder()
@@ -20,12 +24,6 @@ public class Glavni1 {
 		.registerProduction('F', "F+F--F+F")
 		.setAxiom("F")
 		.build();
-		}
-	
-	public static void main(String[] args) {
-
-		LSystemViewer.showLSystem(createKochCurve(LSystemBuilderImpl::new));
-		
 	}
 
 }

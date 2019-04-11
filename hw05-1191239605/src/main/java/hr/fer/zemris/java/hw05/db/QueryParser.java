@@ -2,9 +2,6 @@ package hr.fer.zemris.java.hw05.db;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import com.sun.source.doctree.AttributeTree.ValueKind;
 
 /**
  *	Class which represents a simple query parser.
@@ -17,7 +14,7 @@ public class QueryParser {
 	/**
 	 *	Enum which lists all the types of the {@link QueryToken}.
 	 */
-	private enum QueryTokenType{
+	private static enum QueryTokenType{
 		/**Name of an attribute.*/
 		ATTRIBUTE_NAME,
 		/**<,<=,>,>=,=,!=,LIKE*/
@@ -49,6 +46,20 @@ public class QueryParser {
 			this.content = content;
 		}
 
+		/**
+		 *	Returns a string representation of the object which is only
+		 *	the content. Also content of type STRING_LITERAL is returned
+		 *	as a normal {@link String} not a literal(only 1 ").
+		 *	@return String representation of the token.
+		 */
+		@Override
+		public String toString() {
+			/*Return STRING_LITERAL as normal String, without double ".*/
+			if(type == QueryTokenType.STRING_LITERAL) {
+				return content.substring(1, content.length() - 1);
+			}
+			return content;
+		}
 	}
 
 	/**
@@ -64,6 +75,9 @@ public class QueryParser {
 		/**Last grouped token.*/
 		private QueryToken token;
 		
+		/**List of all valid attribute names.*/
+		private static final List<String> VALID_ATTRIBUTE_NAMES = new ArrayList<>(List.of("jmbag", "firstName", "lastName"));
+
 		/**
 		 * 	Constructs a new {@link QueryLexer} with the given value.
 		 * 	@param text Text which needs to be grouped into tokens.
@@ -86,32 +100,46 @@ public class QueryParser {
 		 *	@return <code>true</code> if there is, <code>false</code> if not. 
 		 */
 		public boolean hasNext() {
-			return index + 1 <= input.length;
+			return index + 1 < input.length;
 		}
 		
 		/**
 		 *	Groups the next {@link QueryToken}.
 		 *	@return The next {@link QueryToken}.
-		 *	@throws IndexOutOfBoundsException If there is no more input.//TODO maknuti ovaj exception i vracati samo lexer?
 		 *	@throws QueryLexerException If the next token cannot be grouped. 
 		 */
 		public QueryToken nextToken() {
-			checkIndex(1);
-			index++;
-			eatSpaces();
-			if(groupOperator()) {
-				return token;
-			} else if(groupStringLiteral()) {
-				return token;
-			} else if(groupAnd()) {
-				return token;
-			} else if(groupAttributeName()) {
-				return token;
-			} else {
+			try {
+				checkIndex(1);
+				index++;
+				eatSpaces();
+				if(groupOperator()) {
+					return token;
+				} else if(groupStringLiteral()) {
+					return token;
+				} else if(groupAnd()) {
+					return token;
+				} else if(groupAttributeName()) {
+					return token;
+				} else {
+					throw new QueryLexerException("Input cannot be grouped.");
+				}
+			} catch(IndexOutOfBoundsException ex1) {
 				throw new QueryLexerException("Input cannot be grouped.");
 			}
 		}
 		
+		/**
+		 *	Skips whitespace in grouping.
+		 *  @throws IndexOutOfBoundsException If there is no more input.
+		 */
+		private void eatSpaces() {
+			while(Character.isWhitespace(input[index])) {
+				checkIndex(1);
+				index++;
+			}	
+		}
+
 		/**
 		 *	Groups a {@link QueryToken} of type OPERATOR.
 		 *	@return <code>true</code> if successful, <code>false</code> otherwise. 
@@ -169,24 +197,6 @@ public class QueryParser {
 		}
 		
 		/**
-		 *	Groups a {@link QueryToken} of type AND.
-		 *	@return <code>true</code> if successful, <code>false</code> otherwise. 
-		 *  @throws IndexOutOfBoundsException If there is no more input.
-		 */
-		private boolean groupAnd() {
-			if(Character.toUpperCase(input[index]) == 'A') {
-				checkIndex(2);
-				if(Character.toUpperCase(input[index]) == 'N' &&
-				   Character.toUpperCase(input[index]) == 'D') {
-					token = new QueryToken(QueryTokenType.AND, "AND");
-					index +=2;
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		/**
 		 *	Groups a {@link QueryToken} of type STRING_LITERAL.
 		 *	@return <code>true</code> if successful, <code>false</code> otherwise. 
 		 *  @throws IndexOutOfBoundsException If there is no more input.
@@ -207,6 +217,24 @@ public class QueryParser {
 			}
 			return false;
 		}
+
+		/**
+		 *	Groups a {@link QueryToken} of type AND.
+		 *	@return <code>true</code> if successful, <code>false</code> otherwise. 
+		 *  @throws IndexOutOfBoundsException If there is no more input.
+		 */
+		private boolean groupAnd() {
+			if(Character.toUpperCase(input[index]) == 'A') {
+				checkIndex(2);
+				if(Character.toUpperCase(input[index + 1]) == 'N' &&
+				   Character.toUpperCase(input[index + 2]) == 'D') {
+					token = new QueryToken(QueryTokenType.AND, "AND");
+					index +=2;
+					return true;
+				}
+			}
+			return false;
+		}
 		
 		/**
 		 *	Groups a {@link QueryToken} of type ATTRIBUTE_NAME.
@@ -222,21 +250,13 @@ public class QueryParser {
 			}
 			if(sb.length()!=0) {
 				index--;
+				if(!VALID_ATTRIBUTE_NAMES.contains(sb.toString())) {
+					return false;
+				}
 				token = new QueryToken(QueryTokenType.ATTRIBUTE_NAME, sb.toString());
 				return true;
 			}
 			return false;
-		}
-		
-		/**
-		 *	Skips whitespace in grouping.
-		 *  @throws IndexOutOfBoundsException If there is no more input.
-		 */
-		private void eatSpaces() {
-			while(Character.isWhitespace(input[index])) {
-				checkIndex(1);
-				index++;
-			}	
 		}
 		
 		/**
@@ -250,34 +270,6 @@ public class QueryParser {
 			if(index + offset >= input.length) {
 				throw new IndexOutOfBoundsException("No more input");
 			}
-		}
-		
-		/**
-		 * 	Class which describes the exception which
-		 *	is thrown when {@link QueryLexer}
-		 *	encounters unexpected behavior.
-		 */
-		public static class QueryLexerException extends RuntimeException{
-			
-			private static final long serialVersionUID = 1L;
-
-			/**
-			 *	Constructs a new {@link QueryLexerException} with {@code null}
-			 *	as its detail message.
-			 */
-			public QueryLexerException() {
-				super();
-			}
-
-			/**
-			 *	Constructs a new {@link QueryLexerException} with the given 
-			 *	message.
-			 *	@param message The detail message. 
-			 */
-			public QueryLexerException(String message) {
-				super(message);
-			}
-			
 		}
 		
 	}
@@ -295,8 +287,12 @@ public class QueryParser {
 		array = new ArrayList<>();
 		lexer = new QueryLexer(queryString);
 		/*Fill the array with the QueryTokens of the given queryString.*/
-		while(lexer.hasNext()) {
-			array.add(lexer.nextToken());
+		try {
+			while(lexer.hasNext()) {
+				array.add(lexer.nextToken());
+			}
+		} catch(QueryLexerException ex) {
+			throw new QueryParserException("Given query cannot be parsed.");
 		}
 	}
 	
@@ -318,7 +314,6 @@ public class QueryParser {
 		return false;
 	}
 	
-	//TODO provjeri ovo jos jednom na kraju
 	/**
 	 *	Returns the jmbag given in the direct query.
 	 *	@return The string literal given in the direct query which equals jmbag.
@@ -328,9 +323,15 @@ public class QueryParser {
 		if(!isDirectQuery()) {
 			throw new IllegalStateException("Query isn't a direct query.");
 		}
-		return array.get(2).content;
+		return array.get(2).toString();
 	}
-	
+	/**
+	 * 	Method creates a {@link List} of {@link ConditionalExpression}s which
+	 * 	represent the parsed query.
+	 * 	@return {@link List} of {@link ConditionalExpression}s.
+	 * 	@throws QueryParserException If {@link ConditionalExpression}s can't be 
+	 * 								 made from the parsed query.
+	 */
 	public List<ConditionalExpression> getQuery(){
 		List<ConditionalExpression> list = new ArrayList<>();
 		int i = 0;
@@ -364,14 +365,13 @@ public class QueryParser {
 					default	   : throw new QueryParserException();
 				}
 
-				list.add(new ConditionalExpression(getter, literal.content, comparisonOperator));
+				list.add(new ConditionalExpression(getter, literal.toString(), comparisonOperator));
 				i +=3;
 				if(i >= array.size() || array.get(i).type != QueryTokenType.AND) {
 					break;
 				}
 				i++;
 			}
-			throw new QueryParserException("Cannot parse query.");
 		}
 		if(list.size() != 0) {
 			return list;
@@ -380,20 +380,58 @@ public class QueryParser {
 	}
 	
 	
+	/**
+	 * 	Class which describes the exception which
+	 *	is thrown when {@link QueryLexer}
+	 *	encounters unexpected behavior.
+	 */
+	public static class QueryLexerException extends RuntimeException{
+		
+		private static final long serialVersionUID = 1L;
+	
+		/**
+		 *	Constructs a new {@link QueryLexerException} with {@code null}
+		 *	as its detail message.
+		 */
+		public QueryLexerException() {
+			super();
+		}
+	
+		/**
+		 *	Constructs a new {@link QueryLexerException} with the given 
+		 *	message.
+		 *	@param message The detail message. 
+		 */
+		public QueryLexerException(String message) {
+			super(message);
+		}
+	}
+
+	/**
+	 * 	Class which describes the exception which
+	 *	is thrown when {@link QueryParser}
+	 *	encounters unexpected behavior.
+	 */
 	public class QueryParserException extends RuntimeException{
 
 		private static final long serialVersionUID = 1L;
 
+		/**
+		 *	Constructs a new {@link QueryParserException} with {@code null}
+		 *	as its detail message.
+		 */
 		public QueryParserException() {
 			super();
 		}
 
+		/**
+		 *	Constructs a new {@link QueryParserException} with the given 
+		 *	message.
+		 *	@param message The detail message. 
+		 */
 		public QueryParserException(String message) {
 			super(message);
 		}
-
-		
-		
 	}
 	
 }

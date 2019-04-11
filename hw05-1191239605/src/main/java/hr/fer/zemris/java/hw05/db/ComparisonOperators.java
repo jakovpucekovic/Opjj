@@ -13,73 +13,37 @@ public class ComparisonOperators {
 	 *  {@link IComparisonOperator} which signals that the first {@link String}
 	 *  is smaller than the second {@link String}.
 	 */
-	public static final IComparisonOperator LESS = new IComparisonOperator() {
-		
-		@Override
-		public boolean satisfied(String value1, String value2) {
-			return value1.compareTo(value2) < 0;
-		}
-	};
+	public static final IComparisonOperator LESS = (v1, v2) -> {return v1.compareTo(v2) < 0;};
 	
 	/**
 	 *  {@link IComparisonOperator} which signals that the first {@link String}
 	 *  is smaller than or equal to the second {@link String}.
 	 */
-	public static final IComparisonOperator LESS_OR_EQUAL = new IComparisonOperator() {
-		
-		@Override
-		public boolean satisfied(String value1, String value2) {
-			return value1.compareTo(value2) <= 0;
-		}
-	};
+	public static final IComparisonOperator LESS_OR_EQUAL = (v1, v2) -> {return v1.compareTo(v2) <= 0;};
 
 	/**
 	 *  {@link IComparisonOperator} which signals that the first {@link String}
 	 *  is greater than the second {@link String}.
 	 */
-	public static final IComparisonOperator GREATER = new IComparisonOperator() {
-		
-		@Override
-		public boolean satisfied(String value1, String value2) {
-			return value1.compareTo(value2) > 0;
-		}
-	};
+	public static final IComparisonOperator GREATER = (v1, v2) -> {return v1.compareTo(v2) > 0;};
 	
 	/**
 	 *  {@link IComparisonOperator} which signals that the first {@link String}
 	 *  is greater than or equal to the second {@link String}.
 	 */
-	public static final IComparisonOperator GREATER_OR_EQUAL = new IComparisonOperator() {
-		
-		@Override
-		public boolean satisfied(String value1, String value2) {
-			return value1.compareTo(value2) >= 0;
-		}
-	};
+	public static final IComparisonOperator GREATER_OR_EQUAL = (v1, v2) -> {return v1.compareTo(v2) >= 0;};
 	
 	/**
 	 *  {@link IComparisonOperator} which signals that the first {@link String}
 	 *  is equal to the second {@link String}.
 	 */
-	public static final IComparisonOperator EQUALS = new IComparisonOperator() {
-		
-		@Override
-		public boolean satisfied(String value1, String value2) {
-			return value1.compareTo(value2) == 0;
-		}
-	};
+	public static final IComparisonOperator EQUALS = (v1, v2) -> {return v1.compareTo(v2) == 0;};
 	
 	/**
 	 *  {@link IComparisonOperator} which signals that the first {@link String}
 	 *  is not equal to the second {@link String}.
 	 */
-	public static final IComparisonOperator NOT_EQUALS = new IComparisonOperator() {
-		
-		@Override
-		public boolean satisfied(String value1, String value2) {
-			return value1.compareTo(value2) != 0;
-		}
-	};
+	public static final IComparisonOperator NOT_EQUALS = (v1, v2) -> {return v1.compareTo(v2) != 0;};
 	
 	/**
 	 *	{@link IComparisonOperator} which signals that the first {@link String}
@@ -93,6 +57,12 @@ public class ComparisonOperators {
 		
 		@Override
 		public boolean satisfied(String value1, String value2) {
+			if(value1.equals(value2)) {
+				return true;
+			}
+			if(value2.equals("")) {
+				return false;
+			}
 			/*If the first and last occurrence of the * aren't the same,
 			  there is more than 1 * character.*/
 			if(value2.indexOf("*") != value2.lastIndexOf("*")) {
