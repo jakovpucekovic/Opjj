@@ -33,6 +33,7 @@ public class Util {
 		for (int i = 0, s = keyText.length() ; i < s; i += 2) {
 			int hexPrikazanUIntu =((Character.digit(keyText.charAt(i), 16) * 16 + Character.digit(keyText.charAt(i + 1), 16)));
 			byteArray[i/2] = (byte)  hexPrikazanUIntu;
+			
 		}
 		
 		return byteArray;
@@ -49,12 +50,19 @@ public class Util {
 		StringBuilder sb = new StringBuilder();
 		
 		for(var i : bytearray) {
-			String s = Integer.toBinaryString(i);
-			if(i < 0) {
-				s = s.substring(24);
-			}
-			String s2 = Integer.toString(Integer.parseInt(s, 2), 16);
-			sb.append("0123456789abcdef".contains(s2)? "0" + s2 : s2);
+			//prva verzija00
+//			String s = Integer.toBinaryString(i);
+//			if(i < 0) {
+//				s = s.substring(24);
+//			}
+//			String s2 = Integer.toString(Integer.parseInt(s, 2), 16);
+//			sb.append("0123456789abcdef".contains(s2)? "0" + s2 : s2);
+//			
+//			System.out.println(i);
+//			System.out.println(Integer.toString(i & 0xff, 16));
+			String toAppend = Integer.toString(i & 0xff, 16);
+			sb.append(toAppend.length() == 1 ? "0" + toAppend : toAppend);
+			
 		}
 		return sb.toString();
 		
