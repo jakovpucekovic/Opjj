@@ -1,17 +1,13 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import hr.fer.zemris.java.hw06.Util;
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -49,15 +45,17 @@ public class HexdumpCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
+		/*Checks if arguments is blank*/
+		if(arguments.isBlank()) {
+			env.writeln("No arguments given.");
+			return ShellStatus.CONTINUE;
+		}
+		
+		/*Check if valid number of arguments given*/
 		String[] args = arguments.split("\\s+");
 		if(args.length != 1 && args.length != 2) {
 			env.writeln("Invalid number of arguments given.");
 			return ShellStatus.CONTINUE;	
-		}
-		
-		if(args.length == 2 && !Charset.isSupported(args[1])) {
-			env.write("Given charset isn't supported.");
-			return ShellStatus.CONTINUE;
 		}
 		
 		Path file;
@@ -65,28 +63,36 @@ public class HexdumpCommand implements ShellCommand{
 		
 		try {
 			file = Paths.get(ParserUtil.parse(args[0]));
-			charset = Charset.forName(args[1]);
+			
+			/*Check if given charset is supported*/
+			if(args.length == 2) {
+				if(Charset.isSupported(args[1])) {
+					charset = Charset.forName(args[1]);
+				} else {
+					env.writeln("Given charset isn't supported.");
+					return ShellStatus.CONTINUE;
+				}
+			}	
 		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
 
+		/*Hexdump only works on files*/
 		if(!file.toFile().isFile()) {
 			env.writeln("Given argument is not a file.");
 			return ShellStatus.CONTINUE;
 		}
 		
-		try {
-			BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file)); 
+		/*Read file format it and print*/
+		try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file))){
 			byte[] readData = new byte[16];
 			int counter = 0;
 			int bytesRead = bis.read(readData, 0, 16);
 			while(bytesRead != -1) {
 				env.writeln(formatOutput(readData, bytesRead ,counter++));
 				bytesRead = bis.read(readData, 0, 16);
-			}
-			
-			bis.close();
+			}			
 		} catch (IOException e) {
 			throw new ShellIOException("I think i throw"); //TODO
 		}	
@@ -104,11 +110,14 @@ public class HexdumpCommand implements ShellCommand{
 	private String formatOutput(byte[] data, int writeThisMany, int n) {
 		StringBuilder sb = new StringBuilder();
 		StringBuilder text = new StringBuilder();
+		
+		/*append memory location*/
 		String hexNumber = Integer.toHexString(n * 16);
 		sb.append("0".repeat(8-hexNumber.length()));
 		sb.append(hexNumber);
 		sb.append(": ");
 		
+		/*append hex chars to sb and text in these chars to text*/
 		for(int i = 0; i < 16; ++i) {
 			if(i < writeThisMany) {
 				sb.append(getHex(data[i]));

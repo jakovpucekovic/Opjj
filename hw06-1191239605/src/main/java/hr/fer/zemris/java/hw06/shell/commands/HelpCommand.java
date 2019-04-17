@@ -39,6 +39,7 @@ public class HelpCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
+		/*called without arguments*/
 		if(arguments.isBlank()) {
 			Set<String> commands = env.commands().keySet();
 			env.writeln("Supported commands are: ");
@@ -46,6 +47,7 @@ public class HelpCommand implements ShellCommand{
 				env.writeln("\t" + i);
 			}
 		} else {
+			/*print command info if command exist*/
 			if(env.commands().containsKey(arguments)) {
 				env.writeln("Description of command " + arguments + ":");
 				List<String> commandDescritpion = env.commands().get(arguments).getCommandDescription();

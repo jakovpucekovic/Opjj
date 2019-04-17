@@ -2,9 +2,7 @@ package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
-
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ParserUtil;
@@ -60,6 +57,7 @@ public class LsCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
+		/*Check if arguments are blank*/ //TODO jel se moze pozvati bez argumenata
 		if(arguments.isBlank()) {
 			env.writeln("Invalid number of arguments given.");
 			return ShellStatus.CONTINUE;
@@ -74,13 +72,14 @@ public class LsCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 
+		/*Ls only works on directories*/
 		if(!directory.toFile().isDirectory()) {
 			env.writeln("Given argument is not a directory.");
 			return ShellStatus.CONTINUE;
 		}
 		
-		try {//TODO ne ispisivati trenutni direktorij
-			Stream<Path> stream = Files.walk(directory, 1, FileVisitOption.FOLLOW_LINKS);
+		try {
+			Stream<Path> stream = Files.list(directory);
 			stream.sorted((p1,p2)-> p1.compareTo(p2)).map(path -> createPrintableData(path)).forEach(str -> env.writeln(str));
 			stream.close();
 		} catch (IOException e) {
@@ -99,6 +98,7 @@ public class LsCommand implements ShellCommand{
 	private String createPrintableData(Path path) {
 		StringBuilder sb = new StringBuilder();
 		
+		/*Get flags*/
 		File file = path.toFile();
 		sb.append(file.isDirectory() ? 'd' : '-');
 		sb.append(file.canRead() 	? 'r' : '-');
@@ -106,10 +106,11 @@ public class LsCommand implements ShellCommand{
 		sb.append(file.canExecute()  ? 'x' : '-');
 		sb.append(" ");
 		
-		sb.append(String.format("%10d", file.getTotalSpace()));
+		/*Get size*/
+		sb.append(String.format("%10d", file.length()));
 		sb.append(" ");
 		
-		
+		/*Get date and time*/
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		BasicFileAttributeView faView = Files.getFileAttributeView(path, BasicFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
 		BasicFileAttributes attributes;
@@ -123,6 +124,7 @@ public class LsCommand implements ShellCommand{
 		sb.append(formattedDateTime);
 		sb.append(" ");
 		
+		/*Get name*/
 		sb.append(path.getFileName());
 		
 		return sb.toString();

@@ -40,8 +40,9 @@ public class MkdirCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
+		/*Check if arguments is blank*/
 		if(arguments.isBlank()) {
-			env.writeln("Invalid argument given.");
+			env.writeln("No path given.");
 			return ShellStatus.CONTINUE;
 		}
 		
@@ -54,6 +55,13 @@ public class MkdirCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 		
+		/*Checks if directory already exists*/
+		if(directory.toFile().exists()) {
+			env.writeln("Directory already exists.");
+			return ShellStatus.CONTINUE;
+		}
+		
+		/*Create directories*/
 		try {
 			Files.createDirectories(directory);
 		} catch (Exception e) {

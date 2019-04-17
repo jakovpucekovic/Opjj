@@ -1,20 +1,13 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
-import java.util.zip.ZipOutputStream;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ParserUtil;
@@ -52,13 +45,9 @@ public class CopyCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		if(arguments.isBlank()) {
-			env.writeln("Invalid number of arguments given.");
-			return ShellStatus.CONTINUE;
-		}
-		
+		/*Must get 2 arguments*/
 		String[] args = arguments.split("\\s+");
-		if(args.length != 1 && args.length != 2) {
+		if(args.length != 2) {
 			env.writeln("Invalid number of arguments given.");
 			return ShellStatus.CONTINUE;	
 		}
@@ -66,6 +55,7 @@ public class CopyCommand implements ShellCommand{
 		Path whatToCopy;
 		Path whereToCopy;
 		
+		/*Parse arguments and get Paths*/
 		try {
 			whatToCopy = Paths.get(ParserUtil.parse(args[0]));
 			whereToCopy = Paths.get(ParserUtil.parse(args[1]));
@@ -74,32 +64,51 @@ public class CopyCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 
+		/*If whatToCopy is not a file*/
 		if(!whatToCopy.toFile().isFile()) {
 			env.writeln("Given argument is not a file.");
 			return ShellStatus.CONTINUE;
 		}
 		
+		/*If where to copy is a directory add the file name from whatToCopy*/
 		if(whereToCopy.toFile().isDirectory()) {
-			whereToCopy = Path.of(whereToCopy.toString() + whatToCopy.getFileName());			
+			whereToCopy = Path.of(whereToCopy.toString() + "/" + whatToCopy.getFileName());			
+		}
+
+		/*Cannot copy to itself*/
+		try {
+			if(whereToCopy.toRealPath().equals(whatToCopy.toRealPath())) {
+				env.writeln("Cannot copy \"" + whatToCopy.toString() + "\" to itself.");
+				return ShellStatus.CONTINUE;
+			}
+		} catch (IOException e1) {
+			env.writeln("Cannot resolve paths.");
+			return ShellStatus.CONTINUE;
 		}
 		
-//		try {
-//			Files.createFile(whereToCopy);
-//		} catch (IOException e) {
-//			throw new ShellIOException("I think i throw"); //TODO
-//		}	
-		
-		try {
-			InputStream is = Files.newInputStream(whatToCopy);
-			OutputStream os = Files.newOutputStream(whereToCopy);//vidi za transferTo TODO
-			byte[] buffer = new byte[4000];
-			int dataRead = is.read(buffer, 0, 4000);
-			while(dataRead != -1) {
-				os.write(buffer, 0, dataRead);
-				dataRead = is.read(buffer, 0, 4000);
+		/*If file already exists ask for further instructions*/
+		if(whereToCopy.toFile().exists()) {
+			env.writeln("File exists, do you want to overwrite it (Y/n) ?");
+			env.write(env.getPromptSymbol() + " ");
+			String answer = env.readLine().toLowerCase();
+			if(!answer.equals("n") && !answer.equals("y") && !answer.equals("")) {
+				env.writeln("Invalid argument recieved.");
+				return ShellStatus.CONTINUE;
+			} else if(answer.equals("n")){
+				env.writeln("Copy aborted.");
+				return ShellStatus.CONTINUE;
 			}
-			is.close();
-			os.close();
+		}
+			
+		/*Read from one file and write to the other.*/
+		try(BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(whatToCopy));
+			BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(whereToCopy))){
+			byte[] buffer = new byte[1024];
+			int dataRead = bis.read(buffer, 0, 1024);
+			while(dataRead != -1) {
+				bos.write(buffer, 0, dataRead);
+				dataRead = bis.read(buffer, 0, 1024);
+			}
 		} catch (IOException e) {
 			throw new ShellIOException("I think i throw"); //TODO
 		}

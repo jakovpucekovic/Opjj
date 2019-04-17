@@ -46,34 +46,36 @@ public class CatCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
+		/*Must get 2 arguments*/
 		String[] args = arguments.split("\\s+");
 		if(args.length  != 1 && args.length != 2) {
 			env.writeln("Wrong number of arguments given.");
 			return ShellStatus.CONTINUE;
 		}
 		
-		Path directory;
+		Path file;
 		
 		try {
-			directory = Paths.get(arguments);
+			file = Paths.get(arguments);
 		} catch (InvalidPathException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
 
-		if(directory.toFile().isDirectory()) {
+		/*Check if directory*/
+		if(file.toFile().isDirectory()) {
 			env.writeln("Given argument is a directory.");
 			return ShellStatus.CONTINUE;
 		}
 		
+		/*Get charset*/
 		Charset charset = Charset.defaultCharset();
 		if(args.length == 2 && Charset.isSupported(args[1])) {
 			charset = Charset.forName(args[1]);
 		}
 		
-		
-		try {
-			BufferedReader br = Files.newBufferedReader(directory, charset);
+		/*Read from file and write to screen*/
+		try (BufferedReader br = Files.newBufferedReader(file, charset)){
 			String toWrite = br.readLine();
 			while(toWrite != null) {
 				env.writeln(toWrite);
@@ -101,6 +103,5 @@ public class CatCommand implements ShellCommand{
 	public List<String> getCommandDescription() {
 		return description;
 	}
-
 
 }

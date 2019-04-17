@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.hw06.shell;
 
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -63,7 +64,11 @@ public class MyShellEnvironment implements Environment{
 	 */
 	@Override
 	public String readLine() throws ShellIOException {
-		return sc.nextLine();//TODO exceptioni
+		try {
+			return sc.nextLine();
+		} catch (NoSuchElementException ex) {
+			throw new ShellIOException(ex.getMessage());
+		}
 	}
 
 	/**

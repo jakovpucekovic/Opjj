@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -123,6 +122,7 @@ public class TreeCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
+		/*Check if arguments is blank*/
 		if(arguments.isBlank()) {
 			env.writeln("Invalid number of arguments given.");
 			return ShellStatus.CONTINUE;
@@ -137,6 +137,7 @@ public class TreeCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 
+		/*Tree only works on directories*/
 		if(!directory.toFile().isDirectory()) {
 			env.writeln("Given argument is not a directory.");
 			return ShellStatus.CONTINUE;
