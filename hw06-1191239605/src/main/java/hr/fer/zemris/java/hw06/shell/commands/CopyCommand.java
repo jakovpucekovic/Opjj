@@ -11,23 +11,45 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.zip.ZipOutputStream;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
+import hr.fer.zemris.java.hw06.shell.ParserUtil;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellIOException;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class MyShellCommand.
- * 	TODO javadoc
+ *	Class {@link CopyCommand} which implements a {@link ShellCommand}
+ *	and copies the given file to the specified directory when executed.
+ *
  * 	@author Jakov Pucekovic
+ * 	@version 1.0
  */
 public class CopyCommand implements ShellCommand{
 
+	/**{@link List} of {@link String} which contains the description of the command.*/
+	private static List<String> description;
 	
+	/**
+	 * 	Constructs a new {@link CopyCommand}.
+	 */
+	public CopyCommand() {
+		description = new ArrayList<>();
+		description.add("Command which makes a copy of the given file.");
+		description.add("Usage: copy file directory - makes a copy of file1 in directory");
+		description.add("Usage: copy file1 file2 - makes a copy of file1 named file2");
+	}
+	
+	/**
+	 * 	Executes this {@link ShellCommand} which copies the given file.
+	 * 	@param env The {@link Environment} in which this {@link CopyCommand} is executed.
+	 * 	@param arguments String containing path to the file and directory or filename of where to copy.
+	 * 	@return {@link ShellStatus} which signals to continue with the work.
+	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		if(arguments.isBlank()) {
@@ -45,9 +67,9 @@ public class CopyCommand implements ShellCommand{
 		Path whereToCopy;
 		
 		try {
-			whatToCopy = Paths.get(args[0]);
-			whereToCopy = Paths.get(args[1]);
-		} catch (InvalidPathException ex) {
+			whatToCopy = Paths.get(ParserUtil.parse(args[0]));
+			whereToCopy = Paths.get(ParserUtil.parse(args[1]));
+		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
@@ -85,15 +107,21 @@ public class CopyCommand implements ShellCommand{
 		return ShellStatus.CONTINUE;
 	}
 
+	/**
+	 * 	{@inheritDoc}
+	 */
 	@Override
 	public String getCommandName() {
 		return "copy";
 	}
 
+	
+	/**
+	 * 	{@inheritDoc}
+	 */
 	@Override
 	public List<String> getCommandDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return description;
 	}
 
 

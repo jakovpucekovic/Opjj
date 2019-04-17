@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
+import hr.fer.zemris.java.hw06.shell.ParserUtil;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellIOException;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
@@ -122,12 +123,16 @@ public class TreeCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-//TODO jel se moze pozvat bez argumenata?
+		if(arguments.isBlank()) {
+			env.writeln("Invalid number of arguments given.");
+			return ShellStatus.CONTINUE;
+		}
+		
 		Path directory;
 		
 		try {
-			directory = Paths.get(arguments);
-		} catch (InvalidPathException ex) {
+			directory = Paths.get(ParserUtil.parse(arguments));
+		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}

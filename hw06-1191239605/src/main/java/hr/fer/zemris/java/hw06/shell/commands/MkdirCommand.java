@@ -1,23 +1,43 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
+import hr.fer.zemris.java.hw06.shell.ParserUtil;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class MyShellCommand.
- * 	TODO javadoc
+ *	Class {@link MkdirCommand} which implements a {@link ShellCommand}
+ *	and creates the given directory structure when executed.
+ *
  * 	@author Jakov Pucekovic
+ * 	@version 1.0
  */
 public class MkdirCommand implements ShellCommand{
-
 	
+	/**{@link List} of {@link String} which contains the description of the command.*/
+	private static List<String> description;
+	
+	/**
+	 * 	Constructs a new {@link MkdirCommand}.
+	 */
+	public MkdirCommand() {
+		description = new ArrayList<>();
+		description.add("Command which creates the given directory structure.");
+		description.add("Usage: mkdir directory");
+	}
+	
+	/**
+	 * 	Executes this {@link ShellCommand} which print a creates the given directory structure.
+	 * 	@param env The {@link Environment} in which this {@link MkdirCommand} is executed.
+	 * 	@param arguments Path to the directory.
+	 * 	@return {@link ShellStatus} which signals to continue with the work.
+	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		if(arguments.isBlank()) {
@@ -25,12 +45,11 @@ public class MkdirCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 		
-		
 		Path directory;
 		
 		try {
-			directory = Paths.get(arguments);
-		} catch (InvalidPathException ex) {
+			directory = Paths.get(ParserUtil.parse(arguments));
+		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
@@ -44,15 +63,21 @@ public class MkdirCommand implements ShellCommand{
 		return ShellStatus.CONTINUE;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getCommandName() {
 		return "mkdir";
 	}
 
+	
+	/**
+	 *	{@inheritDoc} 
+	 */
 	@Override
 	public List<String> getCommandDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return description;
 	}
 
 

@@ -3,13 +3,12 @@ package hr.fer.zemris.java.hw06.shell.commands;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
@@ -17,13 +16,34 @@ import hr.fer.zemris.java.hw06.shell.ShellIOException;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class MyShellCommand.
- * 	TODO javadoc
+ *	Class {@link CatCommand} which implements a {@link ShellCommand}
+ *	and prints content of the given file when executed.
+ *
  * 	@author Jakov Pucekovic
+ * 	@version 1.0
  */
 public class CatCommand implements ShellCommand{
 
 	
+	/**{@link List} of {@link String} which contains the description of the command.*/
+	private static List<String> description;
+	
+	/**
+	 * 	Constructs a new {@link TreeCommand}.
+	 */
+	public CatCommand() {
+		description = new ArrayList<>();
+		description.add("Command which prints contents of the given file.");
+		description.add("Usage: cat file charset(optional)");
+	}
+	
+	/**
+	 * 	Executes this {@link ShellCommand} which print a tree structure of the given
+	 * 	directory.
+	 * 	@param env The {@link Environment} in which this {@link CatCommand} is executed.
+	 * 	@param arguments String containing path to the file and {@link Charset} with which the file should be read.
+	 * 	@return {@link ShellStatus} which signals to continue with the work.
+	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
 		String[] args = arguments.split("\\s+");
@@ -66,15 +86,20 @@ public class CatCommand implements ShellCommand{
 		return ShellStatus.CONTINUE;
 	}
 
+	/**
+	 * 	{@inheritDoc}
+	 */
 	@Override
 	public String getCommandName() {
 		return "cat";
 	}
 
+	/**
+	 *	{@inheritDoc} 
+	 */
 	@Override
 	public List<String> getCommandDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return description;
 	}
 
 

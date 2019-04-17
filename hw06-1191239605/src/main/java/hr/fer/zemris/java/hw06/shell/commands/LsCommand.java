@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 
 import hr.fer.zemris.java.hw06.shell.Environment;
+import hr.fer.zemris.java.hw06.shell.ParserUtil;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellIOException;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
@@ -67,8 +68,8 @@ public class LsCommand implements ShellCommand{
 		Path directory;
 		
 		try {
-			directory = Paths.get(arguments);
-		} catch (InvalidPathException ex) {
+			directory = Paths.get(ParserUtil.parse(arguments));
+		} catch (IllegalArgumentException ex1) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
@@ -78,7 +79,7 @@ public class LsCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 		
-		try {
+		try {//TODO ne ispisivati trenutni direktorij
 			Stream<Path> stream = Files.walk(directory, 1, FileVisitOption.FOLLOW_LINKS);
 			stream.sorted((p1,p2)-> p1.compareTo(p2)).map(path -> createPrintableData(path)).forEach(str -> env.writeln(str));
 			stream.close();
