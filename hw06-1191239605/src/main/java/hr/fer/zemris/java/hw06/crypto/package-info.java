@@ -6,4 +6,4 @@
  *
  * 	@author Jakov Pucekovic
  *	@since 1.0
- */package hr.fer.zemris.java.hw06;
+ */package hr.fer.zemris.java.hw06.crypto;

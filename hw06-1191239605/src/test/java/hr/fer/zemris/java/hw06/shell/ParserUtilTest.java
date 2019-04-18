@@ -12,7 +12,7 @@ public class ParserUtilTest {
 		
 		assertEquals("", ParserUtil.parse(""));
 		assertEquals("Pero", ParserUtil.parse("Pero"));
-		assertEquals("Pero", ParserUtil.parse("\"Pero"));
+		assertEquals("Pero", ParserUtil.parse("\"Pero\""));
 		assertEquals("C:/Program Files/Program1/info.txt", ParserUtil.parse("\"C:/Program Files/Program1/info.txt\""));
 		
 		assertThrows(IllegalArgumentException.class, () -> ParserUtil.parse("\"C:\\fi le\".txt"));

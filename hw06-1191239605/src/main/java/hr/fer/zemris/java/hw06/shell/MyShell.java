@@ -18,7 +18,7 @@ public class MyShell {
 	private static SortedMap<String, ShellCommand> commands;
 	
 	/**
-	 * 	Method which models the actuall shell.
+	 * 	Method which models the actual shell.
 	 * 	@param args Not used.
 	 */
 	public static void main(String[] args) {

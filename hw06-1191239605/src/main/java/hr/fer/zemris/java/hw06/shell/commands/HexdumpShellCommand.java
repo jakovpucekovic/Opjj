@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import hr.fer.zemris.java.hw06.Util;
+import hr.fer.zemris.java.hw06.crypto.Util;
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
@@ -32,7 +32,7 @@ public class HexdumpShellCommand implements ShellCommand{
 	public HexdumpShellCommand() {
 		description = new ArrayList<>();
 		description.add("Command which prints contents of the given file in hexadecimal values.");
-		description.add("Usage: hexdump directory");
+		description.add("Usage: hexdump file");
 	}
 	
 	/**

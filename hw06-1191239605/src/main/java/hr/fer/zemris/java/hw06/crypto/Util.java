@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw06;
+package hr.fer.zemris.java.hw06.crypto;
 
 /**
  *	Class {@link Util} which allows for conversion from arrays 
@@ -21,6 +21,7 @@ public class Util {
 		if(keyText.length() == 0) {
 			return new byte[0];
 		}
+		keyText = keyText.toLowerCase();
 		if(keyText.length() % 2 != 0) {
 			throw new IllegalArgumentException();
 		}
@@ -28,7 +29,12 @@ public class Util {
 		byte[] byteArray = new byte[keyText.length()/2];
 
 		for (int i = 0, s = keyText.length() ; i < s; i += 2) {
-			byteArray[i/2] = (byte) (Character.digit(keyText.charAt(i), 16) * 16 + Character.digit(keyText.charAt(i + 1), 16));
+			char c1 = keyText.charAt(i);
+			char c2 = keyText.charAt(i + 1);
+			if("0123456789abcdef".indexOf(c1) == -1 || "0123456789abcdef".indexOf(c2) == -1) {
+				throw new IllegalArgumentException();
+			}
+			byteArray[i/2] = (byte) (Character.digit(c1, 16) * 16 + Character.digit(c2, 16));
 		}
 		
 		return byteArray;
