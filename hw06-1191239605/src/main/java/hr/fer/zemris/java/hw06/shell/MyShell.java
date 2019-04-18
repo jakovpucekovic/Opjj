@@ -27,20 +27,23 @@ public class MyShell {
 		env.writeln("Welcome to MyShell v 1.0 ");
 		
 		ShellStatus status;
-	
-		do {
-			String l = readLineOrLines();
-			String commandName = l.split("\\s+")[0];
-			String arguments = l.substring(commandName.length()).trim();
-			if(!commands.containsKey(commandName)) {
-				env.writeln("Unknown command.");
-				status = ShellStatus.CONTINUE;
-				continue;
-			}
-			ShellCommand command = commands.get(commandName);
-			status = command.executeCommand(env, arguments);
-		} while(status != ShellStatus.TERMINATE);
-	
+		
+		try {
+			do {
+				String l = readLineOrLines();
+				String commandName = l.split("\\s+")[0];
+				String arguments = l.substring(commandName.length()).trim();
+				if(!commands.containsKey(commandName)) {
+					env.writeln("Unknown command.");
+					status = ShellStatus.CONTINUE;
+					continue;
+				}
+				ShellCommand command = commands.get(commandName);
+				status = command.executeCommand(env, arguments);
+			} while(status != ShellStatus.TERMINATE);
+		} catch(ShellIOException ex) {
+			System.exit(1);
+		}
 	}
 	
 	/**

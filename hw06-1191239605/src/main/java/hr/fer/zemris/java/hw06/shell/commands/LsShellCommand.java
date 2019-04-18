@@ -11,32 +11,32 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
-import hr.fer.zemris.java.hw06.shell.ParserUtil;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
-import hr.fer.zemris.java.hw06.shell.ShellIOException;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class {@link LsCommand} which implements a {@link ShellCommand}
+ *	Class {@link LsShellCommand} which implements a {@link ShellCommand}
  *	and writes a list of all files and directories to the given {@link Environment}.
  *
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-public class LsCommand implements ShellCommand{
+public class LsShellCommand implements ShellCommand{
 
 	/**{@link List} of {@link String} which contains the description of the command.*/
 	private static List<String> description;
 	
 	/**
-	 * 	Constructs a new {@link LsCommand}.
+	 * 	Constructs a new {@link LsShellCommand}.
 	 */
-	public LsCommand() {
+	public LsShellCommand() {
 		description = new ArrayList<>();
 		description.add("Command which prints the information on the directories and files contained in the given directory.");
 		description.add("Given informations are flags, size of the files and date and time of creation.");
@@ -51,13 +51,13 @@ public class LsCommand implements ShellCommand{
 	
 	/**
 	 * 	Executes this {@link ShellCommand} which writes information of the contents of the given directory.
-	 * 	@param env The {@link Environment} in which this {@link LsCommand} is executed.
+	 * 	@param env The {@link Environment} in which this {@link LsShellCommand} is executed.
 	 * 	@param arguments Path to the directory.
 	 * 	@return {@link ShellStatus} which signals to continue with the work.
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		/*Check if arguments are blank*/ //TODO jel se moze pozvati bez argumenata
+		/*Check if arguments are blank*/
 		if(arguments.isBlank()) {
 			env.writeln("Invalid number of arguments given.");
 			return ShellStatus.CONTINUE;
@@ -78,12 +78,14 @@ public class LsCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 		
-		try {
-			Stream<Path> stream = Files.list(directory);
-			stream.sorted((p1,p2)-> p1.compareTo(p2)).map(path -> createPrintableData(path)).forEach(str -> env.writeln(str));
-			stream.close();
-		} catch (IOException e) {
-			throw new ShellIOException("I think i throw"); //TODO
+		try(Stream<Path> stream = Files.list(directory)){
+			List<Path> list = stream.sorted((p1,p2)-> p1.compareTo(p2)).collect(Collectors.toList());
+			for(var i : list) {
+				env.writeln(createPrintableData(i));
+			}
+		} catch (IOException ex) {
+			env.writeln("Files can't be read.");
+			return ShellStatus.CONTINUE;
 		}	
 		
 		return ShellStatus.CONTINUE;
@@ -94,8 +96,9 @@ public class LsCommand implements ShellCommand{
 	 *	file/directory at the given path.
 	 *	@param path The directory/file on which we need information.
 	 *	@return {@link String} in format "flags size dateOfCreation timeOfCreation name". 
+	 * 	@throws IOException If some data can't be read.
 	 */
-	private String createPrintableData(Path path) {
+	private String createPrintableData(Path path) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		
 		/*Get flags*/
@@ -114,11 +117,8 @@ public class LsCommand implements ShellCommand{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		BasicFileAttributeView faView = Files.getFileAttributeView(path, BasicFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
 		BasicFileAttributes attributes;
-		try {
-			attributes = faView.readAttributes();
-		} catch (IOException e) {
-			 return ""; //TODO
-		}
+		attributes = faView.readAttributes();
+		
 		FileTime fileTime = attributes.creationTime();
 		String formattedDateTime = sdf.format(new Date(fileTime.toMillis()));
 		sb.append(formattedDateTime);
@@ -143,8 +143,7 @@ public class LsCommand implements ShellCommand{
 	 */
 	@Override
 	public List<String> getCommandDescription() {
-		return description;
+		return Collections.unmodifiableList(description);
 	}
-
 
 }

@@ -6,16 +6,16 @@ import java.util.Scanner;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import hr.fer.zemris.java.hw06.shell.commands.CatCommand;
-import hr.fer.zemris.java.hw06.shell.commands.CharsetsCommand;
-import hr.fer.zemris.java.hw06.shell.commands.CopyCommand;
+import hr.fer.zemris.java.hw06.shell.commands.CatShellCommand;
+import hr.fer.zemris.java.hw06.shell.commands.CharsetsShellCommand;
+import hr.fer.zemris.java.hw06.shell.commands.CopyShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.ExitShellCommand;
-import hr.fer.zemris.java.hw06.shell.commands.HelpCommand;
-import hr.fer.zemris.java.hw06.shell.commands.HexdumpCommand;
-import hr.fer.zemris.java.hw06.shell.commands.LsCommand;
-import hr.fer.zemris.java.hw06.shell.commands.MkdirCommand;
-import hr.fer.zemris.java.hw06.shell.commands.SymbolCommand;
-import hr.fer.zemris.java.hw06.shell.commands.TreeCommand;
+import hr.fer.zemris.java.hw06.shell.commands.HelpShellCommand;
+import hr.fer.zemris.java.hw06.shell.commands.HexdumpShellCommand;
+import hr.fer.zemris.java.hw06.shell.commands.LsShellCommand;
+import hr.fer.zemris.java.hw06.shell.commands.MkdirShellCommand;
+import hr.fer.zemris.java.hw06.shell.commands.SymbolShellCommand;
+import hr.fer.zemris.java.hw06.shell.commands.TreeShellCommand;
 
 /**
  *	Class MyShellEnvironment which gives an implementation of {@link Environment}.
@@ -45,17 +45,17 @@ public class MyShellEnvironment implements Environment{
 	 * 	all known commands.
 	 */
 	public MyShellEnvironment(){
-		commands = new TreeMap<>();//TODO mapa koju vracas se ne smije moci mjenjati
+		commands = new TreeMap<>();
 		commands.put("exit"		, new ExitShellCommand());
-		commands.put("symbol"	, new SymbolCommand());
-		commands.put("help"		, new HelpCommand());
-		commands.put("tree"		, new TreeCommand());
-		commands.put("mkdir"	, new MkdirCommand());
-		commands.put("ls"		, new LsCommand());
-		commands.put("cat"		, new CatCommand());
-		commands.put("charsets"	, new CharsetsCommand());
-		commands.put("hexdump"	, new HexdumpCommand());		
-		commands.put("copy"		, new CopyCommand());		
+		commands.put("symbol"	, new SymbolShellCommand());
+		commands.put("help"		, new HelpShellCommand());
+		commands.put("tree"		, new TreeShellCommand());
+		commands.put("mkdir"	, new MkdirShellCommand());
+		commands.put("ls"		, new LsShellCommand());
+		commands.put("cat"		, new CatShellCommand());
+		commands.put("charsets"	, new CharsetsShellCommand());
+		commands.put("hexdump"	, new HexdumpShellCommand());		
+		commands.put("copy"		, new CopyShellCommand());		
 		
 	}
 	
@@ -66,7 +66,7 @@ public class MyShellEnvironment implements Environment{
 	public String readLine() throws ShellIOException {
 		try {
 			return sc.nextLine();
-		} catch (NoSuchElementException ex) {
+		} catch (NoSuchElementException | IllegalStateException ex) {
 			throw new ShellIOException(ex.getMessage());
 		}
 	}

@@ -33,7 +33,9 @@ public interface Environment {
 	void writeln(String text) throws ShellIOException;
 	
 	/**
-	 * TODO javadoc
+	 * 	Returns an unmodifiable {@link SortedMap} which contains all
+	 * 	command as values and their names as keys.
+	 * 	@return Unmodifiable {@link SortedMap} of commands and their names.
 	 */
 	SortedMap<String, ShellCommand> commands();
 	

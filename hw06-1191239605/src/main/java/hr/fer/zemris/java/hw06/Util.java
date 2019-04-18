@@ -1,13 +1,9 @@
 package hr.fer.zemris.java.hw06;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.file.Files;
-
 /**
- *	Class Util. TODO javadoc
+ *	Class {@link Util} which allows for conversion from arrays 
+ *	of bytes to their string representation in hex (each byte
+ *	is represented with 2 hex characters) and vise-versa.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -15,10 +11,11 @@ import java.nio.file.Files;
 public class Util {
 
 	/**
-	 *	TODO 
+	 *	Method which converts the given hex string representation of bytes
+	 *	to an array of bytes.
 	 *	@param keyText String which needs to be converted to byte array.
 	 *	@return Byte array which holds the given String.
-	 *	@throws IllegalArgumentException KeyText is odd-sized or invalid characters.
+	 *	@throws IllegalArgumentException KeyText is odd-sized or contains invalid characters.
 	 */
 	public static byte[] hextobyte(String keyText) {
 		if(keyText.length() == 0) {
@@ -31,9 +28,7 @@ public class Util {
 		byte[] byteArray = new byte[keyText.length()/2];
 
 		for (int i = 0, s = keyText.length() ; i < s; i += 2) {
-			int hexPrikazanUIntu =((Character.digit(keyText.charAt(i), 16) * 16 + Character.digit(keyText.charAt(i + 1), 16)));
-			byteArray[i/2] = (byte)  hexPrikazanUIntu;
-			
+			byteArray[i/2] = (byte) (Character.digit(keyText.charAt(i), 16) * 16 + Character.digit(keyText.charAt(i + 1), 16));
 		}
 		
 		return byteArray;
@@ -41,33 +36,20 @@ public class Util {
 	}
 	
 	/**
-	 *	TODO
+	 *	Method which converts the given byte array to hex string representation
+	 *	where each byte is converted to 2 characters in hex.
 	 *	@param bytearray Array which needs to be converted to String.
 	 *	@return String value of the byte array. 
 	 */
 	public static String bytetohex(byte[] bytearray) {
-		
 		StringBuilder sb = new StringBuilder();
 		
 		for(var i : bytearray) {
-			//prva verzija00
-//			String s = Integer.toBinaryString(i);
-//			if(i < 0) {
-//				s = s.substring(24);
-//			}
-//			String s2 = Integer.toString(Integer.parseInt(s, 2), 16);
-//			sb.append("0123456789abcdef".contains(s2)? "0" + s2 : s2);
-//			
-//			System.out.println(i);
-//			System.out.println(Integer.toString(i & 0xff, 16));
 			String toAppend = Integer.toString(i & 0xff, 16);
 			sb.append(toAppend.length() == 1 ? "0" + toAppend : toAppend);
-			
 		}
+		
 		return sb.toString();
-		
-		
-		
 	}
 	
 }

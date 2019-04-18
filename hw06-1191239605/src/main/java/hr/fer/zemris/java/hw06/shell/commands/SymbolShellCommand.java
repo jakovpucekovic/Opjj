@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -8,32 +9,35 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class {@link SymbolCommand} which implements a {@link ShellCommand}
+ *	Class {@link SymbolShellCommand} which implements a {@link ShellCommand}
  *	and prints and sets special shell symbols when executed.
  *
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-public class SymbolCommand implements ShellCommand{
+public class SymbolShellCommand implements ShellCommand{
 
 	
 	/**{@link List} of {@link String} which contains the description of the command.*/
 	private static List<String> description;
 	
 	/**
-	 * 	Constructs a new {@link SymbolCommand}.
+	 * 	Constructs a new {@link SymbolShellCommand}.
 	 */
-	public SymbolCommand() {
+	public SymbolShellCommand() {
 		description = new ArrayList<>();
 		description.add("Command which prints and sets shell symbols.");
 		description.add("Usage: symbol symbolName - prints the current symbol for the symbolName");
 		description.add("Usage: symbol symbolName newSymbol - sets the newSymbol for the symbolName");
-		description.add("Supported symbol names: PROMPT, MULTILINE, MORELINES");
+		description.add("Supported symbols: ");
+		description.add("	PROMPT - symbol which shell prints to let the user know he can input commands");
+		description.add("	MORELINES - symbol which the user can add to span a command across multiple lines");
+		description.add("	MULTILINE - symbol which shell prints to lets the user know he is inputing a command across multiple lines");
 	}
 	
 	/**
 	 * 	Executes this {@link ShellCommand} which prints and sets shell symbols.
-	 * 	@param env The {@link Environment} in which this {@link SymbolCommand} is executed.
+	 * 	@param env The {@link Environment} in which this {@link SymbolShellCommand} is executed.
 	 * 	@param arguments {@link String} containing name of symbol and new symbol if it should be changed.
 	 * 	@return {@link ShellStatus} which signals to continue with the work.
 	 */
@@ -109,8 +113,7 @@ public class SymbolCommand implements ShellCommand{
 	 */
 	@Override
 	public List<String> getCommandDescription() {
-		return description;
+		return Collections.unmodifiableList(description);
 	}
-
 
 }

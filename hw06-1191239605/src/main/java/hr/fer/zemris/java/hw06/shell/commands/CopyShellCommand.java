@@ -7,30 +7,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
-import hr.fer.zemris.java.hw06.shell.ParserUtil;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
-import hr.fer.zemris.java.hw06.shell.ShellIOException;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class {@link CopyCommand} which implements a {@link ShellCommand}
+ *	Class {@link CopyShellCommand} which implements a {@link ShellCommand}
  *	and copies the given file to the specified directory when executed.
  *
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-public class CopyCommand implements ShellCommand{
+public class CopyShellCommand implements ShellCommand{
 
 	/**{@link List} of {@link String} which contains the description of the command.*/
 	private static List<String> description;
 	
 	/**
-	 * 	Constructs a new {@link CopyCommand}.
+	 * 	Constructs a new {@link CopyShellCommand}.
 	 */
-	public CopyCommand() {
+	public CopyShellCommand() {
 		description = new ArrayList<>();
 		description.add("Command which makes a copy of the given file.");
 		description.add("Usage: copy file directory - makes a copy of file1 in directory");
@@ -39,7 +38,7 @@ public class CopyCommand implements ShellCommand{
 	
 	/**
 	 * 	Executes this {@link ShellCommand} which copies the given file.
-	 * 	@param env The {@link Environment} in which this {@link CopyCommand} is executed.
+	 * 	@param env The {@link Environment} in which this {@link CopyShellCommand} is executed.
 	 * 	@param arguments String containing path to the file and directory or filename of where to copy.
 	 * 	@return {@link ShellStatus} which signals to continue with the work.
 	 */
@@ -76,14 +75,16 @@ public class CopyCommand implements ShellCommand{
 		}
 
 		/*Cannot copy to itself*/
-		try {
-			if(whereToCopy.toRealPath().equals(whatToCopy.toRealPath())) {
-				env.writeln("Cannot copy \"" + whatToCopy.toString() + "\" to itself.");
+		if(whereToCopy.toFile().exists()) {
+			try {
+				if(whereToCopy.toRealPath().equals(whatToCopy.toRealPath())) {
+					env.writeln("Cannot copy \"" + whatToCopy.toString() + "\" to itself.");
+					return ShellStatus.CONTINUE;
+				}
+			} catch (IOException e1) {
+				env.writeln("Cannot resolve paths.");
 				return ShellStatus.CONTINUE;
 			}
-		} catch (IOException e1) {
-			env.writeln("Cannot resolve paths.");
-			return ShellStatus.CONTINUE;
 		}
 		
 		/*If file already exists ask for further instructions*/
@@ -110,7 +111,8 @@ public class CopyCommand implements ShellCommand{
 				dataRead = bis.read(buffer, 0, 1024);
 			}
 		} catch (IOException e) {
-			throw new ShellIOException("I think i throw"); //TODO
+			env.writeln("Cannot read or write files.");
+			return ShellStatus.CONTINUE;
 		}
 		
 		return ShellStatus.CONTINUE;
@@ -123,15 +125,13 @@ public class CopyCommand implements ShellCommand{
 	public String getCommandName() {
 		return "copy";
 	}
-
 	
 	/**
 	 * 	{@inheritDoc}
 	 */
 	@Override
 	public List<String> getCommandDescription() {
-		return description;
+		return Collections.unmodifiableList(description);
 	}
-
 
 }

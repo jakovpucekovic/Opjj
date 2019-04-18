@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw06.shell;
+package hr.fer.zemris.java.hw06.shell.commands;
 
 /**
  *	Class ParserUtil which is used to parse paths.

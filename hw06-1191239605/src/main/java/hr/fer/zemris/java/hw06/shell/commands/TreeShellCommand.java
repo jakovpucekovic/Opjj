@@ -8,22 +8,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
-import hr.fer.zemris.java.hw06.shell.ParserUtil;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
-import hr.fer.zemris.java.hw06.shell.ShellIOException;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class {@link TreeCommand} which implements a {@link ShellCommand}
+ *	Class {@link TreeShellCommand} which implements a {@link ShellCommand}
  *	and prints a tree structure of the given directory when executed.
  *
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-public class TreeCommand implements ShellCommand{
+public class TreeShellCommand implements ShellCommand{
 
 	/**
 	 * 	Private Class which implements {@link FileVisitor} and
@@ -53,7 +52,7 @@ public class TreeCommand implements ShellCommand{
 		 * 	@return Signal to continue.
 		 * 	@throws IOException Never.
 		 */
-		@Override //TODO jel treba loviti IOShellException i bacati IO?
+		@Override
 		public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 			env.write("  ".repeat(level));
 			env.writeln(level == 0 ? dir.toAbsolutePath().toString() : dir.getFileName().toString());
@@ -105,9 +104,9 @@ public class TreeCommand implements ShellCommand{
 	private static List<String> description;
 	
 	/**
-	 * 	Constructs a new {@link TreeCommand}.
+	 * 	Constructs a new {@link TreeShellCommand}.
 	 */
-	public TreeCommand() {
+	public TreeShellCommand() {
 		description = new ArrayList<>();
 		description.add("Command which prints the structure of the given directory in a tree like structure.");
 		description.add("Usage: tree directory");
@@ -116,7 +115,7 @@ public class TreeCommand implements ShellCommand{
 	/**
 	 * 	Executes this {@link ShellCommand} which print a tree structure of the given
 	 * 	directory.
-	 * 	@param env The {@link Environment} in which this {@link TreeCommand} is executed.
+	 * 	@param env The {@link Environment} in which this {@link TreeShellCommand} is executed.
 	 * 	@param arguments Path to the directory.
 	 * 	@return {@link ShellStatus} which signals to continue with the work.
 	 */
@@ -146,7 +145,8 @@ public class TreeCommand implements ShellCommand{
 		try {
 			Files.walkFileTree(directory, new TreePrint(env));
 		} catch (IOException e) {
-			throw new ShellIOException("I think i throw"); //TODO
+			env.writeln("Error while listing directories occured.");
+			return ShellStatus.CONTINUE;
 		}	
 		
 		return ShellStatus.CONTINUE;
@@ -165,8 +165,7 @@ public class TreeCommand implements ShellCommand{
 	 */
 	@Override
 	public List<String> getCommandDescription() {
-		return description;
+		return Collections.unmodifiableList(description);
 	}
-
 
 }

@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
@@ -53,8 +54,7 @@ public class ExitShellCommand implements ShellCommand{
 	 */
 	@Override
 	public List<String> getCommandDescription() {
-		return description;
+		return Collections.unmodifiableList(description);
 	}
-
-
+	
 }

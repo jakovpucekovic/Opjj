@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -9,21 +10,21 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class {@link HelpCommand} which implements a {@link ShellCommand}
+ *	Class {@link HelpShellCommand} which implements a {@link ShellCommand}
  *	and prints information on supported commands when executed.
  *
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-public class HelpCommand implements ShellCommand{
+public class HelpShellCommand implements ShellCommand{
 
 	/**{@link List} of {@link String} which contains the description of the command.*/
 	private static List<String> description;
 	
 	/**
-	 * 	Constructs a new {@link HelpCommand}.
+	 * 	Constructs a new {@link HelpShellCommand}.
 	 */
-	public HelpCommand() {
+	public HelpShellCommand() {
 		description = new ArrayList<>();
 		description.add("Command which gives information on supported commands.");
 		description.add("Usage: help - lists all supported commands");
@@ -33,7 +34,7 @@ public class HelpCommand implements ShellCommand{
 	/**
 	 * 	Executes this {@link ShellCommand} which print all supported commands or a description
 	 * 	of given command.
-	 * 	@param env The {@link Environment} in which this {@link HelpCommand} is executed.
+	 * 	@param env The {@link Environment} in which this {@link HelpShellCommand} is executed.
 	 * 	@param arguments Nothing or name of the command to give the description of.
 	 * 	@return {@link ShellStatus} which signals to continue with the work.
 	 */
@@ -74,8 +75,7 @@ public class HelpCommand implements ShellCommand{
 	 */
 	@Override
 	public List<String> getCommandDescription() {
-		return description;
+		return Collections.unmodifiableList(description);
 	}
-
-
+	
 }

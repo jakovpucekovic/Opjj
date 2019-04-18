@@ -3,6 +3,8 @@ package hr.fer.zemris.java.hw06.shell;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
+import hr.fer.zemris.java.hw06.shell.commands.ParserUtil;
+
 public class ParserUtilTest {
 
 	@Test

@@ -2,36 +2,34 @@ package hr.fer.zemris.java.hw06.shell.commands;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.Util;
 import hr.fer.zemris.java.hw06.shell.Environment;
-import hr.fer.zemris.java.hw06.shell.ParserUtil;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
-import hr.fer.zemris.java.hw06.shell.ShellIOException;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class {@link HexdumpCommand} which implements a {@link ShellCommand}
+ *	Class {@link HexdumpShellCommand} which implements a {@link ShellCommand}
  *	and prints the hexdump of the given file when executed.
  *
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-public class HexdumpCommand implements ShellCommand{
+public class HexdumpShellCommand implements ShellCommand{
 
 	/**{@link List} of {@link String} which contains the description of the command.*/
 	private static List<String> description;
 	
 	/**
-	 * 	Constructs a new {@link HexdumpCommand}.
+	 * 	Constructs a new {@link HexdumpShellCommand}.
 	 */
-	public HexdumpCommand() {
+	public HexdumpShellCommand() {
 		description = new ArrayList<>();
 		description.add("Command which prints contents of the given file in hexadecimal values.");
 		description.add("Usage: hexdump directory");
@@ -39,7 +37,7 @@ public class HexdumpCommand implements ShellCommand{
 	
 	/**
 	 * 	Executes this {@link ShellCommand} which print a hexdump of the given file;
-	 * 	@param env The {@link Environment} in which this {@link HexdumpCommand} is executed.
+	 * 	@param env The {@link Environment} in which this {@link HexdumpShellCommand} is executed.
 	 * 	@param arguments Path to the directory.
 	 * 	@return {@link ShellStatus} which signals to continue with the work.
 	 */
@@ -51,28 +49,10 @@ public class HexdumpCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 		
-		/*Check if valid number of arguments given*/
-		String[] args = arguments.split("\\s+");
-		if(args.length != 1 && args.length != 2) {
-			env.writeln("Invalid number of arguments given.");
-			return ShellStatus.CONTINUE;	
-		}
-		
 		Path file;
-		Charset charset; //TODO citaj u danom charsetu
 		
 		try {
-			file = Paths.get(ParserUtil.parse(args[0]));
-			
-			/*Check if given charset is supported*/
-			if(args.length == 2) {
-				if(Charset.isSupported(args[1])) {
-					charset = Charset.forName(args[1]);
-				} else {
-					env.writeln("Given charset isn't supported.");
-					return ShellStatus.CONTINUE;
-				}
-			}	
+			file = Paths.get(ParserUtil.parse(arguments));	
 		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
@@ -94,7 +74,8 @@ public class HexdumpCommand implements ShellCommand{
 				bytesRead = bis.read(readData, 0, 16);
 			}			
 		} catch (IOException e) {
-			throw new ShellIOException("I think i throw"); //TODO
+			env.writeln("File can't be read.");
+			return ShellStatus.CONTINUE;
 		}	
 		
 		return ShellStatus.CONTINUE;
@@ -167,7 +148,7 @@ public class HexdumpCommand implements ShellCommand{
 	 */
 	@Override
 	public List<String> getCommandDescription() {
-		return description;
+		return Collections.unmodifiableList(description);
 	}
 
 }

@@ -4,29 +4,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
-import hr.fer.zemris.java.hw06.shell.ParserUtil;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	Class {@link MkdirCommand} which implements a {@link ShellCommand}
+ *	Class {@link MkdirShellCommand} which implements a {@link ShellCommand}
  *	and creates the given directory structure when executed.
  *
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-public class MkdirCommand implements ShellCommand{
+public class MkdirShellCommand implements ShellCommand{
 	
 	/**{@link List} of {@link String} which contains the description of the command.*/
 	private static List<String> description;
 	
 	/**
-	 * 	Constructs a new {@link MkdirCommand}.
+	 * 	Constructs a new {@link MkdirShellCommand}.
 	 */
-	public MkdirCommand() {
+	public MkdirShellCommand() {
 		description = new ArrayList<>();
 		description.add("Command which creates the given directory structure.");
 		description.add("Usage: mkdir directory");
@@ -34,7 +34,7 @@ public class MkdirCommand implements ShellCommand{
 	
 	/**
 	 * 	Executes this {@link ShellCommand} which print a creates the given directory structure.
-	 * 	@param env The {@link Environment} in which this {@link MkdirCommand} is executed.
+	 * 	@param env The {@link Environment} in which this {@link MkdirShellCommand} is executed.
 	 * 	@param arguments Path to the directory.
 	 * 	@return {@link ShellStatus} which signals to continue with the work.
 	 */
@@ -78,15 +78,13 @@ public class MkdirCommand implements ShellCommand{
 	public String getCommandName() {
 		return "mkdir";
 	}
-
 	
 	/**
 	 *	{@inheritDoc} 
 	 */
 	@Override
 	public List<String> getCommandDescription() {
-		return description;
+		return Collections.unmodifiableList(description);
 	}
-
 
 }

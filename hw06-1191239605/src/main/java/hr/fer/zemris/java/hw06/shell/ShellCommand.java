@@ -29,10 +29,10 @@ public interface ShellCommand {
 	
 	
 	/**
-	 * 	Returns the {@link List} of {@link String} which 
+	 * 	Returns a read-only {@link List} of {@link String} which 
 	 * 	contains the detailed description of what this {@link ShellCommand}
 	 * 	does and how to use it.
-	 * 	@return {@link List} of {@link String} containing the description.
+	 * 	@return Read-only {@link List} of {@link String} containing the description.
 	 */
 	List<String> getCommandDescription();
 }
