@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.hw06.shell;
 
+import java.nio.file.Path;
 import java.util.SortedMap;
 
 /**
@@ -7,7 +8,7 @@ import java.util.SortedMap;
  *	which {@link MyShell} operates.
  * 
  * 	@author Jakov Pucekovic
- * 	@version 1.0
+ * 	@version 1.1
  */
 public interface Environment {
 
@@ -74,5 +75,14 @@ public interface Environment {
 	 * 	@param The new morelines symbol.
 	 */
 	void setMorelinesSymbol(Character symbol);
+	
+	//TODO javadoc
+	Path getCurrentDirectory();
+	
+	void setCurrentDirectory(Path path);
+	
+	Object getSharedData(String key);
+	
+	void setSharedData(String key, Object value);
 
 }
