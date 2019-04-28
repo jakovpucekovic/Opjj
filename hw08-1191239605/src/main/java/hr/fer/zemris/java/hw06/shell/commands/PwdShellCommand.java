@@ -8,7 +8,8 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	PwdShellCommand TODO javadoc
+ *	Class {@link PwdShellCommand} which implements a {@link ShellCommand}
+ *	and writes the path to the current working directory to the given {@link Environment}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

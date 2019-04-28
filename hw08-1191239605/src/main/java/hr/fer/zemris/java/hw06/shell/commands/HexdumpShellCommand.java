@@ -42,7 +42,7 @@ public class HexdumpShellCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		String[] args;
+		List<String> args;
 		
 		try{
 			args = ParserUtil.parse(arguments);
@@ -51,24 +51,26 @@ public class HexdumpShellCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 		
-		
-		if(args[0].isBlank()) {
-			env.writeln("No argument given.");
+		if(args.size() > 1) {
+			env.writeln("This command takes only 1 argument.");
 			return ShellStatus.CONTINUE;
 		}
-		if(args[1] != null) {
-			env.writeln("This command takes only 1 argument.");
+
+		if(args.get(0).isBlank()) {
+			env.writeln("No argument given.");
 			return ShellStatus.CONTINUE;
 		}
 		
 		Path file;
 		
 		try {
-			file = Paths.get(args[0]);	
+			file = Paths.get(args.get(0));	
 		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
+		
+		file = env.getCurrentDirectory().resolve(file);
 
 		/*Check if file exists.*/
 		if(!Files.exists(file)) {

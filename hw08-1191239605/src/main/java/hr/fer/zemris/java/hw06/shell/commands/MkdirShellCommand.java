@@ -40,7 +40,7 @@ public class MkdirShellCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		String[] args;
+		List<String> args;
 		
 		try{
 			args = ParserUtil.parse(arguments);
@@ -49,23 +49,26 @@ public class MkdirShellCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 		
-		if(args[0].isBlank()) {
-			env.writeln("No arguments given.");
+		if(args.size() > 1) {
+			env.writeln("This command takes only 1 argument.");
 			return ShellStatus.CONTINUE;
 		}
-		if(args[1] != null) {
-			env.writeln("This command takes only 1 argument.");
+
+		if(args.get(0).isBlank()) {
+			env.writeln("No arguments given.");
 			return ShellStatus.CONTINUE;
 		}
 		
 		Path directory;
 		
 		try {
-			directory = Paths.get(args[0]);
+			directory = Paths.get(args.get(0));
 		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
+		
+		directory = env.getCurrentDirectory().resolve(directory);
 		
 		/*Checks if directory already exists*/
 		if(Files.exists(directory)) {

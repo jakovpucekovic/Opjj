@@ -1,5 +1,8 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *	Class ParserUtil which is used to parse paths.
  *	Allows a path to be in quotation marks "", but after
@@ -14,18 +17,16 @@ public class ParserUtil {
 	/**
 	 *	Method which does the parsing of arguments
 	 *	@param str {@link String} which should be parsed.
-	 *	@return {@link String} array which contains the parsed arguments.
-	 *	@throws IllegalArgumentException If the given string contains more than 2 
-	 *									 arguments or has unclosed quotes.
+	 *	@return {@link List} of {@link String}s which contains the parsed arguments.
+	 *	@throws IllegalArgumentException If the given string has unclosed quotes.
 	 */
-	public static String[] parse(String str) {
-		String[] pathAndOther = new String[2];	
+	public static List<String> parse(String str) {
 		
 		char[] array = str.strip().toCharArray();
 		int currentIndex = 0;
 		StringBuilder sb = new StringBuilder();
-		boolean insideString = false;
-		boolean pathFinished = false;
+		boolean insideString = false;		
+		List<String> parsedArguments = new ArrayList<>();
 		
 		while(currentIndex < array.length) {
 			/*If inside of quotation marks.*/
@@ -61,21 +62,17 @@ public class ParserUtil {
 			}
 			
 			if(array[currentIndex] == ' ') {
-				/*Everything up to the first space is path.*/
-				if(!pathFinished) {
-					pathFinished = true;
-					pathAndOther[0] = sb.toString();
-					sb.setLength(0);
-
-					/*Skip multiple spaces*/
-					while(currentIndex + 1 < array.length && array[currentIndex + 1] == ' ') {
-						++currentIndex;
-					}
+				parsedArguments.add(sb.toString());
+				sb.setLength(0);
+				
+				/*Skip multiple spaces*/
+				while(currentIndex + 1 < array.length && array[currentIndex + 1] == ' ') {
 					++currentIndex;
-					continue;
-					
 				}
-				throw new IllegalArgumentException("Cannot have more than 2 arguments.");
+				
+				++currentIndex;
+				continue;
+							
 			}
 			
 			sb.append(array[currentIndex]);
@@ -87,15 +84,9 @@ public class ParserUtil {
 			throw new IllegalArgumentException("Quotes should be closed");
 		}
 		
-		/*If there was a space, sb contains the second argument.*/
-		if(!pathFinished) {
-			pathAndOther[0] = sb.toString();
-		} else {
-			pathAndOther[1] = sb.toString();
-		}
+		parsedArguments.add(sb.toString());
 		
-		
-		return pathAndOther;
+		return parsedArguments;
 	}
 
 }

@@ -12,7 +12,9 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	PophdShellCommand TODO javadoc
+ *	Class {@link PopdShellCommand} which implements a {@link ShellCommand}
+ *	and switches the current working directory to the one stored on top of
+ *	stack which it then removes from the stack.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

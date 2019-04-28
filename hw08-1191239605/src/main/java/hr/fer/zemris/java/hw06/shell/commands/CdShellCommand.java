@@ -11,12 +11,12 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	CdShellCommand TODO javadoc
+ *	Class {@link CdShellCommand} which implements a {@link ShellCommand}
+ *	and sets the working directory to the given directory.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class CdShellCommand implements ShellCommand {
 
 	/**{@link List} of {@link String} which contains the description of the command.*/
@@ -36,7 +36,7 @@ public class CdShellCommand implements ShellCommand {
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		String[] args;
+		List<String> args;
 		
 		try{
 			args = ParserUtil.parse(arguments);
@@ -45,23 +45,26 @@ public class CdShellCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		if(args[0].isBlank()) {
-			env.writeln("No arguments given.");
+		if(args.size() > 1) {
+			env.writeln("This command takes only 1 argument.");
 			return ShellStatus.CONTINUE;
 		}
-		if(args[1] != null) {
-			env.writeln("This command takes only 1 argument.");
+		
+		if(args.get(0).isBlank()) {
+			env.writeln("No arguments given.");
 			return ShellStatus.CONTINUE;
 		}
 		
 		Path directory;
 		
 		try {
-			directory = Paths.get(args[0]);
+			directory = Paths.get(args.get(0));
 		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
+
+		directory = env.getCurrentDirectory().resolve(directory);
 		
 		/*Check if directory exists.*/
 		if(!Files.exists(directory)) {
@@ -69,7 +72,13 @@ public class CdShellCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		env.setCurrentDirectory(env.getCurrentDirectory().resolve(directory));
+		/*Check if directory.*/
+		if(!Files.isDirectory(directory)) {
+			env.writeln("Given argument is not a directory.");
+			return ShellStatus.CONTINUE;
+		}
+		
+		env.setCurrentDirectory(directory);
 		
 		return ShellStatus.CONTINUE;
 	}

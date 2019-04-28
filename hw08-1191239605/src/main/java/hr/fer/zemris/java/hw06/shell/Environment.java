@@ -76,13 +76,32 @@ public interface Environment {
 	 */
 	void setMorelinesSymbol(Character symbol);
 	
-	//TODO javadoc
+	/**
+	 * 	Returns the current working directory.
+	 * 	@return {@link Path} containing the current working directory.
+	 */
 	Path getCurrentDirectory();
 	
+	/**
+	 * 	Sets the current working directory to the given directory.
+	 * 	@param path {@link Path} to the new working directory.
+	 * 	@throws TODO koji exception bacamo ako path nije direktorij?
+	 */
 	void setCurrentDirectory(Path path);
 	
+	/**
+	 * 	Returns the shared data stored with the given key.
+	 * 	@param key The key with which the data is stored.
+	 * 	@return The stored data as {@link Object}.
+	 */
 	Object getSharedData(String key);
 	
+	/**
+	 *  Stored the given data with the given key. Overwrites any
+	 *  data which was before stored with the same key.
+	 * 	@param key The key with which the data is stored.
+	 * 	@param value The data to store.
+	 */
 	void setSharedData(String key, Object value);
 
 }

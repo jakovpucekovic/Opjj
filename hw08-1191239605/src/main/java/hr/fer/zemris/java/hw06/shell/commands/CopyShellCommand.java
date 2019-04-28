@@ -44,7 +44,7 @@ public class CopyShellCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		String[] args;
+		List<String> args;
 		
 		try{
 			args = ParserUtil.parse(arguments);
@@ -53,7 +53,7 @@ public class CopyShellCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 		
-		if(args[1] == null) {
+		if(args.size() != 2 || args.get(0).isBlank() || args.get(1).isBlank()) {
 			env.writeln("This command takes 2 arguments.");
 			return ShellStatus.CONTINUE;
 		}
@@ -61,14 +61,16 @@ public class CopyShellCommand implements ShellCommand{
 		Path whatToCopy;
 		Path whereToCopy;
 		
-		/*Parse arguments and get Paths*/
 		try {
-			whatToCopy = Paths.get(args[0]);
-			whereToCopy = Paths.get(args[1]);
+			whatToCopy = Paths.get(args.get(0));
+			whereToCopy = Paths.get(args.get(1));
 		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
+		
+		whatToCopy = env.getCurrentDirectory().resolve(whatToCopy);
+		whereToCopy = env.getCurrentDirectory().resolve(whereToCopy);
 
 		/*Check if file exists.*/
 		if(!Files.exists(whatToCopy)) {

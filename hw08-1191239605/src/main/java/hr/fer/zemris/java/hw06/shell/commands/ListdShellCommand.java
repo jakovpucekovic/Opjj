@@ -10,7 +10,9 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	ListdShellCommand TODO javadoc
+ *	Class {@link ListdShellCommand} which implements a {@link ShellCommand}
+ *	and writes a list of all directories stored on the stack to the given 
+ *	{@link Environment}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

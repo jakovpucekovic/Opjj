@@ -12,7 +12,9 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	PushdShellCommand TODO javadoc
+ *	Class {@link PushdShellCommand} which implements a {@link ShellCommand}
+ *	and switches the current working directory to the given directory while
+ *	saving the current working directory on top of a stack.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -38,7 +40,7 @@ public class PushdShellCommand implements ShellCommand {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		String[] args;
+		List<String> args;
 		
 		try{
 			args = ParserUtil.parse(arguments);
@@ -47,19 +49,20 @@ public class PushdShellCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		if(args[0].isBlank()) {
-			env.writeln("No arguments given.");
+		if(args.size() > 1) {
+			env.writeln("This command takes only 1 argument.");
 			return ShellStatus.CONTINUE;
 		}
-		if(args[1] != null) {
-			env.writeln("This command takes only 1 argument.");
+
+		if(args.get(0).isBlank()) {
+			env.writeln("No arguments given.");
 			return ShellStatus.CONTINUE;
 		}
 		
 		Path directory;
 		
 		try {
-			directory = Paths.get(args[0]);
+			directory = Paths.get(args.get(0));
 		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
@@ -80,7 +83,7 @@ public class PushdShellCommand implements ShellCommand {
 		}
 		((Stack<Path>)env.getSharedData("cdstack")).push(env.getCurrentDirectory());
 
-		new CdShellCommand().executeCommand(env, args[0]);
+		new CdShellCommand().executeCommand(env, args.get(0));
 		
 		return ShellStatus.CONTINUE;
 	}

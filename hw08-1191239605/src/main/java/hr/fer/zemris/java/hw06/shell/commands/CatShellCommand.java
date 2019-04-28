@@ -47,7 +47,7 @@ public class CatShellCommand implements ShellCommand{
 	 */
 	@Override
 	public ShellStatus executeCommand(Environment env, String arguments) {
-		String[] args;
+		List<String> args;
 		
 		try{
 			args = ParserUtil.parse(arguments);
@@ -56,7 +56,12 @@ public class CatShellCommand implements ShellCommand{
 			return ShellStatus.CONTINUE;
 		}
 		
-		if(args[0].isBlank()) {
+		if(args.size() > 2) {
+			env.writeln("This command takes one or two arguments.");
+			return ShellStatus.CONTINUE;
+		}
+		
+		if(args.get(0).isBlank()) {
 			env.writeln("No arguments given.");
 			return ShellStatus.CONTINUE;
 		}
@@ -64,11 +69,13 @@ public class CatShellCommand implements ShellCommand{
 		Path file;
 		
 		try {
-			file = Paths.get(args[0]);
+			file = Paths.get(args.get(0));
 		} catch (IllegalArgumentException ex) {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
+		
+		file = env.getCurrentDirectory().resolve(file);
 
 		/*Check if file exists.*/
 		if(!Files.exists(file)) {
@@ -84,9 +91,9 @@ public class CatShellCommand implements ShellCommand{
 		
 		/*Get charset*/
 		Charset charset = Charset.defaultCharset();
-		if(args[1] != null) { 
-			if(Charset.isSupported(args[1])) {
-				charset = Charset.forName(args[1]);
+		if(args.size() == 1) { 
+			if(Charset.isSupported(args.get(1))) {
+				charset = Charset.forName(args.get(1));
 			} else {
 				env.writeln("Given charset isn't supported");
 				return ShellStatus.CONTINUE;

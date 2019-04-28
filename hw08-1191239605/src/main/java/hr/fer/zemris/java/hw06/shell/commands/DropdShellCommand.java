@@ -10,12 +10,12 @@ import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
 
 /**
- *	DropdShellCommand TODO javadoc
+ *	Class {@link DropdShellCommand} which implements a {@link ShellCommand}
+ *	and removes all saved directories from the stack. 
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class DropdShellCommand implements ShellCommand {
 
 	/**{@link List} of {@link String} which contains the description of the command.*/

@@ -21,6 +21,7 @@ import hr.fer.zemris.java.hw06.shell.commands.HelpShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.HexdumpShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.ListdShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.LsShellCommand;
+import hr.fer.zemris.java.hw06.shell.commands.MassrenameShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.MkdirShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.PopdShellCommand;
 import hr.fer.zemris.java.hw06.shell.commands.PushdShellCommand;
@@ -63,22 +64,23 @@ public class MyShellEnvironment implements Environment{
 	 */
 	public MyShellEnvironment(){
 		commands = new TreeMap<>();
-		commands.put(new CatShellCommand()		.getCommandName(), new CatShellCommand());
-		commands.put(new CdShellCommand()		.getCommandName(), new CdShellCommand());
-		commands.put(new CharsetsShellCommand()	.getCommandName(), new CharsetsShellCommand());
-		commands.put(new CopyShellCommand()		.getCommandName(), new CopyShellCommand());		
-		commands.put(new DropdShellCommand()	.getCommandName(), new DropdShellCommand());
-		commands.put(new ExitShellCommand()		.getCommandName(), new ExitShellCommand());
-		commands.put(new HelpShellCommand()		.getCommandName(), new HelpShellCommand());
-		commands.put(new HexdumpShellCommand()	.getCommandName(), new HexdumpShellCommand());		
-		commands.put(new ListdShellCommand()	.getCommandName(), new ListdShellCommand());
-		commands.put(new LsShellCommand()		.getCommandName(), new LsShellCommand());
-		commands.put(new MkdirShellCommand()	.getCommandName(), new MkdirShellCommand());
-		commands.put(new PopdShellCommand()		.getCommandName(), new PopdShellCommand());
-		commands.put(new PushdShellCommand()	.getCommandName(), new PushdShellCommand());
-		commands.put(new PwdShellCommand()		.getCommandName(), new PwdShellCommand());
-		commands.put(new SymbolShellCommand()	.getCommandName(), new SymbolShellCommand());
-		commands.put(new TreeShellCommand()		.getCommandName(), new TreeShellCommand());
+		commands.put(new CatShellCommand()			.getCommandName(), new CatShellCommand());
+		commands.put(new CdShellCommand()			.getCommandName(), new CdShellCommand());
+		commands.put(new CharsetsShellCommand()		.getCommandName(), new CharsetsShellCommand());
+		commands.put(new CopyShellCommand()			.getCommandName(), new CopyShellCommand());		
+		commands.put(new DropdShellCommand()		.getCommandName(), new DropdShellCommand());
+		commands.put(new ExitShellCommand()			.getCommandName(), new ExitShellCommand());
+		commands.put(new HelpShellCommand()			.getCommandName(), new HelpShellCommand());
+		commands.put(new HexdumpShellCommand()		.getCommandName(), new HexdumpShellCommand());		
+		commands.put(new ListdShellCommand()		.getCommandName(), new ListdShellCommand());
+		commands.put(new LsShellCommand()			.getCommandName(), new LsShellCommand());
+		commands.put(new MassrenameShellCommand()	.getCommandName(), new MassrenameShellCommand());
+		commands.put(new MkdirShellCommand()		.getCommandName(), new MkdirShellCommand());
+		commands.put(new PopdShellCommand()			.getCommandName(), new PopdShellCommand());
+		commands.put(new PushdShellCommand()		.getCommandName(), new PushdShellCommand());
+		commands.put(new PwdShellCommand()			.getCommandName(), new PwdShellCommand());
+		commands.put(new SymbolShellCommand()		.getCommandName(), new SymbolShellCommand());
+		commands.put(new TreeShellCommand()			.getCommandName(), new TreeShellCommand());
 		
 		sharedData = new HashMap<>();
 		currentDirectory = Paths.get(".").toAbsolutePath().normalize();
