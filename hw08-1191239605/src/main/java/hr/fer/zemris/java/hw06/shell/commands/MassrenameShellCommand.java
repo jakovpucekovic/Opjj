@@ -8,13 +8,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
+import hr.fer.zemris.java.hw06.shell.commands.utils.FilterResult;
 
 /**
  *	MassrenameShellCommand TODO javadoc
@@ -81,19 +79,19 @@ public class MassrenameShellCommand implements ShellCommand {
 		
 		if(args.get(2).equals("filter")) {
 			try {
-				List<FilterResults> list = FilterResults.filter(dir1, args.get(3));
-				list.stream().map(FilterResults::toString).filter(x -> !x.isBlank()).forEach(env::writeln);
+				List<FilterResult> list = FilterResult.filter(dir1, args.get(3));
+				list.stream().map(FilterResult::toString).filter(x -> !x.isBlank()).forEach(env::writeln);
 			} catch (IOException e) {
 				env.writeln("Error while reading files.");
 				return ShellStatus.CONTINUE;
 			}
 		} else if(args.get(2).equals("groups")) {
 			try {
-				List<FilterResults> list = FilterResults.filter(dir1, args.get(3));
-				list.forEach(new Consumer<FilterResults>() {
+				List<FilterResult> list = FilterResult.filter(dir1, args.get(3));
+				list.forEach(new Consumer<FilterResult>() {
 
 					@Override
-					public void accept(FilterResults t) {
+					public void accept(FilterResult t) {
 						/*If string is blank do nothing.*/
 						if(t.toString().isBlank()) {
 							return;
@@ -139,45 +137,6 @@ public class MassrenameShellCommand implements ShellCommand {
 	@Override
 	public List<String> getCommandDescription() {
 		return description;
-	}
-	
-	
-	
-	//TODO javadoc
-	public static class FilterResults{
-		
-		private Path path;
-		private Pattern pat;
-		private Matcher match;
-		private boolean matches;
-		
-		public FilterResults(Path path, String pattern) {
-			this.path = path;
-			//TODO baca exception ako regex nije dobar
-			pat = Pattern.compile(pattern, Pattern.UNICODE_CASE & Pattern.CASE_INSENSITIVE);
-			match = pat.matcher(path.getFileName().toString());
-			matches = match.matches();	
-		}
-
-		private static List<FilterResults> filter(Path dir, String pattern) throws IOException{
-			List<FilterResults> list = (Files.list(dir)).map(x -> new FilterResults(x, pattern)).collect(Collectors.toList());
-			/*Sort list by length and then lexicaly*/
-			list.sort((a,b) -> {int c = a.toString().length() - b.toString().length(); return c == 0 ? a.toString().compareTo(b.toString()) : c;});
-			return list;
-		}
-
-		public String toString() {
-			return matches ? path.getFileName().toString() : "";
-		}
-		
-		public int numberOfGroups() {
-			return matches ? match.groupCount() + 1 : 0;
-		}
-		
-		public String group(int index) {
-			return match.group(index);
-		}
-		
 	}
 
 }

@@ -4,7 +4,7 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
-import hr.fer.zemris.java.hw06.shell.commands.MassrenameShellCommand.FilterResults;
+import hr.fer.zemris.java.hw06.shell.commands.utils.FilterResult;
 
 public class MassrrenameShellCommandTest {
 
@@ -12,7 +12,7 @@ public class MassrrenameShellCommandTest {
 	@Test
 	public void test() {
 		
-		FilterResults fr = new FilterResults(Paths.get("dir1/slika1-zagreb.jpg"), "slika(\\d+)-([^.]+)\\.jpg");
+		FilterResult fr = new FilterResult(Paths.get("dir1/slika1-zagreb.jpg"), "slika(\\d+)-([^.]+)\\.jpg");
 		
 		System.out.println(fr.toString());
 		System.out.println(fr.numberOfGroups());

@@ -12,7 +12,7 @@ import java.util.List;
  * 	@version 2.0
  */
 public class ParserUtil {
-		
+	//TODO preseli u utils paket
 	
 	/**
 	 *	Method which does the parsing of arguments

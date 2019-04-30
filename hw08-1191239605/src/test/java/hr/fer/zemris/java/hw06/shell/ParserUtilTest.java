@@ -3,6 +3,7 @@ package hr.fer.zemris.java.hw06.shell;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -102,6 +103,23 @@ public class ParserUtilTest {
 		List<String> actual2 = ParserUtil.parse("\"\"");
 		assertEquals("", actual2.get(0));
 		assertEquals(1, actual2.size());
+	}
+	
+	@Test
+	public void testMassrename() {
+		List<String> actual = ParserUtil.parse("dir1 dir2 show slika(\\d+)-([^.]+)\\.jpg gradovi-${2}-${1,03}.jpg");
+		assertEquals(5, actual.size());
+		assertEquals("dir1", actual.get(0));
+		assertEquals("dir2", actual.get(1));
+		assertEquals("show", actual.get(2));
+		assertEquals("slika(\\d+)-([^.]+)\\.jpg", actual.get(3));
+		assertEquals("gradovi-${2}-${1,03}.jpg", actual.get(4));
+	}
+	
+	@Test
+	public void test() {
+		String[] s = "gradovi-${2}-${1,03}.jpg".split("(\\$\\{)"); //TODO ovo nije losa ideja mozda
+		Arrays.asList(s).forEach(System.out::println);
 	}
 	
 }
