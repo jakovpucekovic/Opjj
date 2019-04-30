@@ -10,19 +10,31 @@ import java.util.function.Supplier;
 import marcupic.opjj.statespace.coloring.Picture;
 
 /**
- *	Coloring TODO javadoc
- * 
+ *	Class which provides the methods for coloring a {@link Picture}.	
+ *
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class Coloring {
 
+	/**The starting {@link Pixel}.*/
 	private Pixel reference;
+
+	/**The {@link Picture} which should be colored.*/
 	private Picture picture;
+	
+	/**New color.*/
 	private int fillColor;
+	
+	/**The color of the starting {@link Pixel}.*/
 	private int refColor;
 	
+	/**
+	 *	Constructs a new {@link Coloring} with the given parameters.
+	 *	@param reference The starting pixel.
+	 *	@param picture The picture to color.
+	 *	@param fillColor The new color.
+	 */
 	public Coloring(Pixel reference, Picture picture, int fillColor) {
 		this.reference = reference;
 		this.picture = picture;
@@ -30,14 +42,16 @@ public class Coloring {
 		this.refColor = picture.getPixelColor(reference.x, reference.y);
 	}
 	
-	public Consumer<Pixel> process = new Consumer<>() {
-
-		@Override
-		public void accept(Pixel t) {
-			picture.setPixelColor(t.x, t.y, fillColor);
-		}
-	};
+	/**
+	 *  {@link Consumer} which changes the color of the given {@link Pixel}
+	 *  to the fill color.
+	 */
+	public Consumer<Pixel> process = (Pixel p) -> picture.setPixelColor(p.x, p.y, fillColor);
 	
+	/**
+	 * 	{@link Function} which returns a {@link List} of {@link Pixel}s
+	 * 	which are the neighbors the of the given {@link Pixel}.
+	 */
 	public Function<Pixel, List<Pixel>> succ = new Function<>() {
 
 		@Override
@@ -59,23 +73,14 @@ public class Coloring {
 		}
 	};
 	
-	public Predicate<Pixel> acceptable = new Predicate<>() {
-
-		@Override
-		public boolean test(Pixel t) {//TODO jel treba provjeravati jel susjed
-			if(picture.getPixelColor(t.x, t.y) == refColor) {
-				return true;
-			}
-			return false;
-		}
-	};
+	/**
+	 * 	{@link Predicate} which decides whether the given {@link Pixel}
+	 * 	is acceptable which is determined by the color of the {@link Pixel}.
+	 */
+	public Predicate<Pixel> acceptable = (Pixel p) -> picture.getPixelColor(p.x, p.y) == refColor;
 	
-	public Supplier<Pixel> initialState = new Supplier<>() {
-
-		@Override
-		public Pixel get() {
-			return reference;
-		}
-	};
-	
+	/**
+	 *  {@link Supplier} which return the initial state of this {@link Coloring}.
+	 */
+	public Supplier<Pixel> initialState = () -> {return reference;};
 }

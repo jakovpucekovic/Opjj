@@ -8,6 +8,13 @@ package hr.fer.zemris.java.hw06.shell.commands.utils;
  */
 
 public interface NameBuilder {
-		
+			
 	void execute(FilterResult result, StringBuilder sb);
+	
+	default NameBuilder then(NameBuilder nb) { return (fr, sb)->{
+			execute(fr, sb);
+			nb.execute(fr, sb);
+		};
+	}
+	
 }

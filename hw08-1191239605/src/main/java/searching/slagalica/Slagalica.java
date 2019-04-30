@@ -9,7 +9,8 @@ import java.util.function.Supplier;
 import searching.algorithms.Transition;
 
 /**
- *	Slagalica TODO javadoc
+ *	Class which models a 3x3 puzzle described in the
+ *	8th homework.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -17,76 +18,79 @@ import searching.algorithms.Transition;
 
 public class Slagalica {
 	
+	/**Current configuration.*/
 	private KonfiguracijaSlagalice configuration;
 	
+	/**Contains the configuration of a solved {@link Slagalica}.*/
+	private static final KonfiguracijaSlagalice SOLVED = new KonfiguracijaSlagalice(new int[] {1,2,3,4,5,6,7,8,0}); 
+	
+	/**
+	 * 	Constructs a new {@link Slagalica} with the given initial configuration.
+	 * 	@param configuration The initial configuration.
+	 */
 	public Slagalica(KonfiguracijaSlagalice configuration) {
 		this.configuration = configuration;
 	}
 
-	public Supplier<KonfiguracijaSlagalice> initialState = new Supplier<>() {
-
-		@Override
-		public KonfiguracijaSlagalice get() {
-			return configuration;
-		}
-		
-	};
+	/**
+	 * 	{@link Supplier} which return the initial state of
+	 * 	the {@link Slagalica}.
+	 */
+	public Supplier<KonfiguracijaSlagalice> initialState = () -> {return configuration;};
 	
+	/**
+	 *	{@link Function} which returns a {@link List} of
+	 *	{@link Transition}s of next possible {@link KonfiguracijaSlagalice}. 
+	 */
 	public Function<KonfiguracijaSlagalice, List<Transition<KonfiguracijaSlagalice>>> succ = new Function<>() {
 
 		@Override
 		public List<Transition<KonfiguracijaSlagalice>> apply(KonfiguracijaSlagalice t) {
 			List<Transition<KonfiguracijaSlagalice>> list = new ArrayList<>();
+			int ind = t.indexOfSpaces();
 			
-			int up = t.indexOfSpaces() - 3;
-			int down = t.indexOfSpaces() + 3;
-			int left = t.indexOfSpaces() - 1;
-			int right = t.indexOfSpaces() + 1;
-			
-			if(up < 9 && up > 0) {
-				int[] newConf = t.getConfiguration();
-				switchValueAtIndexes(up, t.indexOfSpaces(), newConf);
+			/*Tile above*/
+			if(ind > 2) {
+				int[] newConf = t.getPolje();
+				switchValueAtIndexes(ind - 3, ind, newConf);
 				list.add(new Transition<KonfiguracijaSlagalice>(new KonfiguracijaSlagalice(newConf), 1));
 			}
-			if(down > 0 && down < 9) {
-				int[] newConf = t.getConfiguration();
-				switchValueAtIndexes(down, t.indexOfSpaces(), newConf);
+			/*Tile below*/
+			if(ind < 6) {
+				int[] newConf = t.getPolje();
+				switchValueAtIndexes(ind + 3, ind, newConf);
 				list.add(new Transition<KonfiguracijaSlagalice>(new KonfiguracijaSlagalice(newConf), 1));
 			}
-			if(left % 3 != 2 && left > 0 && left < 9) {
-				int[] newConf = t.getConfiguration();
-				switchValueAtIndexes(left, t.indexOfSpaces(), newConf);
+			/*Tile left*/
+			if(ind % 3 > 0) {
+				int[] newConf = t.getPolje();
+				switchValueAtIndexes(ind - 1, ind, newConf);
 				list.add(new Transition<KonfiguracijaSlagalice>(new KonfiguracijaSlagalice(newConf), 1));
 			}
-			if(right % 3 != 0 && right > 0 && right < 9) {
-				int[] newConf = t.getConfiguration();
-				switchValueAtIndexes(right, t.indexOfSpaces(), newConf);
+			/*Tile right*/
+			if(ind % 3 < 2) {
+				int[] newConf = t.getPolje();
+				switchValueAtIndexes(ind + 1, ind, newConf);
 				list.add(new Transition<KonfiguracijaSlagalice>(new KonfiguracijaSlagalice(newConf), 1));
 			}
-			
 			return list;
 		}
 	};
 	
-	public Predicate<KonfiguracijaSlagalice> pred = new Predicate<>() {
-
-		@Override
-		public boolean test(KonfiguracijaSlagalice t) {
-			if(t.indexOfSpaces() != 8) {
-				return false;
-			}		
-			
-			//TODO ne radi za tablicu vecu od 3x3
-			for(int i = 1; i < 8; ++i) {
-				if(t.indexOf(i) != i - 1) {
-					return false;
-				}
-			}
-			
-			return true;
-		}
-	};
+	/**
+	 *	A {@link Predicate} which tests whether
+	 *	the given {@link KonfiguracijaSlagalice} 
+	 *	equals to the solved {@link KonfiguracijaSlagalice}.
+	 */
+	public Predicate<KonfiguracijaSlagalice> goal = (KonfiguracijaSlagalice puzzleConfig) -> puzzleConfig.equals(SOLVED);	
 	
+	/**
+	 *	Switches the values at the given indexes in the given
+	 *	integer array.
+	 *	@param a First index.
+	 *	@param b Second index.
+	 *	@param conf Array in which the values should be switched.
+	 */
 	private void switchValueAtIndexes(int a, int b, int[] conf) {
 		int temp = conf[a];
 		conf[a] = conf[b];

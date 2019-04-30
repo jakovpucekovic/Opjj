@@ -3,7 +3,6 @@ package hr.fer.zemris.java.hw06.shell;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -114,12 +113,6 @@ public class ParserUtilTest {
 		assertEquals("show", actual.get(2));
 		assertEquals("slika(\\d+)-([^.]+)\\.jpg", actual.get(3));
 		assertEquals("gradovi-${2}-${1,03}.jpg", actual.get(4));
-	}
-	
-	@Test
-	public void test() {
-		String[] s = "gradovi-${2}-${1,03}.jpg".split("(\\$\\{)"); //TODO ovo nije losa ideja mozda
-		Arrays.asList(s).forEach(System.out::println);
 	}
 	
 }

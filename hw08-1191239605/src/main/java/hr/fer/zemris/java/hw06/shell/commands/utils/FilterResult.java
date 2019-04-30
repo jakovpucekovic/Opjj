@@ -31,7 +31,7 @@ public class FilterResult {
 	}
 
 	public static List<FilterResult> filter(Path dir, String pattern) throws IOException{
-		List<FilterResult> list = (Files.list(dir)).map(x -> new FilterResult(x, pattern)).collect(Collectors.toList());
+		List<FilterResult> list = (Files.list(dir)).filter(Files::isRegularFile).map(x -> new FilterResult(x, pattern)).filter(x -> !x.toString().isBlank()).collect(Collectors.toList());
 		/*Sort list by length and then lexicaly*/
 		list.sort((a,b) -> {int c = a.toString().length() - b.toString().length(); return c == 0 ? a.toString().compareTo(b.toString()) : c;});
 		return list;
@@ -46,7 +46,7 @@ public class FilterResult {
 	}
 	
 	public String group(int index) {
-		return match.group(index);
+		return match.group(index); //baca IndexOutOfBounds TODO
 	}
 	
 }

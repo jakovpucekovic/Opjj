@@ -1,9 +1,9 @@
 package coloring.algorithms;
 
-import java.util.Objects;
+import marcupic.opjj.statespace.coloring.Picture;
 
 /**
- *	Pixel TODO javadoc
+ *	Class which represents a pixel in the {@link Picture}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -11,23 +11,20 @@ import java.util.Objects;
 
 public class Pixel {
 
+	/**X coordinate*/
 	public int x;
+	
+	/**Y coordinate*/
 	public int y;
 	
-	
-	
+	/**
+	 * 	Constructs a new {@link Pixel} with the given coordinates.
+	 *	@param x The x-coordinate.
+	 *	@param y The y-coordinate.  
+	 */
 	public Pixel(int x, int y) {
-		super();
 		this.x = x;
 		this.y = y;
-	}
-
-	/**
-	 *	{@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		return Objects.hash(x, y);
 	}
 	
 	/**
@@ -44,14 +41,15 @@ public class Pixel {
 		Pixel other = (Pixel) obj;
 		return x == other.x && y == other.y;
 	}
+	
 	/**
-	 *	{@inheritDoc}
+	 *	Returns a {@link String} representation of this 
+	 *	{@link Pixel} if format "(x,y)".
+	 *	@return {@link String} representation of this {@link Pixel}.
 	 */
 	@Override
 	public String toString() {
 		return "(" + x + "," + y + ")";
 	}
-	
-	
 	
 }

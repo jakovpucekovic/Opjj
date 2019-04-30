@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class ParserUtil {
 	//TODO preseli u utils paket
+	//TODO promjeni sve commande na novi parserUtil
 	
 	/**
 	 *	Method which does the parsing of arguments

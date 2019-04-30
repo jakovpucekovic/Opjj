@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 
 public class SubspaceExploreUtil {
 
-	//TODO jel ovo treba biti parametrizirano ili ne?
 	public static <S> void bfs(Supplier<S> s0, Consumer<S> process,	Function<S,List<S>> succ, Predicate<S> acceptable) {
 		List<S> toExplore = new LinkedList<>();
 		toExplore.add(s0.get());
