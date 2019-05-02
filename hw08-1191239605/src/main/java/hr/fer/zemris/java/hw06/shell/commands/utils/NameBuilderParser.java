@@ -1,28 +1,14 @@
 package hr.fer.zemris.java.hw06.shell.commands.utils;
 
 /**
- *	NameBuilderParser TODO javadoc
+ *	Class which parses an expression and creates an
+ *	{@link NameBuilder} which builds the name based on 	
+ *	the parsed expression.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class NameBuilderParser {
-	
-	public static NameBuilder text(String txt) {return (FilterResult fr, StringBuilder sb) -> sb.append(txt);};
-
-	public static NameBuilder group(int index) {return (FilterResult fr, StringBuilder sb) -> sb.append(fr.group(index));};
-	
-	public static NameBuilder group(int index, char padding, int minWidth) { return new NameBuilder() {
-		
-		@Override
-		public void execute(FilterResult result, StringBuilder sb) {
-			for(int i = 0; i < minWidth - result.group(index).length(); ++i) {
-				sb.append(padding);
-			}
-			sb.append(result.group(index));
-		}
-	};}
 	
 	/**Array that is being parsed.*/
 	private char[] array;
@@ -44,11 +30,12 @@ public class NameBuilderParser {
 	/**
 	 * 	Constructs a new NameBuilderParser with the given expression.
 	 * 	@param expression Expression to parse.
+	 * 	@throws IllegalArgumentException If the expression cannot be parsed.
 	 */
 	public NameBuilderParser(String expression) {
 		array = expression.strip().toCharArray();
 		currentIndex = 0;
-		nb = text("");
+		nb = DefaultNameBuilders.initialize();
 		/*Parses the expression*/
 		while(currentIndex < array.length) {
 			parseGroup();
@@ -70,12 +57,13 @@ public class NameBuilderParser {
 			sb.append(array[currentIndex]);
 			++currentIndex;
 		}
-		nb = nb.then(text(sb.toString()));
+		nb = nb.then(DefaultNameBuilders.text(sb.toString()));
 	}
 
 	/**
 	 * 	Parses a group and adds a group {@link NameBuilder} with the 
 	 * 	appropriate arguments to the generated {@link NameBuilder}. 
+	 * 	@throws IllegalArgumentException If the group isn't closed with }.
 	 */
 	private void parseGroup() {
 		/*Group must start with ${*/
@@ -101,9 +89,10 @@ public class NameBuilderParser {
 			throw new IllegalArgumentException("Group isn't closed with }.");
 		} else if(array[currentIndex] == '}') {
 			++currentIndex;
-			nb = nb.then(group(Integer.parseInt(first.toString())));
+			nb = nb.then(DefaultNameBuilders.group(Integer.parseInt(first.toString())));
 		/*Second number*/
 		} else if(array[currentIndex] == ',') {
+			
 			StringBuilder second = new StringBuilder();
 			/*Flag which tells if the empty spaces should be filled with 0 or " ".*/
 			boolean zero = false;
@@ -113,6 +102,8 @@ public class NameBuilderParser {
 			}
 			
 			++currentIndex;
+			eatSpaces();
+
 			if(array[currentIndex] == '0' && array[currentIndex + 1] != '}') {
 				zero = true;
 			}
@@ -121,11 +112,14 @@ public class NameBuilderParser {
 				second.append(array[currentIndex]);
 				++currentIndex;
 			}
+			
+			eatSpaces();
+			
 			if(currentIndex >= array.length|| array[currentIndex] != '}') {
 				throw new IllegalArgumentException("Group isn't closed with }.");
 			}
 			++currentIndex;
-			nb = nb.then(group(Integer.parseInt(first.toString()), zero ? '0' : ' ', Integer.parseInt(second.toString())));
+			nb = nb.then(DefaultNameBuilders.group(Integer.parseInt(first.toString()), zero ? '0' : ' ', Integer.parseInt(second.toString())));
 			
 		} else {
 			throw new IllegalArgumentException("Group isn't closed with }.");

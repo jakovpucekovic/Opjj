@@ -14,6 +14,7 @@ import java.util.List;
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
+import hr.fer.zemris.java.hw06.shell.commands.utils.ParserUtil;
 
 /**
  *	Class {@link TreeShellCommand} which implements a {@link ShellCommand}
@@ -132,11 +133,6 @@ public class TreeShellCommand implements ShellCommand{
 		
 		if(args.size() > 1) {
 			env.writeln("This command takes only 1 argument.");
-			return ShellStatus.CONTINUE;
-		}
-
-		if(args.get(0).isBlank()) {
-			env.writeln("No arguments given.");
 			return ShellStatus.CONTINUE;
 		}
 		

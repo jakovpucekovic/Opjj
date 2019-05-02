@@ -183,8 +183,11 @@ public class MyShellEnvironment implements Environment{
 	 */
 	@Override
 	public void setCurrentDirectory(Path path) {
-		if(!Files.exists(path)) {//TODO provjeri koji exception bacas
-			throw new ShellIOException("Path doesn't exist.");
+		if(!Files.exists(path)) {
+			throw new IllegalArgumentException("Directory doesn't exist.");
+		}
+		if(!Files.isDirectory(path)) {
+			throw new IllegalArgumentException("Given argument isn't a directory.");
 		}
 		currentDirectory = path.toAbsolutePath().normalize();
 	}

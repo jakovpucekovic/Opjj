@@ -10,6 +10,7 @@ import java.util.Stack;
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
+import hr.fer.zemris.java.hw06.shell.commands.utils.ParserUtil;
 
 /**
  *	Class {@link PushdShellCommand} which implements a {@link ShellCommand}
@@ -67,12 +68,15 @@ public class PushdShellCommand implements ShellCommand {
 			env.writeln("Invalid path given.");
 			return ShellStatus.CONTINUE;
 		}
+		directory = env.getCurrentDirectory().resolve(directory);
 		
+		/*Check if directory exists.*/
 		if(!Files.exists(directory)) {
 			env.writeln("Directory doesn't exist.");
 			return ShellStatus.CONTINUE;
 		}
 		
+		/*Can only switch to directories.*/
 		if(!Files.isDirectory(directory)) {
 			env.writeln("Given argument is not a directory");
 			return ShellStatus.CONTINUE;
@@ -83,8 +87,12 @@ public class PushdShellCommand implements ShellCommand {
 		}
 		((Stack<Path>)env.getSharedData("cdstack")).push(env.getCurrentDirectory());
 
-		new CdShellCommand().executeCommand(env, args.get(0));
-		
+		/*Switch directory.*/
+		try {
+			env.setCurrentDirectory(directory);
+		} catch(IllegalArgumentException ex) {
+			env.writeln(ex.getMessage());
+		}		
 		return ShellStatus.CONTINUE;
 	}
 

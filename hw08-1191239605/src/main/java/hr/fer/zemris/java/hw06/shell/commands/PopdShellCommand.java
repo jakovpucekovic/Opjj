@@ -59,7 +59,12 @@ public class PopdShellCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;
 		}
 		
-		new CdShellCommand().executeCommand(env, path.toString());
+		/*Switch directory.*/
+		try {
+			env.setCurrentDirectory(path);
+		} catch(IllegalArgumentException ex) {
+			env.writeln(ex.getMessage());
+		}
 		return ShellStatus.CONTINUE;
 	}
 

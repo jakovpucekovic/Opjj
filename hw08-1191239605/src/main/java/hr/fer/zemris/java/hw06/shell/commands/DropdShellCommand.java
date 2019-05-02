@@ -44,7 +44,7 @@ public class DropdShellCommand implements ShellCommand {
 		
 		Stack<Path> stack = (Stack<Path>)env.getSharedData("cdstack");
 		if(stack == null) {
-			env.writeln("The aren't any stored directories.");
+			env.writeln("There aren't any stored directories.");
 			return ShellStatus.CONTINUE;						
 		}
 		

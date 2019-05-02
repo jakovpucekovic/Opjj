@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import hr.fer.zemris.java.hw06.shell.commands.ParserUtil;
+import hr.fer.zemris.java.hw06.shell.commands.utils.ParserUtil;
 
 public class ParserUtilTest {
 

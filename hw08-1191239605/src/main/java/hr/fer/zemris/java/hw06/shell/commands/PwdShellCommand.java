@@ -25,7 +25,7 @@ public class PwdShellCommand implements ShellCommand {
 	 */
 	public PwdShellCommand() {
 		description = new ArrayList<>();
-		description.add("Command which prints the current directory.");
+		description.add("Command which prints the path to the current directory.");
 		description.add("Usage: pwd");
 	}
 	
@@ -38,6 +38,7 @@ public class PwdShellCommand implements ShellCommand {
 			env.writeln("This command doesn't take any arguments.");
 			return ShellStatus.CONTINUE;
 		}
+		
 		env.writeln(env.getCurrentDirectory().toString());
 		return ShellStatus.CONTINUE;
 	}

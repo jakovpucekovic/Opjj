@@ -1,8 +1,10 @@
 /**
- *	package-info TODO javadoc
- * 
+ *	Package contains the utilities used for parsing input filtering files
+ *	which are used in implementations of {@link hr.fer.zemris.java.hw06.shell.ShellCommand}
+ *	in the eighth homework for the class Introduction to the Java programming language 
+ *	held in the academic year 2018/2019.
+ *
  * 	@author Jakov Pucekovic
- * 	@version 1.0
+ *	@since 1.0
  */
-
 package hr.fer.zemris.java.hw06.shell.commands.utils;

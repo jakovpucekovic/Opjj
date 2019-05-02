@@ -85,7 +85,7 @@ public interface Environment {
 	/**
 	 * 	Sets the current working directory to the given directory.
 	 * 	@param path {@link Path} to the new working directory.
-	 * 	@throws TODO koji exception bacamo ako path nije direktorij?
+	 * 	@throws IllegalArgumentException Given {@link Path} is not a directory or doesn't exist.
 	 */
 	void setCurrentDirectory(Path path);
 	

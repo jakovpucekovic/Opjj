@@ -9,17 +9,23 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import searching.slagalica.Slagalica;
+
 /**
- *	SearchUtil TODO javadoc
+ *	Class which contains 2 searching algorithms which can be used to 
+ *	solve problems like {@link Slagalica}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class SearchUtil {
 
 	/**
-	 * 	
+	 * 	Implementation of the breadth-first-search algorithm.
+	 * 	@param s0 {@link Supplier} of the initial state.
+	 * 	@param succ {@link Function} which returns the list of next possible states.
+	 * 	@param goal {@link Predicate} which tells if the goal is met.
+	 * 	@return Solution of <code>null</code> if it doesn't exist.
 	 */
 	public static <S> Node<S> bfs(Supplier<S> s0, Function<S,List<Transition<S>>> succ, Predicate<S> goal){
 		List<Node<S>> toExplore = new LinkedList<>();
@@ -37,6 +43,14 @@ public class SearchUtil {
 		return null;
 	}
 	
+	/**
+	 * 	Implementation of an improved breadth-first-search algorithm which
+	 * 	doesn't go through the same values twice.
+	 * 	@param s0 {@link Supplier} of the initial state.
+	 * 	@param succ {@link Function} which returns the list of next possible states.
+	 * 	@param goal {@link Predicate} which tells if the goal is met.
+	 * 	@return Solution of <code>null</code> if it doesn't exist.
+	 */
 	public static <S> Node<S> bfsv(Supplier<S> s0, Function<S,List<Transition<S>>> succ, Predicate<S> goal){
 		List<Node<S>> toExplore = new LinkedList<>();
 		toExplore.add(new Node<S>(null, s0.get(), 0));

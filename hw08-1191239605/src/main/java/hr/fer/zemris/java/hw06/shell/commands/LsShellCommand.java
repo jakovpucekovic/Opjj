@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
+import hr.fer.zemris.java.hw06.shell.commands.utils.ParserUtil;
 
 /**
  *	Class {@link LsShellCommand} which implements a {@link ShellCommand}
@@ -70,11 +71,6 @@ public class LsShellCommand implements ShellCommand{
 			env.writeln("This command takes only 1 argument.");
 			return ShellStatus.CONTINUE;
 		}
-
-		if(args.get(0).isBlank()) {
-			env.writeln("No arguments given.");
-			return ShellStatus.CONTINUE;
-		}
 		
 		Path directory;
 		
@@ -99,7 +95,7 @@ public class LsShellCommand implements ShellCommand{
 		}
 		
 		try(Stream<Path> stream = Files.list(directory)){
-			List<Path> list = stream.sorted((p1,p2)-> p1.compareTo(p2)).collect(Collectors.toList());
+			List<Path> list = stream.sorted(Path::compareTo).collect(Collectors.toList());
 			for(var i : list) {
 				env.writeln(createPrintableData(i));
 			}

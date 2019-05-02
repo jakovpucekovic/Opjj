@@ -8,31 +8,46 @@ import searching.algorithms.Node;
 import searching.algorithms.SearchUtil;
 import searching.slagalica.KonfiguracijaSlagalice;
 import searching.slagalica.Slagalica;
+import searching.slagalica.gui.SlagalicaViewer;
 
 /**
  *	An example class which solves the given {@link KonfiguracijaSlagalice}
- *	using the bsv or bsfv {@link SearchUtil}.
+ *	using the bsfv {@link SearchUtil} and given grafical output of the steps.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class SlagalicaMain {
 
+	
 	public static void main(String[] args) {
+		
+		if(args.length != 1) {
+			System.out.println("This program exprects 1 argument.");
+			return;
+		}
 
-		Slagalica slagalica = new Slagalica(
-//				new KonfiguracijaSlagalice(new int[] {2,3,0,1,4,6,7,5,8})
-				new KonfiguracijaSlagalice(new int[] {1,6,4,5,0,2,8,7,3})
-		);
+		int[] el = new int[9];
+		for(int i = 0; i < args[0].length(); ++i) {
+			el[i] = Character.getNumericValue(args[0].charAt(i));
+		}
+		
+		Slagalica slagalica;
+		
+		try {
+		slagalica = new Slagalica(
+				new KonfiguracijaSlagalice(el));
+		} catch(IllegalArgumentException ex) {
+			System.out.println(ex.getMessage());
+			return;
+		}
 		
 		Node<KonfiguracijaSlagalice> rješenje =
-//			SearchUtil.bfs(slagalica.initialState, slagalica.succ, slagalica.goal);
 			SearchUtil.bfsv(slagalica.initialState, slagalica.succ, slagalica.goal);
 		
 		if(rješenje==null) {
 			System.out.println("Nisam uspio pronaći rješenje.");
-			} else {
+		} else {
 			System.out.println(
 			"Imam rješenje. Broj poteza je: " + rješenje.getCost()
 			);
@@ -47,6 +62,7 @@ public class SlagalicaMain {
 				System.out.println(k);
 				System.out.println();
 			});
+			SlagalicaViewer.display(rješenje);
 		}
 		
 	}

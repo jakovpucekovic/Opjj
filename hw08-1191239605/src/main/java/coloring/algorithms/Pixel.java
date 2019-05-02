@@ -1,5 +1,7 @@
 package coloring.algorithms;
 
+import java.util.Objects;
+
 import marcupic.opjj.statespace.coloring.Picture;
 
 /**
@@ -25,6 +27,14 @@ public class Pixel {
 	public Pixel(int x, int y) {
 		this.x = x;
 		this.y = y;
+	}
+	
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(x, y);
 	}
 	
 	/**

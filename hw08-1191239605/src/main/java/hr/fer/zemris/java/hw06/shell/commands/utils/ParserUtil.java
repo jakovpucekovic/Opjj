@@ -1,19 +1,18 @@
-package hr.fer.zemris.java.hw06.shell.commands;
+package hr.fer.zemris.java.hw06.shell.commands.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  *	Class ParserUtil which is used to parse paths.
- *	Allows a path to be in quotation marks "", but after
- *	quotation marks must come a whitespace.
+ *	Allows a path to be in quotation marks "" and have escaping
+ *	sequence \\ for \ and \" for " inside of "". Also allows whitespace
+ *	if inside "". Otherwise split the input at every whitespace.
  * 	
  * 	@author Jakov Pucekovic
  * 	@version 2.0
  */
 public class ParserUtil {
-	//TODO preseli u utils paket
-	//TODO promjeni sve commande na novi parserUtil
 	
 	/**
 	 *	Method which does the parsing of arguments

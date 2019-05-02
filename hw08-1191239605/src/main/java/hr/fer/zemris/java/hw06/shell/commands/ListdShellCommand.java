@@ -29,7 +29,7 @@ public class ListdShellCommand implements ShellCommand {
 	public ListdShellCommand() {
 		description = new ArrayList<>();
 		description.add("Command which prints all the paths saved on the stack.");
-		description.add("Usage: Listd");
+		description.add("Usage: listd");
 	}
 	
 	/**
@@ -50,7 +50,11 @@ public class ListdShellCommand implements ShellCommand {
 			return ShellStatus.CONTINUE;						
 		}
 		
-		stack.stream().map(Object::toString).forEach(env::writeln);
+		/*Write in descending order.*/
+		for(int i = stack.size() - 1; i >=0; --i) {
+			env.writeln(stack.get(i).toString());
+		}
+		
 		return ShellStatus.CONTINUE;
 	}
 

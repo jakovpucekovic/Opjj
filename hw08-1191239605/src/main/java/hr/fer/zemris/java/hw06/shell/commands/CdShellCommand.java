@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.hw06.shell.commands;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.List;
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
+import hr.fer.zemris.java.hw06.shell.commands.utils.ParserUtil;
 
 /**
  *	Class {@link CdShellCommand} which implements a {@link ShellCommand}
@@ -27,7 +27,7 @@ public class CdShellCommand implements ShellCommand {
 	 */
 	public CdShellCommand() {
 		description = new ArrayList<>();
-		description.add("Command sets the current directory to the given path.");
+		description.add("Command sets the current directory to the given directory.");
 		description.add("Usage: cd path");
 	}
 	
@@ -66,19 +66,11 @@ public class CdShellCommand implements ShellCommand {
 
 		directory = env.getCurrentDirectory().resolve(directory);
 		
-		/*Check if directory exists.*/
-		if(!Files.exists(directory)) {
-			env.writeln("Directory doesn't exist");
-			return ShellStatus.CONTINUE;
+		try {
+			env.setCurrentDirectory(directory);
+		} catch(IllegalArgumentException ex) {
+			env.writeln(ex.getMessage());
 		}
-		
-		/*Check if directory.*/
-		if(!Files.isDirectory(directory)) {
-			env.writeln("Given argument is not a directory.");
-			return ShellStatus.CONTINUE;
-		}
-		
-		env.setCurrentDirectory(directory);
 		
 		return ShellStatus.CONTINUE;
 	}

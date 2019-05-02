@@ -13,6 +13,7 @@ import java.util.List;
 import hr.fer.zemris.java.hw06.shell.Environment;
 import hr.fer.zemris.java.hw06.shell.ShellCommand;
 import hr.fer.zemris.java.hw06.shell.ShellStatus;
+import hr.fer.zemris.java.hw06.shell.commands.utils.ParserUtil;
 
 /**
  *	Class {@link CopyShellCommand} which implements a {@link ShellCommand}
@@ -80,7 +81,7 @@ public class CopyShellCommand implements ShellCommand{
 		
 		/*If whatToCopy is not a file*/
 		if(!Files.isRegularFile(whatToCopy)) {
-			env.writeln("Given argument is not a file.");
+			env.writeln("Given argument which should be copied is not a file.");
 			return ShellStatus.CONTINUE;
 		}
 		
