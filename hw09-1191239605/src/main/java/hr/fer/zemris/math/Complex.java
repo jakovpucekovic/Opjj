@@ -37,6 +37,10 @@ public class Complex {
 	/**Imaginary value*/
 	private double im;
 	
+	public Complex() {
+		//TODO javadoc
+	}
+	
 	/**
 	 * 	Construct a new {@link Complex} with the given real and
 	 * 	imaginary value.

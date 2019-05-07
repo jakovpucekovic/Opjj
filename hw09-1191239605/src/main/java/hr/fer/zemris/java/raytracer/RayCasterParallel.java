@@ -1,9 +1,16 @@
-package hr.fer.zemris.java.raytracer.model;
+package hr.fer.zemris.java.raytracer;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import hr.fer.zemris.java.raytracer.model.IRayTracerProducer;
+import hr.fer.zemris.java.raytracer.model.IRayTracerResultObserver;
+import hr.fer.zemris.java.raytracer.model.LightSource;
+import hr.fer.zemris.java.raytracer.model.Point3D;
+import hr.fer.zemris.java.raytracer.model.Ray;
+import hr.fer.zemris.java.raytracer.model.RayIntersection;
+import hr.fer.zemris.java.raytracer.model.Scene;
 import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
 
 /**

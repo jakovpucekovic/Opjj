@@ -19,6 +19,12 @@ public class ComplexRootedPolynomial {
 	/**Stores the constant of the polynomial.*/
 	private Complex constant;
 	
+	public ComplexRootedPolynomial(List<Complex> roots) {
+		this.roots = new ArrayList<>();
+		this.roots.addAll(roots);
+		this.constant = Complex.ZERO;
+	}
+	
 	/**
 	 * 	Constructs a new {@link ComplexRootedPolynomial} which is
 	 * 	the polynomial f(z)=0.
@@ -88,12 +94,18 @@ public class ComplexRootedPolynomial {
 	 * 	@return Index of closest root or -1 if there is no such root.
 	 */
 	public int indexOfClosestRootFor(Complex z, double treshold) {
+		int closestIndex = -1;
+		double closestDistance = roots.get(0).sub(z).module();
 		for(int i = 0; i < roots.size(); ++i) {
-			if(roots.get(i).sub(z).module() < treshold) {
-				return i;
+			double distance = roots.get(i).sub(z).module();
+			if(distance <= treshold) {
+				if(distance < closestDistance) {
+					closestDistance = distance;
+					closestIndex = i;
+				}
 			}
 		}
-		return -1;
+		return closestIndex;
 	}
 	
 }
