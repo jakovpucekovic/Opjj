@@ -12,7 +12,7 @@ import java.util.List;
  * 	@version 1.0
  */
 public class ComplexRootedPolynomial {
-
+	
 	/**Stores the roots of the polynomial.*/
 	private List<Complex> roots;
 
@@ -22,7 +22,7 @@ public class ComplexRootedPolynomial {
 	public ComplexRootedPolynomial(List<Complex> roots) {
 		this.roots = new ArrayList<>();
 		this.roots.addAll(roots);
-		this.constant = Complex.ZERO;
+		this.constant = Complex.ONE;
 	}
 	
 	/**
@@ -95,11 +95,11 @@ public class ComplexRootedPolynomial {
 	 */
 	public int indexOfClosestRootFor(Complex z, double treshold) {
 		int closestIndex = -1;
-		double closestDistance = roots.get(0).sub(z).module();
+		double closestDistance = Double.MAX_VALUE;
 		for(int i = 0; i < roots.size(); ++i) {
-			double distance = roots.get(i).sub(z).module();
+			double distance = z.sub(roots.get(i)).module();
 			if(distance <= treshold) {
-				if(distance < closestDistance) {
+				if(distance <= closestDistance) {
 					closestDistance = distance;
 					closestIndex = i;
 				}

@@ -35,6 +35,12 @@ public class ComplexTest {
 		Complex expected = new Complex(0.7, -0.1 );
 		assertEquals(expected, new Complex(1,2).divide(new Complex(1,3)));
 	}
+	
+	@Test
+	public void div2Test() {
+		Complex expected = new Complex(43./65, -6./65 );
+		assertEquals(expected, new Complex(5,2).divide(new Complex(7,4)));
+	}
 
 	@Test
 	public void powerTest() {

@@ -53,7 +53,7 @@ public class Complex {
 	}
 	
 	/**
-	 * 	
+	 * 	//TODO javadoc
 	 */
 	public double module() {
 		return Math.sqrt(re * re + im * im);
@@ -71,7 +71,7 @@ public class Complex {
 	
 	/**
 	 * 	Divides this {@link Complex} number with the given
-	 * 	{@link Complex} number.\
+	 * 	{@link Complex} number.
 	 * 	@param c The {@link Complex} number to divide with.
 	 * 	@return A new {@link Complex} number which is the quotient of the division.
 	 */

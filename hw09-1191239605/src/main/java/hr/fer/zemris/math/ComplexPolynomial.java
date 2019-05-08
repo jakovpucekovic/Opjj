@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 
 public class ComplexPolynomial {
-	
+		
 	/**Factors of the polynomial.*/
 	private List<Complex> factors;
 	
@@ -102,11 +102,9 @@ public class ComplexPolynomial {
 	public Complex apply(Complex z) {
 		/*Horner algorithm*/
 		Complex ret = factors.get(factors.size()-1);
-		for(int i = factors.size() - 1; i > 0; --i) {
+		for(int i = factors.size() - 2; i >= 0; --i) {
 			ret = ret.multiply(z).add(factors.get(i));
 		}
-		ret = ret.add(factors.get(0));
-		
 		return ret;
 	}
 
