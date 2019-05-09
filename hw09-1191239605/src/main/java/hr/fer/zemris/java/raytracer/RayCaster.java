@@ -12,7 +12,7 @@ import hr.fer.zemris.java.raytracer.model.Scene;
 import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
 
 /**
- *	RayCaster TODO javadoc
+ *	Class which models a ray caster.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -20,8 +20,13 @@ import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
 
 public class RayCaster {
 
-	private static final short[] ambient = {15, 15, 15};
+	/**Color of scene ambient.*/
+	private static final short[] AMBIENT_COLOR = {15, 15, 15};
 	
+	/**
+	 * 	Runs the program.
+	 * 	@param args None.
+	 */
 	public static void main(String[] args) {
 		RayTracerViewer.show(getIRayTracerProducer(),
 		new Point3D(10,0,0),
@@ -30,7 +35,10 @@ public class RayCaster {
 		20, 20);
 		}
 	
-	
+	/**
+	 *	Returns a {@link IRayTracerProducer} which creates the scene.
+	 *	@return A {@link IRayTracerProducer}. 
+	 */
 	private static IRayTracerProducer getIRayTracerProducer() {
 		return new IRayTracerProducer() {
 				
@@ -39,20 +47,15 @@ public class RayCaster {
 				double horizontal, double vertical, int width, int height,//nigdje ne koristim atomic boolean cancel
 				long requestNo, IRayTracerResultObserver observer, AtomicBoolean cancel) {
 				
-				
 				System.out.println("Započinjem izračune...");
 				short[] red = new short[width*height];
 				short[] green = new short[width*height];
 				short[] blue = new short[width*height];
 				
-				Point3D zAxis = view.sub(eye).modifyNormalize();//promatrac?
-				Point3D vuv = viewUp.normalize();
-				
-				Point3D yAxis = vuv.sub(zAxis.scalarMultiply(zAxis.scalarProduct(vuv)));
+				Point3D zAxis = view.sub(eye).modifyNormalize();				
+				Point3D yAxis = viewUp.normalize().sub(zAxis.scalarMultiply(zAxis.scalarProduct(viewUp.normalize())));
 				yAxis.modifyNormalize();
-				
 				Point3D xAxis = zAxis.vectorProduct(yAxis).modifyNormalize();
-				
 				Point3D screenCorner = view.sub(xAxis.scalarMultiply(horizontal/2)).add(yAxis.scalarMultiply(vertical/2));
 				
 				Scene scene = RayTracerViewer.createPredefinedScene();
@@ -68,7 +71,6 @@ public class RayCaster {
 						
 						Ray ray = Ray.fromPoints(eye, screenPoint);
 						
-//						basicTracer(scene, ray, rgb);
 						tracer(scene, ray, rgb);
 						
 						red[offset] = rgb[0] > 255 ? 255 : rgb[0];
@@ -86,8 +88,13 @@ public class RayCaster {
 		};
 	}
 	
-	
-	protected static void tracer(Scene scene, Ray ray, short[] rgb) {
+	/**
+	 *	Method which does the tracing.
+	 *	@param scene Scene in which the tracing should be done.
+	 *	@param ray Ray that is traced.
+	 *	@param rgb Short[] to store color. 
+	 */
+	private static void tracer(Scene scene, Ray ray, short[] rgb) {
 		
 		RayIntersection closest = findClosestIntersection(scene, ray);
 		if(closest == null) {
@@ -99,11 +106,16 @@ public class RayCaster {
 		}
 	}
 			
+	/**
+	 * 	Determines the color of the given intersection.
+	 * 	@param intersect The intersection whose color should be determined.
+	 * 	@param scene The scene in which the intersection is.
+	 * 	@param rgb Short[] to store color.
+	 */
 	private static void determineColorFor(RayIntersection intersect, Scene scene, Ray ray, short[] rgb) {
-		rgb[0] = ambient[0];
-		rgb[1] = ambient[1];
-		rgb[2] = ambient[2];
-		
+		rgb[0] = AMBIENT_COLOR[0];
+		rgb[1] = AMBIENT_COLOR[1];
+		rgb[2] = AMBIENT_COLOR[2];
 		
 		for(var light : scene.getLights()) {
 			Ray rayFromLight = Ray.fromPoints(light.getPoint(), intersect.getPoint());
@@ -112,17 +124,21 @@ public class RayCaster {
 				continue;
 			}
 			addColor(rgb, intersect, ray, light);
-			
 		}
-
 	}
 
+	/**
+	 *	Adds the color colors the light source emits onto the intersection.
+	 *	@param rgb Short[] to store color.
+	 *	@param intersect Intersection whose color is updated.
+	 *	@param ray Ray from spectator to intersection.
+	 *	@param light Light whose color is added.
+	 */
 	private static void addColor(short[] rgb, RayIntersection intersect, Ray ray, LightSource light) {
-		
 		Point3D normalOfSurface = intersect.getNormal();
 		Point3D vectorFromIntersectionToLightSource = light.getPoint().sub(intersect.getPoint()).modifyNormalize();
 		
-		//dif component
+		/*Diffuse components*/
 		double cos = normalOfSurface.scalarProduct(vectorFromIntersectionToLightSource);
 		if(cos < 0) {
 			cos = 0;
@@ -132,7 +148,7 @@ public class RayCaster {
 		rgb[1] += intersect.getKdg() * light.getG() * cos;
 		rgb[2] += intersect.getKdb() * light.getB() * cos;
 		
-		//refl component
+		/*Reflective components*/
 		Point3D reflectedRay = normalOfSurface.scalarMultiply(normalOfSurface.scalarProduct(vectorFromIntersectionToLightSource)*2).modifySub(vectorFromIntersectionToLightSource).modifyNormalize();
 		Point3D vectorFromIntersectToEye = ray.start.sub(intersect.getPoint()).modifyNormalize();
 		double cosN = reflectedRay.scalarProduct(vectorFromIntersectToEye);
@@ -148,9 +164,11 @@ public class RayCaster {
 	}
 	
 	/**
-	 * @param scene
-	 * @param ray
-	 * @return
+	 * 	Finds the closes intersection of the given ray and any object in this scene or
+	 * 	<code>null</code> if there are no intersections.
+	 * 	@param scene Scene in which to search for intersections.
+	 * 	@param ray Ray to intersect with.
+	 * 	@return Closes intersection in the scene.
 	 */
 	private static RayIntersection findClosestIntersection(Scene scene, Ray ray) {		
 		RayIntersection closestIntersection = null;
@@ -163,7 +181,6 @@ public class RayCaster {
 			if(rayInt != null && rayInt.getDistance() < closestIntersection.getDistance()) {
 				closestIntersection = rayInt;
 			}
-			
 		}
 		return closestIntersection;
 		

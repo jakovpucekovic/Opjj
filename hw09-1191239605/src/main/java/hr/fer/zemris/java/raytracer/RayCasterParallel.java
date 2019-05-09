@@ -14,7 +14,7 @@ import hr.fer.zemris.java.raytracer.model.Scene;
 import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
 
 /**
- *	RayCaster TODO javadoc
+ *	Class which models a ray caster which uses multithreading.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -22,8 +22,13 @@ import hr.fer.zemris.java.raytracer.viewer.RayTracerViewer;
 
 public class RayCasterParallel {
 
-	private static final short[] ambient = {15, 15, 15};
+	/**Color of scene ambient.*/
+	private static final short[] AMBIENT_COLOR = {15, 15, 15};
 	
+	/**
+	 * 	Runs the program.
+	 * 	@param args None.
+	 */
 	public static void main(String[] args) {
 		RayTracerViewer.show(getIRayTracerProducer(),
 		new Point3D(10,0,0),
@@ -32,37 +37,33 @@ public class RayCasterParallel {
 		20, 20);
 		}
 	
-	
+	/**
+	 *	Returns a {@link IRayTracerProducer} which creates the scene.
+	 *	@return A {@link IRayTracerProducer}. 
+	 */
 	private static IRayTracerProducer getIRayTracerProducer() {
 		return new IRayTracerProducer() {
 				
-			private ForkJoinPool pool = new ForkJoinPool(); //imamo pool koji napravimo jednom i onda mu dajemo poslove
+			private ForkJoinPool pool = new ForkJoinPool();
 			
 			@Override
 			public void produce(Point3D eye, Point3D view, Point3D viewUp,
-				double horizontal, double vertical, int width, int height,//TODO dodaj cancel
+				double horizontal, double vertical, int width, int height,
 				long requestNo, IRayTracerResultObserver observer, AtomicBoolean cancel) {
-				
 				
 				System.out.println("Započinjem izračune...");
 				short[] red = new short[width*height];
 				short[] green = new short[width*height];
 				short[] blue = new short[width*height];
 				
-				Point3D zAxis = view.sub(eye).modifyNormalize();
-				Point3D vuv = viewUp.normalize();
-
-				
-				Point3D yAxis = vuv.sub(zAxis.scalarMultiply(zAxis.scalarProduct(vuv)));
+				Point3D zAxis = view.sub(eye).modifyNormalize();				
+				Point3D yAxis = viewUp.normalize().sub(zAxis.scalarMultiply(zAxis.scalarProduct(viewUp.normalize())));
 				yAxis.modifyNormalize();
-				
 				Point3D xAxis = zAxis.vectorProduct(yAxis).modifyNormalize();
-				
 				Point3D screenCorner = view.sub(xAxis.scalarMultiply(horizontal/2)).add(yAxis.scalarMultiply(vertical/2));
 				
 				Scene scene = RayTracerViewer.createPredefinedScene();
 	
-				//multithreading
 				pool.invoke(new Work(0, height, width, height, xAxis, yAxis, eye, screenCorner, scene, horizontal, vertical, red, green, blue, cancel));
 				
 				System.out.println("Izračuni gotovi...");
@@ -73,31 +74,66 @@ public class RayCasterParallel {
 		};
 	}
 	
+	/**
+	 *   Class which represents work that should be done.
+	 */
 	public static class Work extends RecursiveAction{
 
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 		
-		int yMin;
-		int yMax;
-		int width;
-		int height;
-		Point3D xAxis;
-		Point3D yAxis;
-		Point3D eye;
-		Point3D screenCorner;
-		Scene scene;
-		double horizontal;
-		double vertical;
-		short[] red;
-		short[] green;
-		short[] blue;
-		AtomicBoolean cancel; //TODO vidi jel ti treba ovo uopce
-				
+		/**Number of rows that 1 thread will execute, not forking into 2.*/
 		private static final int treshold = 16;
+
 		
+		/**Minimal height for which the {@link Work} should be done.*/
+		private int yMin;
+		/**Maximal height for which the {@link Work} should be done.*/
+		private int yMax;
+		/**Height of the window in pixels.*/
+		private int height;
+		/**Width of the window in pixels.*/
+		private int width;
+		/**X axis of the coordinate system.*/
+		private Point3D xAxis;
+		/**Y axis of the coordinate system.*/
+		private Point3D yAxis;
+		/**Point from where the spectator is looking.*/
+		private Point3D eye;
+		/**Corner of the screen.*/
+		private Point3D screenCorner;
+		/**Scene in which the work should be done.*/
+		private Scene scene;
+		/**Horizontal length of coordinate system.*/
+		private double horizontal;
+		/**Vertical length of coordinate system.*/
+		private double vertical;
+		/**Amount of red color in rgb color.*/
+		private short[] red;
+		/**Amount of green color in rgb color.*/
+		private short[] green;
+		/**Amount of blue color in rgb color.*/
+		private short[] blue;
+		/**Signals whether to cancel an operation.*/
+		private AtomicBoolean cancel;
+	
+		/**
+		 * 	Constructs a new {@link Work} with the given arguments.
+		 * 	@param yMin Minimal height for which the {@link Work} should be done.
+		 * 	@param yMax Maximal height for which the {@link Work} should be done.
+		 * 	@param width Width of the window in pixels.
+		 * 	@param height Height of the window in pixels.
+		 * 	@param xAxis X axis of the coordinate system.
+		 * 	@param yAxis Y axis of the coordinate system.
+		 * 	@param eye Point from where the spectator is looking.
+		 * 	@param screenCorner Corner of the screen.
+		 * 	@param scene Scene in which the work should be done.
+		 * 	@param horizontal Horizontal length of coordinate system.
+		 * 	@param vertical Vertical length of coordinate system.
+		 * 	@param red Amount of red color in rgb color.
+		 * 	@param green Amount of green color in rgb color.
+		 * 	@param blue Amount of blue color in rgb color.
+		 * 	@param cancel Signals whether to cancel an operation.
+		 */
 		public Work(int yMin, int yMax, int width, int height, Point3D xAxis, Point3D yAxis, Point3D eye, Point3D screenCorner, Scene scene, double horizontal, double vertical, short[] red, short[] green, short[] blue, AtomicBoolean cancel) {
 			this.yMin = yMin;
 			this.yMax = yMax;
@@ -116,7 +152,6 @@ public class RayCasterParallel {
 			this.cancel = cancel;
 		}
 
-
 		/**
 		 *	{@inheritDoc}
 		 */
@@ -130,10 +165,10 @@ public class RayCasterParallel {
 					  new Work(yMin+(yMax-yMin)/2, yMax, width, height, xAxis, yAxis, eye, screenCorner, scene, horizontal, vertical, red, green, blue, cancel));
 		}
 		
-		
+		/**
+		 * 	Computes the colors for the pixels in the given range.
+		 */
 		public void computeDirect() {
-			System.out.println("racunam od " + yMin + "do " + yMax);
-			
 			short[] rgb = new short[3];
 			int offset = yMin * width;
 			for(int y = yMin; y < yMax; y++) {
@@ -159,9 +194,13 @@ public class RayCasterParallel {
 		}
 	}
 	
-	
-	protected static void tracer(Scene scene, Ray ray, short[] rgb) {
-		
+	/**
+	 *	Method which does the tracing.
+	 *	@param scene Scene in which the tracing should be done.
+	 *	@param ray Ray that is traced.
+	 *	@param rgb Short[] to store color. 
+	 */
+	private static void tracer(Scene scene, Ray ray, short[] rgb) {
 		RayIntersection closest = findClosestIntersection(scene, ray);
 		if(closest == null) {
 			rgb[0] = 0;
@@ -172,11 +211,16 @@ public class RayCasterParallel {
 		}
 	}
 			
+	/**
+	 * 	Determines the color of the given intersection.
+	 * 	@param intersect The intersection whose color should be determined.
+	 * 	@param scene The scene in which the intersection is.
+	 * 	@param rgb Short[] to store color.
+	 */
 	private static void determineColorFor(RayIntersection intersect, Scene scene, Ray ray, short[] rgb) {
-		rgb[0] = ambient[0];
-		rgb[1] = ambient[1];
-		rgb[2] = ambient[2];
-		
+		rgb[0] = AMBIENT_COLOR[0];
+		rgb[1] = AMBIENT_COLOR[1];
+		rgb[2] = AMBIENT_COLOR[2];
 		
 		for(var light : scene.getLights()) {
 			Ray rayFromLight = Ray.fromPoints(light.getPoint(), intersect.getPoint());
@@ -185,17 +229,21 @@ public class RayCasterParallel {
 				continue;
 			}
 			addColor(rgb, intersect, ray, light);
-			
 		}
-
 	}
-
+	
+	/**
+	 *	Adds the color colors the light source emits onto the intersection.
+	 *	@param rgb Short[] to store color.
+	 *	@param intersect Intersection whose color is updated.
+	 *	@param ray Ray from spectator to intersection.
+	 *	@param light Light whose color is added.
+	 */
 	private static void addColor(short[] rgb, RayIntersection intersect, Ray ray, LightSource light) {
-		
 		Point3D normalOfSurface = intersect.getNormal();
 		Point3D vectorFromIntersectionToLightSource = light.getPoint().sub(intersect.getPoint()).modifyNormalize();
 		
-		//dif component
+		/*Diffuse components*/
 		double cos = normalOfSurface.scalarProduct(vectorFromIntersectionToLightSource);
 		if(cos < 0) {
 			cos = 0;
@@ -205,7 +253,7 @@ public class RayCasterParallel {
 		rgb[1] += intersect.getKdg() * light.getG() * cos;
 		rgb[2] += intersect.getKdb() * light.getB() * cos;
 		
-		//refl component
+		/*Reflective components*/
 		Point3D reflectedRay = normalOfSurface.scalarMultiply(normalOfSurface.scalarProduct(vectorFromIntersectionToLightSource)*2).modifySub(vectorFromIntersectionToLightSource).modifyNormalize();
 		Point3D vectorFromIntersectToEye = ray.start.sub(intersect.getPoint()).modifyNormalize();
 		double cosN = reflectedRay.scalarProduct(vectorFromIntersectToEye);
@@ -221,9 +269,11 @@ public class RayCasterParallel {
 	}
 	
 	/**
-	 * @param scene
-	 * @param ray
-	 * @return
+	 * 	Finds the closes intersection of the given ray and any object in this scene or
+	 * 	<code>null</code> if there are no intersections.
+	 * 	@param scene Scene in which to search for intersections.
+	 * 	@param ray Ray to intersect with.
+	 * 	@return Closes intersection in the scene.
 	 */
 	private static RayIntersection findClosestIntersection(Scene scene, Ray ray) {		
 		RayIntersection closestIntersection = null;
@@ -236,10 +286,8 @@ public class RayCasterParallel {
 			if(rayInt != null && rayInt.getDistance() < closestIntersection.getDistance()) {
 				closestIntersection = rayInt;
 			}
-			
 		}
 		return closestIntersection;
-		
 	}
 				
 }

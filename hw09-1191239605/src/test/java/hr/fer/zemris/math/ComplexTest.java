@@ -1,6 +1,7 @@
 package hr.fer.zemris.math;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,150 @@ import hr.fer.zemris.math.Complex;
 
 public class ComplexTest {
 	
+	@Test 
+	public void parseNull() {
+		assertThrows(NullPointerException.class, ()->Complex.parse(null));
+	}
+	
+	@Test
+	public void parseNotNumber() {
+		assertThrows(IllegalArgumentException.class, ()->Complex.parse("pero"));
+		assertThrows(IllegalArgumentException.class, ()->Complex.parse("1,2"));
+		assertThrows(IllegalArgumentException.class, ()->Complex.parse("+-3"));
+		assertThrows(IllegalArgumentException.class, ()->Complex.parse("-+i"));
+		assertThrows(IllegalArgumentException.class, ()->Complex.parse("++3--2i"));
+	}
+	
+	@Test
+	public void parseOne() {
+		Complex expected = new Complex(1, 0);
+		
+		assertEquals(expected, Complex.parse("1"));
+		assertEquals(expected, Complex.parse("+1"));
+		assertEquals(expected, Complex.parse("1.0"));
+		assertEquals(expected, Complex.parse("+1.0"));
+	}
+	
+	@Test
+	public void parseMinusOne() {
+		Complex expected = new Complex(-1, 0);
+		
+		assertEquals(expected, Complex.parse("-1"));
+		assertEquals(expected, Complex.parse("-1.0"));
+	}
+	
+	@Test
+	public void parseI() {
+		Complex expected = new Complex(0, 1);
+		
+		assertEquals(expected, Complex.parse("i"));
+		assertEquals(expected, Complex.parse("+i"));
+		assertEquals(expected, Complex.parse("i1.0"));
+		assertEquals(expected, Complex.parse("+i1.0"));
+	}
+	
+	@Test
+	public void parseMinusI() {
+		Complex expected = new Complex(0, -1);
+		
+		assertEquals(expected, Complex.parse("-i"));
+		assertEquals(expected, Complex.parse("-i1.0"));
+	}
+	
+	@Test
+	public void parseOnePlusI() {
+		Complex expected = new Complex(1, 1);
+		
+		assertEquals(expected, Complex.parse("1+i"));
+		assertEquals(expected, Complex.parse("1+i1"));
+		assertEquals(expected, Complex.parse("1+i1.0"));
 
+		assertEquals(expected, Complex.parse("1.0+i"));
+		assertEquals(expected, Complex.parse("1.0+i1"));
+		assertEquals(expected, Complex.parse("1.0+i1.0"));
+	}
+	
+	@Test
+	public void parseOneMinusI() {
+		Complex expected = new Complex(1, -1);
+		assertEquals(expected, Complex.parse("1-i"));
+		assertEquals(expected, Complex.parse("1-i1"));
+		assertEquals(expected, Complex.parse("1-i1.0"));
+		
+		assertEquals(expected, Complex.parse("+1-i"));
+		assertEquals(expected, Complex.parse("+1-i1"));
+		assertEquals(expected, Complex.parse("+1-i1.0"));
+
+		assertEquals(expected, Complex.parse("1.0-i"));
+		assertEquals(expected, Complex.parse("1.0-i1"));
+		assertEquals(expected, Complex.parse("1.0-i1.0"));
+		
+		assertEquals(expected, Complex.parse("+1.0-i"));
+		assertEquals(expected, Complex.parse("+1.0-i1"));
+		assertEquals(expected, Complex.parse("+1.0-i1.0"));
+	}
+	
+	@Test
+	public void parsePlusOnePlusI() {
+		Complex expected = new Complex(1, 1);
+		
+		assertEquals(expected, Complex.parse("+1+i"));
+		assertEquals(expected, Complex.parse("+1+i1"));
+		assertEquals(expected, Complex.parse("+1+i1.0"));
+		
+		assertEquals(expected, Complex.parse("+1.0+i"));
+		assertEquals(expected, Complex.parse("+1.0+i1"));
+		assertEquals(expected, Complex.parse("+1.0+i1.0"));
+	}
+	
+	@Test
+	public void parsePlusOneMinusI() {
+		Complex expected = new Complex(1, -1);;
+		
+		assertEquals(expected, Complex.parse("+1-i"));
+		assertEquals(expected, Complex.parse("+1-i1"));
+		assertEquals(expected, Complex.parse("+1-i1.0"));
+		
+		assertEquals(expected, Complex.parse("+1.0-i"));
+		assertEquals(expected, Complex.parse("+1.0-i1"));
+		assertEquals(expected, Complex.parse("+1.0-i1.0"));
+	}
+	
+	@Test
+	public void parseMinusOnePlusI() {
+		Complex expected = new Complex(-1, 1);
+		
+		assertEquals(expected, Complex.parse("-1+i"));
+		assertEquals(expected, Complex.parse("-1+i1"));
+		assertEquals(expected, Complex.parse("-1+i1.0"));
+		
+		assertEquals(expected, Complex.parse("-1+i"));
+		assertEquals(expected, Complex.parse("-1+i1"));
+		assertEquals(expected, Complex.parse("-1+i1.0"));
+
+		assertEquals(expected, Complex.parse("-1.0+i"));
+		assertEquals(expected, Complex.parse("-1.0+i1"));
+		assertEquals(expected, Complex.parse("-1.0+i1.0"));
+	}
+	
+	@Test
+	public void parseMinusOneMinusI() {
+		Complex expected = new Complex(-1, -1);
+		
+		assertEquals(expected, Complex.parse("-1-i"));
+		assertEquals(expected, Complex.parse("-1-i1"));
+		assertEquals(expected, Complex.parse("-1-i1.0"));
+		
+		assertEquals(expected, Complex.parse("-1-i"));
+		assertEquals(expected, Complex.parse("-1-i1"));
+		assertEquals(expected, Complex.parse("-1-i1.0"));
+
+		assertEquals(expected, Complex.parse("-1.0-i"));
+		assertEquals(expected, Complex.parse("-1.0-i1"));
+		assertEquals(expected, Complex.parse("-1.0-i1.0"));
+	}
+	
+	
 	@Test
 	public void addTest() {
 		Complex expected = new Complex(Math.E, -3.14);

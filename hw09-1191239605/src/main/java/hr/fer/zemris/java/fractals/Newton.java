@@ -1,7 +1,6 @@
 package hr.fer.zemris.java.fractals;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
@@ -12,7 +11,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
 import hr.fer.zemris.java.fractals.viewer.FractalViewer;
 import hr.fer.zemris.java.fractals.viewer.IFractalProducer;
 import hr.fer.zemris.java.fractals.viewer.IFractalResultObserver;
@@ -21,76 +19,105 @@ import hr.fer.zemris.math.ComplexPolynomial;
 import hr.fer.zemris.math.ComplexRootedPolynomial;
 
 /**
- *	Newton TODO javadoc
+ *	Class which draws allows viewing of fractals based on Newton-Raphson iteration.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class Newton {
 
-//	public static void main(String[] args) {
-//		System.out.println("Welcome to Newton-Raphson iteration-based fractal viewer.");
-//		System.out.println("Please enter at least two roots, one root per line. Enter 'done' when done");
-//
-//		List<Complex> roots = new ArrayList<>();
-//		Scanner sc = new Scanner(System.in);
-//		int i = 1;
-//		System.out.printf("Root %d> ", i);
-//		while(sc.hasNext()) {
-//			String input = sc.nextLine();//TODO popravi da ne prihvaca prazan input, i da mora biti barem 2 roota pri unosu
-//			if(input.equals("done")) {
-//				break;
-//			}			
-//			try {
-//				roots.add(parse(input));
-//			} catch(NumberFormatException ex) {
-//				System.out.println("Given argument is not a complex number.");
-//				System.out.printf("Root %d> ", i);
-//				continue;
-//			}
-//			System.out.printf("Root %d> ", ++i);
-//			
-//		}
-//		roots.forEach(System.out::println);
-//		
-//		System.out.println("Image of fractal will appear shortly. Thank you.");
-//		
-//		FractalViewer.show(new MojProducer(roots));	
-//		
-//		sc.close();
-//	}
-	
+	/**
+	 *	Main method which interacts with the user.
+	 *	@param args None. 
+	 */
 	public static void main(String[] args) {
-		List<Complex> roots = new ArrayList<Complex>();
-		roots.add(Complex.ONE);
-		roots.add(Complex.ONE_NEG);
-		roots.add(Complex.IM);
-		roots.add(Complex.IM_NEG);
+		System.out.println("Welcome to Newton-Raphson iteration-based fractal viewer.");
+		System.out.println("Please enter at least two roots, one root per line. Enter 'done' when done");
+
+		List<Complex> roots = new ArrayList<>();
+		Scanner sc = new Scanner(System.in);
+		int i = 1;
+		System.out.printf("Root %d> ", i);
+		while(true) {
+			String input = sc.nextLine();
+			if(input.toLowerCase().equals("done")) {
+				break;
+			}			
+			try {
+				roots.add(Complex.parse(input));
+			} catch(IllegalArgumentException | NullPointerException ex) {
+				System.out.println("Given argument is not a complex number.");
+				System.out.printf("Root %d> ", i);
+				continue;
+			}
+			System.out.printf("Root %d> ", ++i);	
+		}
+		sc.close();
 		
-		FractalViewer.show(new MojProducer(roots));
+		if(roots.size() < 2) {
+			System.out.println("Should give atleast 2 roots.");
+			return;
+		}
+				
+		System.out.println("Image of fractal will appear shortly. Thank you.");		
+		FractalViewer.show(new MojProducer(roots));	
+		
 	}
 	
-	
+	/**
+	 *   Class which represents work that should be done.
+	 */
 	public static class Work implements Callable<Void>{
 
+		
+		/**Number of iterations to do*/
 		private static final int maxIter = 16*16*16;
-		private static final double convergenceThreshold = 0.001;
+		/**Convergence treshold*/
+		private static final double convergenceTreshold = 0.001;
+		/**Root treshold*/
 		private static final double rootTreshold = 0.002;
 		
+		
+		/**Minimal real value on the complex plane.*/
 		private double reMin;
+		/**Maximal real value on the complex plane.*/
 		private double reMax;
+		/**Minimal imaginary value on the complex plane.*/
 		private double imMin;
+		/**Maximal imaginary value on the complex plane.*/
 		private double imMax;
+		/**Height of the window in pixels.*/
 		private int height;
+		/**Width of the window in pixels.*/
 		private int width;
+		/**Minimal height for which the {@link Work} should be done.*/
 		private int yMin;
+		/**Maximal height for which the {@link Work} should be done.*/
 		private int yMax;
+		/**Data containing the colors.*/
 		private short[] data;
+		/**Signals whether to cancel an operation.*/
 		private AtomicBoolean cancel;
+		/**Polynomial in rooted form.*/
 		private ComplexRootedPolynomial rootedPoly;
+		/**Polynomial in "normal" form.*/
 		private ComplexPolynomial poly;
 		
+		/**
+		 * 	Construct a new {@link Work} with the given parameters.
+		 * 	@param reMin Minimal real value on the complex plane.
+		 * 	@param reMax Maximal real value on the complex plane.
+		 * 	@param imMin Minimal imaginary value on the complex plane.
+		 * 	@param imMax Maximal imaginary value on the complex plane.
+		 * 	@param height Height of the window in pixels.
+		 * 	@param width Width of the window in pixels.
+		 * 	@param yMin Minimal height for which the {@link Work} should be done.
+		 * 	@param yMax Maximal height for which the {@link Work} should be done.
+		 * 	@param data Data containing the colors.
+		 * 	@param cancel Signals whether to cancel an operation.
+ 		 * 	@param rootedPoly Polynomial in rooted form.
+		 * 	@param poly Polynomial in "normal" form.
+		 */
 		public Work(double reMin, double reMax, double imMin, double imMax, int height, int width, int yMin, int yMax,
 				short[] data, AtomicBoolean cancel, ComplexRootedPolynomial rootedPoly, ComplexPolynomial poly) {
 			super();
@@ -113,47 +140,41 @@ public class Newton {
 		 */
 		@Override
 		public Void call() throws Exception {
-			
 			int offset = yMin * width;
 			for(int y = yMin; y < yMax; y++) {
 				for(int x = 0; x < width; x++) {
-					double a = ((width - x) * reMin + reMax * x )/width;
-					double b = -((yMax - y) * imMin + imMax * (y - yMin) )/(yMax - yMin);
-					
+					double a = ((width - x) * reMin + reMax * x)/width;
+					double b = ((height - y) * imMax + imMin * y)/height;
 					Complex c = new Complex(a, b);
-//					Complex c = mapToComplexPlain(x,y,0,width,0,height,reMin,reMax,imMin,imMax);
-
+					
 					Complex zn = c;
 					int iter = 0;
 					Complex znold;
-					do {
+					do {					
 						znold = zn;
 						zn = zn.sub(poly.apply(zn).divide(poly.derive().apply(zn)));
 						iter++;
-					} while(zn.sub(znold).module() > convergenceThreshold && iter < maxIter);
+					} while(zn.sub(znold).module() > convergenceTreshold && iter < maxIter);
 					int index = rootedPoly.indexOfClosestRootFor(zn, rootTreshold);
 					data[offset++] = (short)(index + 1);
 				}
+				if(cancel.get()) {
+					return null;
+				}
 			}
-			
 			return null;
 		}
 		
-		private Complex mapToComplexPlain(int x, int y, int xMin, int xMax, int yMin, int yMax, double reMin, double reMax, double imMin, double imMax) {
-			double a = ((xMax - x) * reMin + reMax * (x - xMin) )/(xMax - xMin);
-			double b = -((yMax - y) * imMin + imMax * (y - yMin) )/(yMax - yMin);
-			
-			return new Complex(a, b);
-		}
 	}
 	
 	public static class MojProducer implements IFractalProducer{
-		
-		private ComplexRootedPolynomial rooterdPoly;
+				
+		/**Polynomial in rooted form.*/
+		private ComplexRootedPolynomial rootedPoly;
+		/**Polynomial in "normal" form.*/
 		private ComplexPolynomial poly;
-		
-		private int availableProcessors = Runtime.getRuntime().availableProcessors();
-		private ExecutorService pool = Executors.newFixedThreadPool(availableProcessors, new ThreadFactory() {
+		/**Pool which supplies daemon threads.*/
+		private ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new ThreadFactory() {
 			
 			@Override
 			public Thread newThread(Runnable r) {
@@ -165,12 +186,13 @@ public class Newton {
 		});
 		
 		/**
-		 * 	Constructs a new Newton.MojProducer.
-		 * 	TODO javadoc
+		 * 	Constructs a new {@link MojProducer} from the given 
+		 * 	{@link List} of {@link Complex} roots.
+		 * 	@param roots {@link List} of {@link Complex} roots of the function.
 		 */
 		public MojProducer(List<Complex> roots) {
-			rooterdPoly = new ComplexRootedPolynomial(roots);
-			poly = rooterdPoly.toComplexPolynom();
+			rootedPoly = new ComplexRootedPolynomial(roots);
+			poly = rootedPoly.toComplexPolynom();
 		}
 		
 		/**
@@ -179,24 +201,24 @@ public class Newton {
 		@Override
 		public void produce(double reMin, double reMax, double imMin, double imMax,
 				int width, int height, long requestNo, IFractalResultObserver observer, AtomicBoolean cancel) {
-			System.out.println("Zapocinjem izracun...");
-			
 			short[] data = new short[width * height];
 		
 			List<Future<Void>> results = new ArrayList<>();
-			int numberOfRegions = availableProcessors * 8;
+			int numberOfRegions = Runtime.getRuntime().availableProcessors()* 8;
 			int numberOfYInRegion = height/numberOfRegions;
-			
-			for(int i = 0; i < numberOfRegions; ++i) {
+
+			//Generate work
+			for(int i = 0; i <= numberOfRegions; ++i) {
 				int yMin = i * numberOfYInRegion;
 				int yMax = (i + 1)*numberOfYInRegion;
 				if(i == numberOfRegions - 1) {
-					yMax = height; //TODO why?
+					yMax = height;
 				}
-				Work work = new Work(reMin, reMax, imMin, imMax, height, width, yMin, yMax, data, cancel,rooterdPoly,poly);
+				Work work = new Work(reMin, reMax, imMin, imMax, height, width, yMin, yMax, data, cancel, rootedPoly, poly);
 				results.add(pool.submit(work));
 			}
 			
+			//Wait for work to be done
 			for(Future<Void> work : results) {
 				try {
 					work.get();
@@ -204,42 +226,8 @@ public class Newton {
 				}
 			}
 			
-			System.out.println("Racunanje gotovo. Idem obavijestiti promatraca tj. GUI!");
 			observer.acceptResult(data, (short)(poly.order() + 1), requestNo);
-		
 		}	
-
-	}
-	
-	//mogu uzeti iz 2.dz ali treba doraditi i think
-	public static Complex parse(String input) {//TODO ne radi za "+i"
-		input = input.replaceAll("\\s+", "");
-		int plus = input.lastIndexOf('+');
-		int minus = input.lastIndexOf('-');
-		if(plus > 0) {
-			if(plus + 2 < input.length()) {
-				return new Complex(Double.parseDouble(input.substring(0, plus)),
-								   Double.parseDouble(input.substring(plus + 2)) );
-			}
-			return new Complex(Double.parseDouble(input.substring(0, plus)), 1);
-		}
-		if(minus > 0) {
-			if(minus + 2 < input.length()) {
-				return new Complex(Double.parseDouble(input.substring(0, minus)),
-								  -Double.parseDouble(input.substring(minus + 2)) );
-			}
-			return new Complex(Double.parseDouble(input.substring(0, minus)), -1);
-		}
-		if(input.equals("i")) {
-			return Complex.IM;
-		}
-		if(input.equals("-i")) {
-			return Complex.IM_NEG;
-		}
-		if(input.indexOf('i')!= -1) {
-			return new Complex(0, Double.parseDouble(input.substring(input.indexOf('i')+1)));
-		}
-		return new Complex(Double.parseDouble(input), 0);
 	}
 	
 }

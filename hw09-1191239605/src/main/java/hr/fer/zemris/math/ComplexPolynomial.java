@@ -53,7 +53,6 @@ public class ComplexPolynomial {
 	public ComplexPolynomial multiply(ComplexPolynomial p) {
 		ComplexPolynomial ret = new ComplexPolynomial();
 		ret.factors.clear();
-		
 		int degreeSum = order() + p.order();
 		for(int l = 0; l <= degreeSum; ++l) {
 			Complex s = Complex.ZERO;
@@ -64,17 +63,6 @@ public class ComplexPolynomial {
 			}
 			ret.factors.add(s);
 		}
-		
-		
-//		int degreeSum = order() + p.order();
-//		for(int i = 0; i <= degreeSum; ++i) {
-//			Complex s = Complex.ZERO;
-//			for(int j = 0; j <= i ; ++j) {
-//				s = s.add(factors.get(j).multiply(p.factors.get(i - j)));
-//			}
-//			ret.factors.add(s);
-//		}
-		
 		return ret;
 	}
 	

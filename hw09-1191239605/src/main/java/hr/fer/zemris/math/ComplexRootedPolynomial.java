@@ -19,6 +19,11 @@ public class ComplexRootedPolynomial {
 	/**Stores the constant of the polynomial.*/
 	private Complex constant;
 	
+	/**
+	 * 	Creates a new {@link ComplexRootedPolynomial} from the given {@link List}
+	 * 	of {@link Complex} roots.
+	 * 	@param A {@link List} of {@link Complex} roots.
+	 */
 	public ComplexRootedPolynomial(List<Complex> roots) {
 		this.roots = new ArrayList<>();
 		this.roots.addAll(roots);
