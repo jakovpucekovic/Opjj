@@ -19,9 +19,9 @@ public class DemoFrame1 extends JFrame{
 
 	public DemoFrame1() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setSize(500, 500);
+//		setSize(500, 500);
 		initGUI();
-//		pack();
+		pack();
 	}
 	
 	private void initGUI() {
@@ -33,14 +33,6 @@ public class DemoFrame1 extends JFrame{
 		cp.add(l("tekst kraći"), new RCPosition(4,2));
 		cp.add(l("tekst srednji"), new RCPosition(4,5));
 		cp.add(l("tekst"), new RCPosition(4,7));
-		
-//		JPanel p = new JPanel(new CalcLayout(3));
-//		p.add(new JLabel("x"), new RCPosition(1,1));
-//		p.add(new JLabel("y"), new RCPosition(2,3));
-//		p.add(new JLabel("z"), new RCPosition(2,7));
-//		p.add(new JLabel("w"), new RCPosition(4,2));
-//		p.add(new JLabel("a"), new RCPosition(4,5));
-//		p.add(new JLabel("b"), new RCPosition(4,7));
 	
 	}
 	
