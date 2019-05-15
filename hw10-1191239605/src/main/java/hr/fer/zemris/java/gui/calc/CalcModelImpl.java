@@ -9,27 +9,35 @@ import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
 import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 
 /**
- *	Calculator TODO javadoc
+ *	Class which implements a {@link CalcModel} capable of 
+ *	storing values, operands and operations. It also notifies
+ *	all registered listeners when the value is changed.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
 public class CalcModelImpl implements CalcModel{
 
+	/**Signal whether the {@link CalcModelImpl} is editable.*/
 	private boolean isEditable;
+	/**Signals whether the stored value is negative.*/
 	private boolean isNegative; 
-	private String input; //TODO realno moze string builder umjesto stringa
+	/**String representation of the stored value.*/
+	private String input;
+	/**Stored value.*/
 	private double value;
-	
+	/**Signals whether the active operand is set.*/
 	private boolean isActiveOperandSet;
+	/**Stores the active operand.*/
 	private double activeOperand;
+	/**Stores the pending operation.*/
 	private DoubleBinaryOperator pendingOperation;
-	
+	/**Stores all listeners which need to be notified in case of value change.*/
 	private List<CalcValueListener> listeners;
 	
 	/**
-	 * 	Constructs a new Calculator.
-	 * 	TODO javadoc
+	 * 	Constructs a new {@link CalcModelImpl} and sets
+	 * 	initial values.
 	 */
 	public CalcModelImpl() {
 		this.isEditable = true;
@@ -42,6 +50,9 @@ public class CalcModelImpl implements CalcModel{
 		this.listeners = new ArrayList<>();
 	}
 	
+	/**
+	 * 	Notifies all registered listeners.
+	 */
 	private void notifyAllListeners() {
 		for(var l : listeners) {
 			l.valueChanged(this);
@@ -112,7 +123,6 @@ public class CalcModelImpl implements CalcModel{
 		isNegative = false;
 		input = "";
 		isEditable = true;
-		notifyAllListeners();
 	}
 
 	/**
@@ -174,7 +184,8 @@ public class CalcModelImpl implements CalcModel{
 		if(value == 0 && input.equals("0") && digit == 0) {
 			return;
 		}
-		if(value * 10 + digit > Double.MAX_VALUE) {//TODO probably nije dobro ovako
+		if(value * 10 + digit > Double.MAX_VALUE) { //TODO vidi jel ovo okej
+//		if(value * 10 + digit < value) {
 			throw new CalculatorInputException("Overflow happened");
 		}
 		if(input.equals("0") && digit != 0) {
@@ -211,7 +222,7 @@ public class CalcModelImpl implements CalcModel{
 	public void setActiveOperand(double activeOperand) {
 		this.activeOperand = activeOperand;
 		isActiveOperandSet = true;
-		notifyAllListeners();
+//		notifyAllListeners();
 	}
 
 	/**
@@ -221,7 +232,7 @@ public class CalcModelImpl implements CalcModel{
 	public void clearActiveOperand() {
 		activeOperand = 0;
 		isActiveOperandSet = false;
-		notifyAllListeners();
+//		notifyAllListeners();
 	}
 
 	/**
@@ -238,7 +249,6 @@ public class CalcModelImpl implements CalcModel{
 	@Override
 	public void setPendingBinaryOperation(DoubleBinaryOperator op) {
 		pendingOperation = op;
-//		notifyAllListeners();//TODO jel treba i ovdje obavijestavati sve ili samo kad se mjenja vrijednost
 	}
 
 }

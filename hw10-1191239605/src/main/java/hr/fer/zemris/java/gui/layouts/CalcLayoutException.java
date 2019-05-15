@@ -13,7 +13,6 @@ public class CalcLayoutException extends RuntimeException {
 
 	/**
 	 * 	Constructs a new CalcLayoutException.
-	 * 	TODO javadoc
 	 */
 	public CalcLayoutException() {
 		super();
@@ -21,8 +20,7 @@ public class CalcLayoutException extends RuntimeException {
 
 	/**
 	 * 	Constructs a new CalcLayoutException.
-	 * 	TODO javadoc
-	 * 	@param message
+	 * 	@param message Message to show.
 	 */
 	public CalcLayoutException(String message) {
 		super(message);

@@ -5,23 +5,24 @@ import java.awt.Container;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 /**
- *	DemoFrame1 TODO javadoc
+ *	Demo class which shows a usage of {@link CalcLayout}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
 public class DemoFrame1 extends JFrame{
 
+	private static final long serialVersionUID = 1L;
+
 	public DemoFrame1() {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-//		setSize(500, 500);
+		setSize(500, 500);
 		initGUI();
-		pack();
+//		pack();
 	}
 	
 	private void initGUI() {

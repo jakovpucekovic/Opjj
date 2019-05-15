@@ -1,33 +1,33 @@
 package hr.fer.zemris.java.gui.layouts;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager2;
-import java.util.Objects;
 import java.util.function.Function;
-import java.util.function.Supplier;
-
-import javax.swing.JPanel;
 
 /**
- *	CalcLayout TODO javadoc
+ *	A layout manager which allows the placing of components
+ *	anywhere on a grid whose size is specified by the ROWS and COLUMNS
+ *	constants.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
 public class CalcLayout implements LayoutManager2 {
 
+	/**Distance between components in pixels.*/
 	private int preferredDistance;
 	
+	/**Number of rows in the layout.*/
 	private static final int ROWS = 5;
+	
+	/**Number of columns in the layout.*/
 	private static final int COLUMNS = 7;
 	
+	/**Stores the components which are added to the layout.*/
 	private Component[][] storedComponents;
-	
 	
 	/**
 	 * 	Constructs a new CalcLayout with the preferred
@@ -47,7 +47,6 @@ public class CalcLayout implements LayoutManager2 {
 		this.preferredDistance = preferredDistance;
 		this.storedComponents = new Component[ROWS][COLUMNS];
 	}
-	
 	
 	/**
 	 *	{@inheritDoc}
@@ -91,29 +90,58 @@ public class CalcLayout implements LayoutManager2 {
 	/**
 	 *	{@inheritDoc}
 	 */
-	@Override
-	public void layoutContainer(Container parent) {//TODO insets
-		int parentWidth = Math.round((parent.getWidth() - 6 * preferredDistance) / (float)COLUMNS);
-		int parentHeight = Math.round((parent.getHeight() - 4 * preferredDistance) / (float)ROWS);
+	@Override//TODO napisi ljepse
+	public void layoutContainer(Container parent) {
+		Insets insets = parent.getInsets();
+		int width = Math.round((parent.getWidth() - 6 * preferredDistance - insets.left - insets.right) / (float)COLUMNS);
+		int height = Math.round((parent.getHeight() - 4 * preferredDistance - insets.top - insets.bottom) / (float)ROWS);
 		
+		int actualWidth = width * COLUMNS + 6 * preferredDistance + insets.left + insets.right;
+		int actualHeight = height * ROWS + 4 * preferredDistance + insets.top + insets.bottom;
+		
+		int realExcessWidth = parent.getWidth() - actualWidth;
+		int excessHeight = parent.getHeight() - actualHeight;
+				
+		int heightPos = insets.top;
 		for(int i = 0; i < ROWS; ++i) {
+		
+			int heightToSet = height;
+			if(i % 2 == 0 && excessHeight != 0) {
+				heightToSet += excessHeight > 0 ? 1 : -1;
+				if(excessHeight < 0) excessHeight++;
+				if(excessHeight > 0) excessHeight--;
+			}
+
+			int widthPos = insets.left;
+			int excessWidth = realExcessWidth;
 			for(int j = 0; j < COLUMNS; ++j) {
-				if(i == 0 && j < 5) {
+				int widthToSet = width;
+				if(j % 2 == 0 && excessWidth != 0) {
+					widthToSet += excessWidth > 0 ? 1 : -1;
+					if(excessWidth < 0) excessWidth++;
+					if(excessWidth > 0) excessWidth--;
+				}
+				if(i == 0 && j < 4) {
+					widthPos += widthToSet + preferredDistance;
 					continue;
 				}
-				if(storedComponents[i][j] != null) {
-					storedComponents[i][j].setSize(new Dimension(parentWidth, parentHeight));
-					storedComponents[i][j].setBounds(parentWidth * j + preferredDistance * j,
-													 parentHeight * i + preferredDistance * i, 
-													 parentWidth, 
-													 parentHeight);
+				if(i == 0 && j == 5) {
+					if(storedComponents[0][0] != null) {
+						storedComponents[0][0].setSize(new Dimension(widthPos - preferredDistance, heightToSet));
+						storedComponents[0][0].setBounds(0, 0, widthPos - preferredDistance, heightToSet);	
+					}
 				}
+				
+				if(storedComponents[i][j] != null) {
+					storedComponents[i][j].setSize(new Dimension(widthToSet, heightToSet));
+					storedComponents[i][j].setBounds(widthPos,
+													 heightPos,
+													 widthToSet, 
+													 heightToSet);
+				}
+				widthPos += widthToSet + preferredDistance;
 			}
-		}
-		if(storedComponents[0][0] != null) {
-			storedComponents[0][0].setSize(new Dimension(parentWidth * 5 + 4 * preferredDistance, parentHeight));
-			storedComponents[0][0].setBounds(0, 0, parentWidth * 5 + 4 * preferredDistance, parentHeight);
-			
+			heightPos += heightToSet + preferredDistance;
 		}
 	}
 
@@ -122,9 +150,12 @@ public class CalcLayout implements LayoutManager2 {
 	 */
 	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {
-		Objects.nonNull(comp); //TODO jel to okej pretpostavka?
-		if(!constraints.getClass().equals(String.class) && !constraints.getClass().equals(RCPosition.class)) {
-			throw new UnsupportedOperationException();
+		if(constraints.getClass().equals(String.class)) {
+			try {
+				addLayoutComponent(comp, new RCPosition((String) constraints));
+			} catch(IllegalArgumentException ex) {
+				throw new UnsupportedOperationException("Given constraint isn't RCPosition.");
+			}
 		}		
 		
 		if(constraints.getClass().equals(RCPosition.class)) {
@@ -136,31 +167,10 @@ public class CalcLayout implements LayoutManager2 {
 			if(storedComponents[rcPos.getRow()-1][rcPos.getColumn()-1] != null) {
 				throw new CalcLayoutException("Cannot set more than 1 Component on each space.");
 			}
-			
 			storedComponents[rcPos.getRow()-1][rcPos.getColumn()-1] = comp;
+			return;
 		}
-		
-		if(constraints.getClass().equals(String.class)) {
-			int row, column;
-			String str = (String)constraints;
-			try {
-				row = Integer.parseInt(str.substring(0, str.indexOf(',')));
-				column = Integer.parseInt(str.substring(str.indexOf(',')));
-			} catch (NumberFormatException ex) {
-				throw new UnsupportedOperationException("Constraint should be 2 integers.");
-			}
-			
-			if(row < 1 || row > 5 || column < 1 || column > 7 ||
-			  (row == 1 && (column > 1 && column < 6 ))){
-				   throw new CalcLayoutException("Illegal constraint given.");
-			   }
-			if(storedComponents[row-1][column-1] != null) {
-				throw new CalcLayoutException("Cannot set more than 1 Component on each space.");
-			}
-			
-			storedComponents[row-1][column-1] = comp;
-		}
-		
+		throw new UnsupportedOperationException("Given constraint isn't RCPosition.");
 	}
 
 	/**
@@ -192,8 +202,6 @@ public class CalcLayout implements LayoutManager2 {
 	 */
 	@Override
 	public void invalidateLayout(Container target) {
-//		prefWidth = 0;
-//		prefHeight = 0;
 	}
 
 	
@@ -209,6 +217,7 @@ public class CalcLayout implements LayoutManager2 {
 	private Dimension layoutSize(Container parent, Function<Component, Dimension> funct) {
 		int maxHeight = 0;
 		int maxWidth = 0;
+		Insets insets = parent.getInsets();
 		for(int i = 0; i < ROWS; ++i) {
 			for(int j = 0; j < COLUMNS; ++j) {
 				if(i == 0 && j < 5) {
@@ -227,14 +236,15 @@ public class CalcLayout implements LayoutManager2 {
 		}
 		if(storedComponents[0][0] != null) {
 			Dimension pref = funct.apply(storedComponents[0][0]);
-			if(5 * maxWidth + 4 * preferredDistance < pref.width) {
-				maxWidth = pref.width / 5;
+			int actualWidth = (pref.width - 4 * preferredDistance) / 5;
+			if(actualWidth > maxWidth) {
+				maxWidth = actualWidth;
 			}
 			if(pref.height > maxHeight) {
 				maxHeight = pref.height;
 			}
 		}
-		return new Dimension(maxWidth * 7 + preferredDistance * 6, maxHeight * 5 + preferredDistance * 4);
+		return new Dimension(maxWidth * 7 + preferredDistance * 6 + insets.left + insets.right, maxHeight * 5 + preferredDistance * 4 + insets.bottom + insets.top);
 	}
 	
 }

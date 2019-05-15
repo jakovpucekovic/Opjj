@@ -3,11 +3,13 @@ package hr.fer.zemris.java.gui.calc;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoubleUnaryOperator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -34,29 +36,30 @@ public class Calculator extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 
+	/**Stores the {@link CalcModelImpl} which does the calculations.*/
 	private CalcModelImpl calc;
 	
 	
 	/**
-	 * 	Constructs a new Calculator.
-	 * 	TODO javadoc
+	 * 	Constructs a new {@link Calculator}.
 	 */
 	public Calculator() {
 		super();
 		calc = new CalcModelImpl();
-		
+				
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setTitle("Java Calculator v1.0");
 		setLocation(20, 50);
-//		setSize(300, 200);
 		
 		initGUI();	
 	}
 	
+	/**
+	 *	Initializes the GUI, adds all the buttons and labels. 
+	 */
 	private void initGUI() {
 		Container cp = getContentPane();
-		cp.setLayout(new CalcLayout());
-//		cp.setBackground(Color.WHITE); //treba biti light gray
+		cp.setLayout(new CalcLayout(3));
 		
 		//label
 		JLabel show = new JLabel();
@@ -75,110 +78,64 @@ public class Calculator extends JFrame{
 		cp.add(show, new RCPosition(1, 1));
 		
 		//numbers
-		cp.add(numberButton("0"), new RCPosition(5, 3));
-		cp.add(numberButton("1"), new RCPosition(4, 3));
-		cp.add(numberButton("2"), new RCPosition(4, 4));
-		cp.add(numberButton("3"), new RCPosition(4, 5));
-		cp.add(numberButton("4"), new RCPosition(3, 3));
-		cp.add(numberButton("5"), new RCPosition(3, 4));
-		cp.add(numberButton("6"), new RCPosition(3, 5));
-		cp.add(numberButton("7"), new RCPosition(2, 3));
-		cp.add(numberButton("8"), new RCPosition(2, 4));
-		cp.add(numberButton("9"), new RCPosition(2, 5));
+		cp.add(new NumberButton("0"), new RCPosition(5, 3));
+		cp.add(new NumberButton("1"), new RCPosition(4, 3));
+		cp.add(new NumberButton("2"), new RCPosition(4, 4));
+		cp.add(new NumberButton("3"), new RCPosition(4, 5));
+		cp.add(new NumberButton("4"), new RCPosition(3, 3));
+		cp.add(new NumberButton("5"), new RCPosition(3, 4));
+		cp.add(new NumberButton("6"), new RCPosition(3, 5));
+		cp.add(new NumberButton("7"), new RCPosition(2, 3));
+		cp.add(new NumberButton("8"), new RCPosition(2, 4));
+		cp.add(new NumberButton("9"), new RCPosition(2, 5));
 		
 		//binary operators
-		cp.add(operationButton("+"), new RCPosition(5, 6));
-		cp.add(operationButton("-"), new RCPosition(4, 6));
-		cp.add(operationButton("*"), new RCPosition(3, 6));
-		cp.add(operationButton("/"), new RCPosition(2, 6));
+		cp.add(new OperationButton("+", (x,y)->x+y), new RCPosition(5, 6));
+		cp.add(new OperationButton("-", (x,y)->x-y), new RCPosition(4, 6));
+		cp.add(new OperationButton("*", (x,y)->x*y), new RCPosition(3, 6));
+		cp.add(new OperationButton("/", (x,y)->x/y), new RCPosition(2, 6));
 
-		//=
-		JButton equal = button("=");
-		equal.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		//unary operators
+		cp.add(new UnaryButton("sin", "arcsin", Math::sin, Math::asin), new RCPosition(2, 2));
+		cp.add(new UnaryButton("cos", "arccos", Math::cos, Math::acos), new RCPosition(3, 2));
+		cp.add(new UnaryButton("tan", "arctan", Math::tan, Math::atan), new RCPosition(4, 2));
+		cp.add(new UnaryButton("ctg", "arcctg", x->1/Math.tan(x), x->Math.PI/2 - Math.tan(x)), new RCPosition(5, 2)); 
+		cp.add(new UnaryButton("log", "10^x", Math::log10, x->Math.pow(10,x)), new RCPosition(3, 1));
+		cp.add(new UnaryButton("ln", "e^x", Math::log, Math::exp), new RCPosition(4, 1));		
+		
+		//=		
+		cp.add(new MyButton("=", e->{
 				if(calc.isActiveOperandSet()) {
 					calc.setValue(calc.getPendingBinaryOperation().applyAsDouble(calc.getActiveOperand(), calc.getValue()));
 					calc.clearActiveOperand();
 					calc.setPendingBinaryOperation(null);
+				}else {
+					calc.setValue(calc.getValue());
 				}
-			}
-		});
-		cp.add(equal, new RCPosition(1, 6));
+			}), new RCPosition(1, 6));
 		
 		//reset
-		JButton reset = button("reset");
-		reset.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				calc.clearAll();
-			}
-		});
-		cp.add(reset, new RCPosition(2, 7));
+		cp.add(new MyButton("reset", e-> calc.clearAll()), new RCPosition(2, 7));
+		
+		//clr
+		cp.add(new MyButton("clr", e -> {
+				calc.clear();
+			}), new RCPosition(1, 7));
 
 		//switchSign
-		JButton switchSign= button("+/-");
-		switchSign.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				calc.swapSign();
-			}
-		});
-		cp.add(switchSign, new RCPosition(5, 4));
+		cp.add(new MyButton("+/-", e-> calc.swapSign()), new RCPosition(5, 4));
 		
 		//decimal point
-		JButton decPoint = button("."); 
-		decPoint.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				calc.insertDecimalPoint();
-			}
-		});
-		cp.add(decPoint, new RCPosition(5, 5));
+		cp.add(new MyButton(".", e-> calc.insertDecimalPoint()), new RCPosition(5, 5));
 
 		//inverse
-		JButton inverse = button("1/x");
-		inverse.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(calc.isActiveOperandSet()) {
-					calc.setActiveOperand(1.f / calc.getActiveOperand());
-				}else {
-					calc.setValue(1.f / calc.getValue());
-				}
-			}
-		});
-		cp.add(inverse, new RCPosition(2, 1));
-
-		
-		cp.add(button("sin"), new RCPosition(2, 2));
-		cp.add(button("cos"), new RCPosition(3, 2));
-		cp.add(button("tan"), new RCPosition(4, 2));
-		cp.add(button("ctg"), new RCPosition(5, 2));
-		cp.add(button("log"), new RCPosition(3, 1));
-		cp.add(button("ln"), new RCPosition(4, 1));
-		
-		cp.add(button("x^n"), new RCPosition(5, 1));//on je poseban jer je binary, a ima inverznu operaciju
-
-
-		JButton clear = button("clr");
-		clear.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				calc.clear();
-			}
-		});
-		cp.add(clear, new RCPosition(1, 7));
+		cp.add(new UnaryButton("1/x", "1/x", x->1.f/x, x->1.f/x), new RCPosition(2, 1));
 		
 		
-		cp.add(button("push"), new RCPosition(3, 7));
-		cp.add(button("pop"), new RCPosition(4, 7));
+		//TODO ova 3
+		cp.add(new MyButton("x^n"), new RCPosition(5, 1));//on je poseban jer je binary, a ima inverznu operaciju
+		cp.add(new MyButton("push"), new RCPosition(3, 7));
+		cp.add(new MyButton("pop"), new RCPosition(4, 7));
 		
 		//Checkbox
 		JCheckBox checkbox = new JCheckBox("Inv");
@@ -187,77 +144,211 @@ public class Calculator extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
+				for(var comp : cp.getComponents()) {
+					if(comp instanceof UnaryButton) {
+						((UnaryButton)comp).inv();
+					}
+				}
 			}
 		});
 		
 		cp.add(checkbox, new RCPosition(5, 7));
 	}
 	
-	private JButton numberButton(String text) {
-		JButton button = new JButton(text);
-		button.setBackground(Color.LIGHT_GRAY);
-		button.setOpaque(true);
-		button.setFont(button.getFont().deriveFont(30.f));
-		button.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(!calc.isEditable()){
+	/**
+	 *	Class which represents a {@link JButton} with
+	 *	a set background color and opacity set to true and the given text.
+	 *	All other buttons are derived from this class for customizations sake.
+	 */
+	private class MyButton extends JButton{
+		
+		private static final long serialVersionUID = 1L;
+
+		/**
+		 * 	Constructs a new {@link OperationButton} with the given parameters.
+		 * 	@param text Text to display on the button.
+		 */
+		public MyButton(String text) {
+			setBackground(Color.LIGHT_GRAY);
+			setOpaque(true);
+			setText(text);
+		}	
+		
+		/**
+		 * 	Constructs a new {@link MyButton} with the given parameters.
+		 * 	@param text Text to display on the button.
+		 * 	@param actionListener Action to do when the button is pressed..
+		 */
+		public MyButton(String text, ActionListener actionListener) {
+			this(text);
+			addActionListener(actionListener);
+		}
+	}
+	
+	/**
+	 *	Class which models a {@link MyButton} which inserts
+	 *	the digit which is displayed as the text of the button
+	 *	when the button is pressed.
+	 */
+	private class NumberButton extends MyButton{
+		
+		private static final long serialVersionUID = 1L;
+
+		/**
+		 * 	Constructs a new {@link NumberButton} with the given text.
+		 * 	@param text Number to display on the button and add when the
+		 * 				button is pressed.
+		 */
+		public NumberButton(String text) {
+			super(text);
+			setFont(getFont().deriveFont(30.f));
+			addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(!calc.isEditable()){
+						calc.clear();
+					}
+					calc.insertDigit(Integer.parseInt(text));
+				}
+			});
+		}
+	}
+	
+	/**
+	 *	Class which models a {@link MyButton} which has a 
+	 *	binary operation which is performed when the button is
+	 *	pressed.
+	 */
+	private class OperationButton extends MyButton{
+		
+		private static final long serialVersionUID = 1L;
+
+		/**
+		 * 	Constructs a new {@link OperationButton} with the given parameters.
+		 * 	@param text Text to display on the button.
+		 * 	@param operation Operation to perform when button is clicked.
+		 */
+		public OperationButton(String text, DoubleBinaryOperator operation) {
+			super(text);
+			setFont(getFont().deriveFont(20.f));
+			addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					if(calc.getPendingBinaryOperation() != null){
+						calc.setActiveOperand(calc.getPendingBinaryOperation()
+												  .applyAsDouble(calc.getActiveOperand(), calc.getValue()));
+						calc.setValue(calc.getActiveOperand());
+					} else {	
+						calc.setActiveOperand(calc.getValue());
+					}
+					calc.setPendingBinaryOperation(operation);				
 					calc.clear();
 				}
-				calc.insertDigit(Integer.parseInt(text));
-			}
-		});
-		return button;
+			});
+		}
 	}
-	
-	private JButton operationButton(String text) {
-		JButton button = new JButton(text);
-		button.setBackground(Color.LIGHT_GRAY);
-		button.setOpaque(true);
-		button.setFont(button.getFont().deriveFont(30.f));
-		button.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-//				if(calc.getPendingBinaryOperation() != null){
-//					calc.setValue(calc.getPendingBinaryOperation().applyAsDouble(calc.getActiveOperand(), calc.getValue()));
-//					calc.clearActiveOperand();
-//				}
-					
-				calc.setPendingBinaryOperation(new DoubleBinaryOperator() {
-					
-					@Override
-					public double applyAsDouble(double left, double right) {
-						switch(text) {
-							case "+": return left + right;
-							case "-": return left - right;
-							case "*": return left * right;
-							case "/": return left / right;
-							case "x^n": return Math.pow(left, right); //TODO vidi kaj tu
-							default : throw new IllegalArgumentException("Unknown operation");
-						}
+
+	/**
+	 *	Class which models a {@link MyButton} which has 2
+	 *	unary operations which are performed depending on the 
+	 *	state of the button when the button is pressed.
+	 */
+	private class UnaryButton extends MyButton{
+		
+		private static final long serialVersionUID = 1L;
+		
+		/**Flag which signals if the inverseText is set.*/
+		private boolean invSet;
+		/**Main text of the button.*/
+		private String text;
+		/**Inverse text of the button.*/
+		private String inverseText;
+		
+		/**
+		 * 	Constructs a new {@link UnaryButton} with the given parameters.
+		 * 	@param text	Main text of the button.
+		 * 	@param inverseText Inverse text of the button.
+		 * 	@param normal Operation to perform if in normal mode.
+		 * 	@param inverse Operation to perform if in inverse mode.
+		 */
+		public UnaryButton(String text, String inverseText, DoubleUnaryOperator normal, DoubleUnaryOperator inverse) {
+			super(text);
+			this.text = text;
+			this.inverseText = inverseText;
+			this.invSet = false;
+			addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {		
+					if(invSet) {
+						calc.setValue(inverse.applyAsDouble(calc.getValue()));
+					} else {
+						calc.setValue(normal.applyAsDouble(calc.getValue()));						
 					}
-				});
-				
-				calc.setActiveOperand(calc.getValue());
-//				calc.clear();//TODO kako izbjeci brisanje koje imam?
+				}
+			});
+		}
+		
+		/**
+		 *	{@inheritDoc}
+		 */
+		@Override
+		public Dimension getMinimumSize() {
+			setText(text);
+			Dimension original = super.getMinimumSize();
+			setText(inverseText);
+			Dimension inverse = super.getMinimumSize();
+			if(!invSet) {
+				setText(text);
 			}
-		});
-		return button;
+			return original.width > inverse.width ? original : inverse;
+		}
+		
+		/**
+		 *	{@inheritDoc}
+		 */
+		@Override
+		public Dimension getPreferredSize() {
+			setText(text);
+			Dimension original = super.getPreferredSize();
+			setText(inverseText);
+			Dimension inverse = super.getPreferredSize();
+			if(!invSet) {
+				setText(text);
+			}
+			return original.width > inverse.width ? original : inverse;
+		}
+		
+		/**
+		 *	{@inheritDoc}
+		 */
+		@Override
+		public Dimension getMaximumSize() {
+			setText(text);
+			Dimension original = super.getMaximumSize();
+			setText(inverseText);
+			Dimension inverse = super.getMaximumSize();
+			if(!invSet) {
+				setText(text);
+			}
+			return original.width > inverse.width ? original : inverse;
+		}
+		
+		/**
+		 * 	Changes the text on the {@link UnaryButton} between
+		 * 	the text and inverseText.
+		 */
+		public void inv() {
+			invSet = !invSet;
+			if(invSet) {
+				setText(inverseText); 
+			} else {
+				setText(text);
+			}
+		}
 	}
-	
-	
-	private JButton button(String text) {
-		JButton button = new JButton(text);
-		button.setBackground(Color.LIGHT_GRAY);
-		button.setOpaque(true);
-		button.setFont(button.getFont().deriveFont(30.f));
-		return button;
-	}
-	
 	
 	
 	public static void main(String[] args) {
