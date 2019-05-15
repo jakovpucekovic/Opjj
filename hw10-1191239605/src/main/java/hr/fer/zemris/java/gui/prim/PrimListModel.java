@@ -13,7 +13,7 @@ import javax.swing.event.ListDataListener;
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
+//TODO testovi
 public class PrimListModel implements ListModel<Integer>{
 
 	/**List of stored numbers.*/

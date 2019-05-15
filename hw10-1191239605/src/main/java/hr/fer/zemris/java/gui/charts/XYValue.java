@@ -54,5 +54,13 @@ public class XYValue {
 	public int getY() {
 		return y;
 	}
+
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "(" + x + ", " + y + ")";
+	}
 	
 }

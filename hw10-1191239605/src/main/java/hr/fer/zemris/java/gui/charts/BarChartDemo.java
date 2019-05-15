@@ -1,5 +1,8 @@
 package hr.fer.zemris.java.gui.charts;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -9,6 +12,9 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 /**
  *	BarChartDemo TODO javadoc
@@ -19,6 +25,23 @@ import javax.swing.JFrame;
 public class BarChartDemo extends JFrame{
 
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * 	Constructs a new BarChartDemo.
+	 * 	TODO javadoc
+	 */
+	public BarChartDemo(BarChart chart, String path) {
+		Container cp = getContentPane();
+		cp.setLayout(new BorderLayout());
+		
+		JLabel label = new JLabel(path, SwingConstants.CENTER);
+		label.setBackground(Color.WHITE);
+		label.setOpaque(true);
+		cp.add(label, BorderLayout.NORTH);
+		
+		cp.add(new BarChartComponent(chart), BorderLayout.CENTER);
+	}
+	
 	
 	public static void main(String[] args) {
 		if(args.length != 1) {
@@ -42,7 +65,7 @@ public class BarChartDemo extends JFrame{
 
 		BarChart chart;
 		try {
-		List<XYValue> values = Arrays.stream(list.get(2).strip().split("")).map(x->new XYValue(x)).collect(Collectors.toList());
+		List<XYValue> values = Arrays.stream(list.get(2).strip().split(" ")).map(x->new XYValue(x)).collect(Collectors.toList());
 		chart = new BarChart(values, 
 							 list.get(0),
 							 list.get(1), 
@@ -55,6 +78,12 @@ public class BarChartDemo extends JFrame{
 			return;
 		}
 		list.forEach(System.out::println);
+		
+		SwingUtilities.invokeLater(() -> {
+			JFrame frame = new BarChartDemo(chart, Paths.get(args[0]).toAbsolutePath().normalize().toString());
+			frame.pack();
+			frame.setVisible(true);
+		});
 	}
 	
 }

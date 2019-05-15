@@ -1,13 +1,12 @@
 package hr.fer.zemris.java.gui.calc;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EmptyStackException;
+import java.util.Stack;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
@@ -16,13 +15,14 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.border.Border;
 
 import hr.fer.zemris.java.gui.calc.model.CalcModel;
 import hr.fer.zemris.java.gui.calc.model.CalcValueListener;
+import hr.fer.zemris.java.gui.calc.model.CalculatorInputException;
 import hr.fer.zemris.java.gui.layouts.CalcLayout;
 import hr.fer.zemris.java.gui.layouts.RCPosition;
 
@@ -39,6 +39,11 @@ public class Calculator extends JFrame{
 	/**Stores the {@link CalcModelImpl} which does the calculations.*/
 	private CalcModelImpl calc;
 	
+	/**Stack for storing values.*/
+	private Stack<Double> stack;
+	
+	/**Container which contains the components on screen.*/
+	private Container cp;
 	
 	/**
 	 * 	Constructs a new {@link Calculator}.
@@ -46,6 +51,7 @@ public class Calculator extends JFrame{
 	public Calculator() {
 		super();
 		calc = new CalcModelImpl();
+		stack = new Stack<>();
 				
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setTitle("Java Calculator v1.0");
@@ -58,7 +64,7 @@ public class Calculator extends JFrame{
 	 *	Initializes the GUI, adds all the buttons and labels. 
 	 */
 	private void initGUI() {
-		Container cp = getContentPane();
+		cp = getContentPane();
 		cp.setLayout(new CalcLayout(3));
 		
 		//label
@@ -123,19 +129,38 @@ public class Calculator extends JFrame{
 			}), new RCPosition(1, 7));
 
 		//switchSign
-		cp.add(new MyButton("+/-", e-> calc.swapSign()), new RCPosition(5, 4));
+		cp.add(new MyButton("+/-", e-> {
+				try {
+					calc.swapSign();
+				} catch(CalculatorInputException ex) {
+					JOptionPane.showMessageDialog(cp, ex.getMessage());
+				}
+			}), new RCPosition(5, 4));
 		
 		//decimal point
-		cp.add(new MyButton(".", e-> calc.insertDecimalPoint()), new RCPosition(5, 5));
+		cp.add(new MyButton(".", e-> {
+				try {
+					calc.insertDecimalPoint();
+				} catch(CalculatorInputException ex) {
+					JOptionPane.showMessageDialog(cp, ex.getMessage());
+				}
+			}), new RCPosition(5, 5));
 
 		//inverse
 		cp.add(new UnaryButton("1/x", "1/x", x->1.f/x, x->1.f/x), new RCPosition(2, 1));
 		
+		//power
+		cp.add(new BinaryButton("x^n", "x^(1/n)", (a,b)->Math.pow(a, b), (a,b)->Math.pow(a, 1.f/b)), new RCPosition(5, 1));//on je poseban jer je binary, a ima inverznu operaciju
 		
-		//TODO ova 3
-		cp.add(new MyButton("x^n"), new RCPosition(5, 1));//on je poseban jer je binary, a ima inverznu operaciju
-		cp.add(new MyButton("push"), new RCPosition(3, 7));
-		cp.add(new MyButton("pop"), new RCPosition(4, 7));
+		//push i pop
+		cp.add(new MyButton("push", e-> stack.push(calc.getValue())), new RCPosition(3, 7));
+		cp.add(new MyButton("pop", e-> {
+				try {
+					calc.setValue(stack.pop());
+				} catch(EmptyStackException ex) {
+					JOptionPane.showMessageDialog(cp, "No values saved on stack.");
+				}
+			}),new RCPosition(4, 7));
 		
 		//Checkbox
 		JCheckBox checkbox = new JCheckBox("Inv");
@@ -145,14 +170,15 @@ public class Calculator extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for(var comp : cp.getComponents()) {
-					if(comp instanceof UnaryButton) {
-						((UnaryButton)comp).inv();
+					if(comp instanceof InvertableButton) {
+						((InvertableButton)comp).invert();
 					}
 				}
 			}
 		});
 		
 		cp.add(checkbox, new RCPosition(5, 7));
+		
 	}
 	
 	/**
@@ -209,7 +235,11 @@ public class Calculator extends JFrame{
 					if(!calc.isEditable()){
 						calc.clear();
 					}
-					calc.insertDigit(Integer.parseInt(text));
+					try {
+						calc.insertDigit(Integer.parseInt(text));
+					} catch(CalculatorInputException ex) {
+						JOptionPane.showMessageDialog(cp, "Cannot show such a big number");
+					}
 				}
 			});
 		}
@@ -252,43 +282,46 @@ public class Calculator extends JFrame{
 	}
 
 	/**
-	 *	Class which models a {@link MyButton} which has 2
-	 *	unary operations which are performed depending on the 
-	 *	state of the button when the button is pressed.
+	 * 	Class which represents {@link MyButton}s which has 2 button names
+	 * 	and depending on the state of the {@link InvertableButton}
+	 * 	the correct text is displayed on the button. The state can be switched
+	 * 	by using the method invert(). The class also returns minimal, maximal and
+	 * 	preferred size so that the longer text can be properly displayed on the button.
 	 */
-	private class UnaryButton extends MyButton{
+	public abstract class InvertableButton extends MyButton{
 		
 		private static final long serialVersionUID = 1L;
 		
 		/**Flag which signals if the inverseText is set.*/
-		private boolean invSet;
+		protected boolean invSet;
 		/**Main text of the button.*/
-		private String text;
+		protected String text;
 		/**Inverse text of the button.*/
-		private String inverseText;
+		protected String inverseText;
 		
 		/**
-		 * 	Constructs a new {@link UnaryButton} with the given parameters.
+		 * 	Constructs a new {@link InvertableButton} with the given parameters.
 		 * 	@param text	Main text of the button.
 		 * 	@param inverseText Inverse text of the button.
-		 * 	@param normal Operation to perform if in normal mode.
-		 * 	@param inverse Operation to perform if in inverse mode.
 		 */
-		public UnaryButton(String text, String inverseText, DoubleUnaryOperator normal, DoubleUnaryOperator inverse) {
+		public InvertableButton(String text, String inverseText) {
 			super(text);
 			this.text = text;
 			this.inverseText = inverseText;
 			this.invSet = false;
-			addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {		
-					if(invSet) {
-						calc.setValue(inverse.applyAsDouble(calc.getValue()));
-					} else {
-						calc.setValue(normal.applyAsDouble(calc.getValue()));						
-					}
-				}
-			});
+		}
+		
+		/**
+		 * 	Changes the text on the {@link UnaryButton} between
+		 * 	the text and inverseText.
+		 */
+		public void invert() {
+			invSet = !invSet;
+			if(invSet) {
+				setText(inverseText); 
+			} else {
+				setText(text);
+			}
 		}
 		
 		/**
@@ -335,18 +368,77 @@ public class Calculator extends JFrame{
 			}
 			return original.width > inverse.width ? original : inverse;
 		}
+	}
+
+	/**
+	 *	Class which models a {@link MyButton} which has 2
+	 *	unary operations which are performed depending on the 
+	 *	state of the button when the button is pressed.
+	 */
+	private class UnaryButton extends InvertableButton{
+		
+		private static final long serialVersionUID = 1L;
 		
 		/**
-		 * 	Changes the text on the {@link UnaryButton} between
-		 * 	the text and inverseText.
+		 * 	Constructs a new {@link UnaryButton} with the given parameters.
+		 * 	@param text	Main text of the button.
+		 * 	@param inverseText Inverse text of the button.
+		 * 	@param normal Operation to perform if in normal mode.
+		 * 	@param inverse Operation to perform if in inverse mode.
 		 */
-		public void inv() {
-			invSet = !invSet;
-			if(invSet) {
-				setText(inverseText); 
-			} else {
-				setText(text);
-			}
+		public UnaryButton(String text, String inverseText, DoubleUnaryOperator normal, DoubleUnaryOperator inverse) {
+			super(text, inverseText);
+			addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {		
+					if(invSet) {
+						calc.setValue(inverse.applyAsDouble(calc.getValue()));
+					} else {
+						calc.setValue(normal.applyAsDouble(calc.getValue()));						
+					}
+				}
+			});
+		}
+	}
+	
+	/**
+	 *	Class which models a {@link MyButton} which has 2
+	 *	unary operations which are performed depending on the 
+	 *	state of the button when the button is pressed.
+	 */
+	private class BinaryButton extends InvertableButton{
+		
+		private static final long serialVersionUID = 1L;
+		
+		/**
+		 * 	Constructs a new {@link UnaryButton} with the given parameters.
+		 * 	@param text	Main text of the button.
+		 * 	@param inverseText Inverse text of the button.
+		 * 	@param normal Operation to perform if in normal mode.
+		 * 	@param inverse Operation to perform if in inverse mode.
+		 */
+		public BinaryButton(String text, String inverseText, DoubleBinaryOperator normal, DoubleBinaryOperator inverse) {
+			super(text, inverseText);
+			addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {	
+					//do stuff like any other operation button
+					if(calc.getPendingBinaryOperation() != null){
+						calc.setActiveOperand(calc.getPendingBinaryOperation()
+												  .applyAsDouble(calc.getActiveOperand(), calc.getValue()));
+						calc.setValue(calc.getActiveOperand());
+					} else {	
+						calc.setActiveOperand(calc.getValue());
+					}
+					//set operation accordingly
+					if(invSet) {
+						calc.setPendingBinaryOperation(inverse);		
+					} else {
+						calc.setPendingBinaryOperation(normal);		
+					}
+					calc.clear();
+				}
+			});
 		}
 	}
 	

@@ -56,8 +56,53 @@ public class BarChart {
 		this.maxY = maxY;
 		this.yFrequency = yFrequency;
 	}
-	
-	
-	
+
+	/**
+	 * 	Returns the values of the {@link BarChart}.
+	 * 	@return the values of the {@link BarChart}.
+	 */
+	public List<XYValue> getValues() {
+		return values;
+	}
+
+	/**
+	 * 	Returns the xAxisDescription of the {@link BarChart}.
+	 * 	@return the xAxisDescription of the {@link BarChart}.
+	 */
+	public String getxAxisDescription() {
+		return xAxisDescription;
+	}
+
+	/**
+	 * 	Returns the yAxisDescription of the {@link BarChart}.
+	 * 	@return the yAxisDescription of the {@link BarChart}.
+	 */
+	public String getyAxisDescription() {
+		return yAxisDescription;
+	}
+
+	/**
+	 * 	Returns the minY of the {@link BarChart}.
+	 * 	@return the minY of the {@link BarChart}.
+	 */
+	public int getMinY() {
+		return minY;
+	}
+
+	/**
+	 * 	Returns the maxY of the {@link BarChart}.
+	 * 	@return the maxY of the {@link BarChart}.
+	 */
+	public int getMaxY() {
+		return maxY;
+	}
+
+	/**
+	 * 	Returns the yFrequency of the {@link BarChart}.
+	 * 	@return the yFrequency of the {@link BarChart}.
+	 */
+	public int getyFrequency() {
+		return yFrequency;
+	}	
 	
 }

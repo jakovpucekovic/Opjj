@@ -21,8 +21,13 @@ public class BarChartComponent extends JComponent{
 	public BarChartComponent(BarChart chart) {
 		super();
 		this.chart = chart;
+		
+		initGUI();
 	}
 	
+	private void initGUI() {
+		
+	}
 	
 	
 	

@@ -90,7 +90,7 @@ public class CalcModelImpl implements CalcModel{
 	 *	{@inheritDoc}
 	 */
 	@Override
-	public double getValue() {
+	public double getValue() { //TODO vidi kaj je s ispisom na calculator, kad treba sa dec . a kad bez
 		return isNegative ? -value : value;
 	}
 
