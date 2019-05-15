@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -39,7 +40,12 @@ public class BarChartDemo extends JFrame{
 		label.setOpaque(true);
 		cp.add(label, BorderLayout.NORTH);
 		
-		cp.add(new BarChartComponent(chart), BorderLayout.CENTER);
+		
+		JComponent jcomp = new BarChartComponent(chart);
+		jcomp.setBackground(Color.RED);
+		jcomp.setOpaque(true);
+		jcomp.paintImmediately(50, 50, 100, 100);
+		cp.add(jcomp, BorderLayout.CENTER);
 	}
 	
 	
@@ -83,6 +89,7 @@ public class BarChartDemo extends JFrame{
 			JFrame frame = new BarChartDemo(chart, Paths.get(args[0]).toAbsolutePath().normalize().toString());
 			frame.pack();
 			frame.setVisible(true);
+			frame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		});
 	}
 	
