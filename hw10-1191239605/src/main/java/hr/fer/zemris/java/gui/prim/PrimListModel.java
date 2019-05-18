@@ -8,12 +8,12 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 /**
- *	PrimListModel TODO javadoc
+ *	Class which generates new prime numbers and stores them, 
+ *	also it notifies all the registered listeners when that happens.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-//TODO testovi
 public class PrimListModel implements ListModel<Integer>{
 
 	/**List of stored numbers.*/
@@ -77,6 +77,7 @@ public class PrimListModel implements ListModel<Integer>{
 
 	/**
 	 *	{@inheritDoc}
+	 *	@throws IndexOutOfBoundsException If index is out of bounds.
 	 */
 	@Override
 	public Integer getElementAt(int index) {

@@ -1,12 +1,12 @@
 package hr.fer.zemris.java.gui.layouts;
 
 /**
- *	CalcLayoutException TODO javadoc
+ *	An exception that is thrown when there is the
+ *	{@link CalcLayout} encounters unexpected behaviour.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class CalcLayoutException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
@@ -25,5 +25,4 @@ public class CalcLayoutException extends RuntimeException {
 	public CalcLayoutException(String message) {
 		super(message);
 	}
-
 }

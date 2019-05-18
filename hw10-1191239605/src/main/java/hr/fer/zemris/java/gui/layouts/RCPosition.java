@@ -26,7 +26,7 @@ public class RCPosition {
 		} catch (NumberFormatException ex) {
 			throw new IllegalArgumentException("String doesn't contain a valid position.");
 		}
-		if(row < 1 || column < 1) {
+		if(row < 0 || column < 0) {
 			throw new IllegalArgumentException("Row and column must be > 0.");
 		}
 	}
@@ -39,7 +39,7 @@ public class RCPosition {
 	 *	@throws IllegalArgumentException If the row or column are < 0.
 	 */
 	public RCPosition(int row, int column) {
-		if(row < 1 || column < 1) {
+		if(row < 0 || column < 0) {
 			throw new IllegalArgumentException("Position must be > 0.");
 		}
 		this.row = row;

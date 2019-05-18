@@ -3,7 +3,7 @@ package hr.fer.zemris.java.gui.charts;
 import java.util.List;
 
 /**
- *	BarChart TODO javadoc
+ *	Class which models a bar chart.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

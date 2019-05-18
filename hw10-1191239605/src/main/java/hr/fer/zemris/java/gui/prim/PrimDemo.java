@@ -12,7 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 /**
- *	PrimDemo TODO javadoc
+ *	Demo Class which draws 2 lists of the same {@link PrimListModel}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -21,6 +21,9 @@ public class PrimDemo extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constructs a new {@link PrimDemo}.
+	 */
 	public PrimDemo() {
 		setLocation(20, 50);
 		setSize(300, 200);
@@ -30,6 +33,10 @@ public class PrimDemo extends JFrame{
 		initGUI();
 	}
 	
+	/**
+	 * 	Private method which initializes the GUI, sets
+	 * 	the lists and the button.
+	 */
 	private void initGUI() {
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
@@ -50,7 +57,11 @@ public class PrimDemo extends JFrame{
 		cp.add(button, BorderLayout.PAGE_END);
 	}
 	
-	
+	/**
+	 * 	Main method which invokes the drawing of the 
+	 * 	program.
+	 * 	@param args No args.
+	 */
 	public static void main(String[] args) {
 		
 		SwingUtilities.invokeLater(()->{

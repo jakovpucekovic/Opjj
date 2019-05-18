@@ -90,7 +90,7 @@ public class CalcModelImpl implements CalcModel{
 	 *	{@inheritDoc}
 	 */
 	@Override
-	public double getValue() { //TODO vidi kaj je s ispisom na calculator, kad treba sa dec . a kad bez
+	public double getValue() {
 		return isNegative ? -value : value;
 	}
 
@@ -184,8 +184,7 @@ public class CalcModelImpl implements CalcModel{
 		if(value == 0 && input.equals("0") && digit == 0) {
 			return;
 		}
-		if(value * 10 + digit > Double.MAX_VALUE) { //TODO vidi jel ovo okej
-//		if(value * 10 + digit < value) {
+		if(value * 10 + digit > Double.MAX_VALUE) {
 			throw new CalculatorInputException("Overflow happened");
 		}
 		if(input.equals("0") && digit != 0) {
@@ -222,7 +221,6 @@ public class CalcModelImpl implements CalcModel{
 	public void setActiveOperand(double activeOperand) {
 		this.activeOperand = activeOperand;
 		isActiveOperandSet = true;
-//		notifyAllListeners();
 	}
 
 	/**
@@ -232,7 +230,6 @@ public class CalcModelImpl implements CalcModel{
 	public void clearActiveOperand() {
 		activeOperand = 0;
 		isActiveOperandSet = false;
-//		notifyAllListeners();
 	}
 
 	/**

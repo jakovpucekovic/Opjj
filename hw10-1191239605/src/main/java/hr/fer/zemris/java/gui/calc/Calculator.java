@@ -27,7 +27,8 @@ import hr.fer.zemris.java.gui.layouts.CalcLayout;
 import hr.fer.zemris.java.gui.layouts.RCPosition;
 
 /**
- *	Calculator TODO javadoc
+ *	Class which models a calculator which reminds of the old
+ *	windows calculators and provides a similar functionality.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

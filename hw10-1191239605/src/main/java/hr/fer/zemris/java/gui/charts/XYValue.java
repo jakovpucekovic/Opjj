@@ -1,7 +1,8 @@
 package hr.fer.zemris.java.gui.charts;
 
 /**
- *	XYValue TODO javadoc
+ *	Class which represents a pair of values that should be
+ *	added to the {@link BarChart}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

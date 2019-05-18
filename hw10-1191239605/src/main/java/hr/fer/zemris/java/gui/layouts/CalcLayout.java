@@ -90,17 +90,19 @@ public class CalcLayout implements LayoutManager2 {
 	/**
 	 *	{@inheritDoc}
 	 */
-	@Override//TODO napisi ljepse
+	@Override
 	public void layoutContainer(Container parent) {
 		Insets insets = parent.getInsets();
+		//width and height of a component
 		int width = Math.round((parent.getWidth() - 6 * preferredDistance - insets.left - insets.right) / (float)COLUMNS);
 		int height = Math.round((parent.getHeight() - 4 * preferredDistance - insets.top - insets.bottom) / (float)ROWS);
 		
-		int actualWidth = width * COLUMNS + 6 * preferredDistance + insets.left + insets.right;
-		int actualHeight = height * ROWS + 4 * preferredDistance + insets.top + insets.bottom;
+		int calculatedWidth = width * COLUMNS + 6 * preferredDistance + insets.left + insets.right;
+		int calculatedHeight = height * ROWS + 4 * preferredDistance + insets.top + insets.bottom;
 		
-		int realExcessWidth = parent.getWidth() - actualWidth;
-		int excessHeight = parent.getHeight() - actualHeight;
+		//because of rounding we have excess width
+		int excessWidth = parent.getWidth() - calculatedWidth;
+		int excessHeight = parent.getHeight() - calculatedHeight;
 				
 		int heightPos = insets.top;
 		for(int i = 0; i < ROWS; ++i) {
@@ -113,18 +115,23 @@ public class CalcLayout implements LayoutManager2 {
 			}
 
 			int widthPos = insets.left;
-			int excessWidth = realExcessWidth;
+			int tempExcessWidth = excessWidth;
 			for(int j = 0; j < COLUMNS; ++j) {
+				
 				int widthToSet = width;
-				if(j % 2 == 0 && excessWidth != 0) {
-					widthToSet += excessWidth > 0 ? 1 : -1;
-					if(excessWidth < 0) excessWidth++;
-					if(excessWidth > 0) excessWidth--;
+				
+				//distribute excess width on every other component
+				if(j % 2 == 0 && tempExcessWidth != 0) {
+					widthToSet += tempExcessWidth > 0 ? 1 : -1;
+					if(tempExcessWidth < 0) tempExcessWidth++;
+					if(tempExcessWidth > 0) tempExcessWidth--;
 				}
 				if(i == 0 && j < 4) {
 					widthPos += widthToSet + preferredDistance;
 					continue;
 				}
+				
+				//component with position 1,1
 				if(i == 0 && j == 5) {
 					if(storedComponents[0][0] != null) {
 						storedComponents[0][0].setSize(new Dimension(widthPos - preferredDistance, heightToSet));
@@ -132,6 +139,7 @@ public class CalcLayout implements LayoutManager2 {
 					}
 				}
 				
+				//other components
 				if(storedComponents[i][j] != null) {
 					storedComponents[i][j].setSize(new Dimension(widthToSet, heightToSet));
 					storedComponents[i][j].setBounds(widthPos,
