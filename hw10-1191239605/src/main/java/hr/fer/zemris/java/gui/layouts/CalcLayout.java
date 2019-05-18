@@ -135,7 +135,7 @@ public class CalcLayout implements LayoutManager2 {
 				if(i == 0 && j == 5) {
 					if(storedComponents[0][0] != null) {
 						storedComponents[0][0].setSize(new Dimension(widthPos - preferredDistance, heightToSet));
-						storedComponents[0][0].setBounds(0, 0, widthPos - preferredDistance, heightToSet);	
+						storedComponents[0][0].setBounds(insets.left, insets.top, widthPos - preferredDistance, heightToSet);	
 					}
 				}
 				
