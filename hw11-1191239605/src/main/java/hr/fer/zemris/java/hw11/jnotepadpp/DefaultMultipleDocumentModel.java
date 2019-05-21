@@ -29,9 +29,11 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	private List<MultipleDocumentListener> listeners;
 	
 	private ImageIcon modifiedIcon;
+	private ImageIcon unmodifiedIcon;
 	
-	public void setModifiedIcon(ImageIcon icon) {
-		this.modifiedIcon = icon;
+	public void setModifiedIcons(ImageIcon icon1, ImageIcon icon2) {
+		this.modifiedIcon = icon1;
+		this.unmodifiedIcon = icon2;
 	}
 	
 	/**
@@ -40,31 +42,25 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	 */
 	public DefaultMultipleDocumentModel() {
 		documents = new ArrayList<>();
-		currentDocument = new DefaultSingleDocumentModel(null, null);
-		currentDocument.addSingleDocumentListener(updateImage);
-		documents.add(currentDocument);
-		addTab("new", new JScrollPane(currentDocument.getTextComponent()));
-	
-		
+			
 		listeners = new ArrayList<>();
 		
 	}
 
-	private SingleDocumentListener updateImage = new SingleDocumentListener() {
+	private SingleDocumentListener update = new SingleDocumentListener() {
 		
 		@Override
 		public void documentModifyStatusUpdated(SingleDocumentModel model) {
 			if(model.isModified()) {
 				setIconAt(documents.indexOf(model), modifiedIcon);
 			} else {
-				setIconAt(documents.indexOf(model), null);
+				setIconAt(documents.indexOf(model), unmodifiedIcon);
 			}
 		}
 		
 		@Override
-		public void documentFilePathUpdated(SingleDocumentModel model) {
-			// TODO Auto-generated method stub
-			
+		public void documentFilePathUpdated(SingleDocumentModel model) {			
+			setTitleAt(documents.indexOf(model), model.getFilePath().getFileName().toString());
 		}
 	};
 	
@@ -82,16 +78,16 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	@Override
 	public SingleDocumentModel createNewDocument() {
 		currentDocument = new DefaultSingleDocumentModel(null, "");
-		currentDocument.addSingleDocumentListener(updateImage);
+		currentDocument.addSingleDocumentListener(update);
 		documents.add(currentDocument);
-		
 		
 		for(var l : listeners) {
 			l.documentAdded(currentDocument);
 		}
 		
-		addTab(currentDocument.getFilePath()!= null ? currentDocument.getFilePath().getFileName().toString() : "new",
-				new JScrollPane(currentDocument.getTextComponent()));
+		addTab("(unnamed)",	new JScrollPane(currentDocument.getTextComponent()));
+		setIconAt(documents.size() - 1, modifiedIcon);
+
 		return currentDocument;
 	}
 
@@ -113,17 +109,20 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			if(doc.getFilePath() == null) {
 				continue;
 			}
-			if(doc.getFilePath().equals(path)) {//TODO vidi jel equals
+			if(doc.getFilePath().equals(path)) {
 				currentDocument = doc;
+				
+				setSelectedIndex(documents.indexOf(currentDocument));
+				
 				return currentDocument;
 			}
 		}
 		if(!Files.isReadable(path)) {
-			throw new IllegalArgumentException("Path doesn't lead to a readable file.");
+			throw new IllegalArgumentException("Path doesn't lead to a readable file.");//TODO sto ako damo nesto sto nije text?
 		}
 		try {
 			currentDocument = new DefaultSingleDocumentModel(path, Files.readString(path));
-			currentDocument.addSingleDocumentListener(updateImage);
+			currentDocument.addSingleDocumentListener(update);
 			documents.add(currentDocument);
 			
 			for(var l : listeners) {
@@ -145,6 +144,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	@Override
 	public void saveDocument(SingleDocumentModel model, Path newPath) {
 		Objects.requireNonNull(model);
+		SingleDocumentModel previous = currentDocument;
 		try {//TODO sta s iznimkama, tko ih obraduje?
 			if(newPath == null) {
 				Files.writeString(model.getFilePath(), model.getTextComponent().getText());
@@ -154,7 +154,14 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		} catch(IOException ex) {
 			//TODO napravi nes
 		}
+		model.setFilePath(newPath);
 		model.setModified(false);
+		
+		setSelectedIndex(documents.indexOf(currentDocument));
+		
+		for(var l : listeners) {
+			l.currentDocumentChanged(previous, currentDocument);
+		}
 	}
 
 	/**
@@ -162,9 +169,18 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	 */
 	@Override
 	public void closeDocument(SingleDocumentModel model) {
+		Objects.requireNonNull(model);
+		
 		int index = documents.indexOf(model);
-		currentDocument = index == 0 ? documents.get(1) : documents.get(index - 1);
+		
+		if(documents.size() > 1) {
+			currentDocument = documents.get(index == 0 ? 1 : (index - 1));
+		} else {
+			currentDocument = null;
+		}
 		documents.remove(model);
+		
+		removeTabAt(index);
 		
 		for(var l : listeners) {
 			l.documentRemoved(model);
