@@ -1,10 +1,13 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.swing.JTextArea;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *	DefaultSingleDocumentModel TODO javadoc
@@ -22,13 +25,33 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel{
 	private List<SingleDocumentListener> listeners;	
 	
 	/**
-	 * 	Constructs a new DefaultSingleDocumentModel.
+	 * 	Constructs a new {@link DefaultSingleDocumentModel} with the given path
+	 * 	and the given text.
+	 * 	@param filePath {@link Path} to the document.
+	 * 	@param textContent Content of the document.
 	 * 	TODO javadoc
 	 */
 	public DefaultSingleDocumentModel(Path filePath, String textContent) {
 		this.path = filePath;
+		listeners = new ArrayList<>();
 		textArea = new JTextArea(textContent);
-//		textArea.add TODO dodaje se neki listener
+		textArea.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				setModified(true);
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				setModified(true);
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				setModified(true);
+			}
+		});
 	}
 
 	/**
