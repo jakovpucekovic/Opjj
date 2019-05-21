@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -13,6 +14,9 @@ import java.awt.event.WindowListener;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.EventObject;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -32,6 +36,7 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
@@ -71,29 +76,10 @@ public class JNotepadPP extends JFrame {
 		tabModel = new DefaultMultipleDocumentModel();
 		tabModel.setModifiedIcons(loadPic("icons/modified.png"), loadPic("icons/unmodified.png"));
 		
-		
-		//updates the title of JNotepadPP to match the path of the current tab
-		tabModel.addChangeListener(new ChangeListener() {
-			
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				SingleDocumentModel doc = tabModel.getDocument(tabModel.getSelectedIndex());
-				if(doc.getFilePath() != null) {
-					setTitle(doc.getFilePath().toAbsolutePath().toString() + " - JNotepad++");
-				} else {
-					setTitle("(unnamed) - JNotepad++");
-				}
-			}
-		});
-		
-		
-		
+		addListeners();
 		initGUI();
 		setClosingOperations();
 	}
-	
-	
-	
 	
 	//TODO javadoc
 	private void initGUI() {
@@ -107,13 +93,65 @@ public class JNotepadPP extends JFrame {
 		panel.setLayout(new BorderLayout());
 		panel.add(tabModel, BorderLayout.CENTER);
 		panel.add(statusbar, BorderLayout.SOUTH);
+
+		tabModel.createNewDocument();	
 		
 		cp.add(createToolbar(), BorderLayout.NORTH);
-		
 		cp.add(panel, BorderLayout.CENTER);
-		
 	}	
-	//TODO kad se promjeni current document makni caret listener sa starog i dodaj na novi za status bar
+	
+	private void addListeners() {
+		//updates the statusbar when tab comes into focus
+		tabModel.addMultipleDocumentListener(new MultipleDocumentListenerAdapter() {
+			
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+				super.currentDocumentChanged(previousModel, currentModel);
+				statusbar.updateStatusbar(tabModel.getCurrentDocument().getTextComponent());
+			};
+		});
+				
+		
+		//updates statusbar as text is entered
+		tabModel.addMultipleDocumentListener(new MultipleDocumentListenerAdapter() {
+			
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+				super.currentDocumentChanged(previousModel, currentModel);
+				if(previousModel != null) {
+					previousModel.getTextComponent().removeCaretListener(e -> statusbar.updateStatusbar(e));
+				}
+				if(currentModel != null) {
+					currentModel.getTextComponent().addCaretListener(e -> statusbar.updateStatusbar(e));
+				}
+			}
+		});
+		
+				
+		//updates the title of JNotepadPP to match the path of the current tab		
+		tabModel.addMultipleDocumentListener(new MultipleDocumentListenerAdapter() {
+		
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+				super.currentDocumentChanged(previousModel, currentModel);
+				SingleDocumentModel doc = tabModel.getCurrentDocument();
+				if(doc.getFilePath() != null) {
+					setTitle(doc.getFilePath().toAbsolutePath().toString() + " - JNotepad++");
+				} else {
+					setTitle("(unnamed) - JNotepad++");
+				}
+			}
+		});
+	}
 	
 	private class Statusbar extends JPanel {
 		
@@ -122,24 +160,33 @@ public class JNotepadPP extends JFrame {
 		private JLabel column;
 		private JLabel selection;
 		private JLabel dateTime;
+		Timer clock;
 		
 		public Statusbar(){
 			super();
 			setLayout(new BorderLayout());
-			setBorder(BorderFactory.createLineBorder(Color.black));
+			setBorder(BorderFactory.createLineBorder(Color.black));	
 			
-			
-			lenght = new JLabel("length: ");
-			line = new JLabel("Ln: ");
-			column = new JLabel("Col: ");
-			selection = new JLabel("Sel: ");
-			dateTime = new JLabel("datetime"); //TODO vrijeme i datum
+			lenght = new JLabel("Length: 0");
+			line = new JLabel("Ln: 1");
+			column = new JLabel("Col: 0");
+			selection = new JLabel("Sel: 0");
+			dateTime = new JLabel("");
 				
+			clock = new Timer(100, new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					dateTime.setText(dateFormat.format(new Date()));
+				}
+			}); 	
+			clock.start();
+			
 			initStatusbar();
 		}
 		
 		private void initStatusbar() {
-			
 			JPanel left = new JPanel();
 
 			left.add(lenght);
@@ -149,58 +196,32 @@ public class JNotepadPP extends JFrame {
 			
 			add(left, BorderLayout.WEST);
 			add(dateTime, BorderLayout.EAST);
-			
-			//TODO add this
-			tabModel.addMultipleDocumentListener(new MultipleDocumentListener() {
-				
-				/**
-				 *	{@inheritDoc}
-				 */
-				@Override
-				public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
-					MultipleDocumentListener.super.currentDocumentChanged(previousModel, currentModel);
-					if(previousModel != null) {
-						previousModel.getTextComponent().removeCaretListener(statsListener);
-					}
-					if(currentModel != null) {
-						currentModel.getTextComponent().addCaretListener(statsListener);
-					}
-					
-				}
-				
-				@Override
-				public void documentRemoved(SingleDocumentModel model) {
-				}
-				
-				@Override
-				public void documentAdded(SingleDocumentModel model) {
-				}
-			});
 		}
 		
-		private final CaretListener statsListener = new CaretListener() {
+		private void updateStatusbar(EventObject e) {
+			JTextArea area = (JTextArea)e.getSource();
+			updateStatusbar(area);
 			
-			@Override
-			public void caretUpdate(CaretEvent e) {
-				JTextArea area = (JTextArea)e.getSource();
-				lenght.setText("length: " + area.getText().length());
-				
-                int ln = 1;
-                int col = 1;
-                try {
-                    ln = area.getLineOfOffset(area.getCaretPosition());
-                    col = area.getCaretPosition() - area.getLineStartOffset(ln);
-                    ln++;
-                }
-                catch(Exception ex) { 
-                }
-                
-                line.setText("Ln: " + ln);
-                column.setText("Col: " + col);
-                
-                selection.setText("Sel: " + Math.abs((e.getMark() - e.getDot())));
-			}
-		};
+		}
+		
+		private void updateStatusbar(JTextArea area) {
+			lenght.setText("Length: " + area.getText().length());
+			
+            int ln = 1;
+            int col = 1;
+            try {
+                ln = area.getLineOfOffset(area.getCaretPosition());
+                col = area.getCaretPosition() - area.getLineStartOffset(ln);
+                ln++;
+            }
+            catch(Exception ex) { 
+            }
+            
+            line.setText("Ln: " + ln);
+            column.setText("Col: " + col);
+            
+            selection.setText("Sel: " + Math.abs((area.getCaret().getMark() - area.getCaret().getDot())));
+		}
 		
 	}
 
@@ -360,7 +381,7 @@ public class JNotepadPP extends JFrame {
 	private final Action openDocument = new AbstractAction() {
 		
 		@Override
-		public void actionPerformed(ActionEvent e) {//TODO neka uvijek bude 1 otvoren
+		public void actionPerformed(ActionEvent e) {
 			load("Load"); //TODO i18n
 		}
 	};
@@ -455,6 +476,7 @@ public class JNotepadPP extends JFrame {
 			tabModel.closeDocument(tabModel.getDocument(i));
 		}
 		
+		statusbar.clock.stop();
 		dispose();
 	}
 	

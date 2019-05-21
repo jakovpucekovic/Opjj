@@ -41,7 +41,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	public DefaultMultipleDocumentModel() {
 		documents = new ArrayList<>();
 		listeners = new ArrayList<>();
-		createNewDocument();
 		
 		addChangeListener(new ChangeListener() {
 			
@@ -72,7 +71,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		
 		@Override
 		public void documentFilePathUpdated(SingleDocumentModel model) {			
-			setTitleAt(documents.indexOf(model), model.getFilePath().getFileName().toString());//TODO problem za null?
+			setTitleAt(documents.indexOf(model), model.getFilePath().getFileName().toString());
 		}
 	};
 	
@@ -102,6 +101,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		addTab("(unnamed)", new JScrollPane(newDocument.getTextComponent()));
 		currentDocument = newDocument;
 		setSelectedIndex(documents.indexOf(newDocument));
+		setIconAt(documents.indexOf(newDocument), modifiedIcon);
 		
 		notifyListenersChanged(previousDoc, newDocument);
 		
@@ -139,7 +139,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			throw new RuntimeException("Path to non readable file.");
 		}
 		
-		
 		SingleDocumentModel newDocument;
 		try {
 			newDocument = new DefaultSingleDocumentModel(path, Files.readString(path));
@@ -149,7 +148,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		
 		newDocument.addSingleDocumentListener(update);
 		documents.add(newDocument);
-		currentDocument = newDocument;
 		addTab(newDocument.getFilePath().getFileName().toString(), new JScrollPane(newDocument.getTextComponent()));
 		notifyListenersAdded(newDocument);
 		
@@ -158,6 +156,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 			closeDocument(currentDocument);
 		}		
 					
+		currentDocument = newDocument;
 		setSelectedIndex(documents.indexOf(newDocument));
 		return newDocument;
 		
