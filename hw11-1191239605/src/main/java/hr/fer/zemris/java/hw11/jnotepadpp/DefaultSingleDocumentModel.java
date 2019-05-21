@@ -21,8 +21,8 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel{
 	private JTextArea textArea;
 	private Path path;
 	private boolean modified;
-	
 	private List<SingleDocumentListener> listeners;	
+	
 	
 	/**
 	 * 	Constructs a new {@link DefaultSingleDocumentModel} with the given path

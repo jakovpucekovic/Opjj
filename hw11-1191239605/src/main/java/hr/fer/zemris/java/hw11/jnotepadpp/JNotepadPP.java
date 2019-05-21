@@ -3,9 +3,11 @@ package hr.fer.zemris.java.hw11.jnotepadpp;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.InputStream;
@@ -26,6 +28,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -33,6 +36,11 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.DefaultEditorKit.CopyAction;
+import javax.swing.text.DefaultEditorKit.CutAction;
+import javax.swing.text.DefaultEditorKit.PasteAction;
 
 /**
  *	JNotepadPP TODO javadoc
@@ -43,9 +51,9 @@ import javax.swing.event.ChangeListener;
 
 public class JNotepadPP extends JFrame {	
 	
-	private DefaultMultipleDocumentModel model;
+	private DefaultMultipleDocumentModel tabModel;
 	
-	private JPanel statusbar;
+	private Statusbar statusbar;
 	
 	
 	/**
@@ -55,67 +63,36 @@ public class JNotepadPP extends JFrame {
 	public JNotepadPP() {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setLocation(10, 10);
-		setTitle("JNotepad++");
+		setTitle("(unnamed) - JNotepad++");
 		setSize(500, 500);
 		
-		statusbar = new JPanel();
+		statusbar = new Statusbar();
 		
-		model = new DefaultMultipleDocumentModel(); //TODO preimenuj iz model u nesto smislenije
-		model.setModifiedIcons(loadPic("icons/modified.png"), loadPic("icons/unmodified.png"));
-		model.addMultipleDocumentListener(new MultipleDocumentListener() {
-			
-			/**
-			 *	{@inheritDoc}
-			 */
-			@Override //TODO jel se tu misli na to da je novi dokument postao current ili da je doslo do promjena unutar current documenta
-			public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
-				MultipleDocumentListener.super.currentDocumentChanged(previousModel, currentModel);
-//				previousModel.getTextComponent().removeCaretListener(caretListener);
-//				currentModel.getTextComponent().addCaretListener(caretListener); 
-				//TODO napraviti statusbar kao poseban razred koji onda registrira caretListener?
-			}
-			
-			/**
-			 * 	{@inheritDoc}
-			 */
-			@Override
-			public void documentRemoved(SingleDocumentModel model1) {
-				//TODO tko se brine o updateanju multiple modela, jnotepad preko ovakvog listenera ili samo model
-				if(model.getNumberOfDocuments() == 0) {
-					closeDocument.setEnabled(false);
-					infoAction.setEnabled(false);
-				}
-			}
-			
-			/**
-			 * 	{@inheritDoc}
-			 */
-			@Override
-			public void documentAdded(SingleDocumentModel model1) {
-				if(model.getNumberOfDocuments() > 0) {
-					closeDocument.setEnabled(true);
-					infoAction.setEnabled(true);
-				}
-				
-			}
-		});
+		tabModel = new DefaultMultipleDocumentModel();
+		tabModel.setModifiedIcons(loadPic("icons/modified.png"), loadPic("icons/unmodified.png"));
 		
-		model.addChangeListener(new ChangeListener() { //TODO gdje pratim kako se mjenjaju tabovi
+		
+		//updates the title of JNotepadPP to match the path of the current tab
+		tabModel.addChangeListener(new ChangeListener() {
 			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				SingleDocumentModel doc = model.getCurrentDocument();
-				if(doc != null && doc.getFilePath() != null) {
+				SingleDocumentModel doc = tabModel.getDocument(tabModel.getSelectedIndex());
+				if(doc.getFilePath() != null) {
 					setTitle(doc.getFilePath().toAbsolutePath().toString() + " - JNotepad++");
 				} else {
-					setTitle("(unnamed) - JNotepad++"); //TODO jel bi bilo pametnije postaviti path na unnamed ili neku varijablu koja prati ime?
+					setTitle("(unnamed) - JNotepad++");
 				}
 			}
 		});
+		
+		
 		
 		initGUI();
 		setClosingOperations();
 	}
+	
+	
 	
 	
 	//TODO javadoc
@@ -126,35 +103,104 @@ public class JNotepadPP extends JFrame {
 		createActions();
 		createMenus();
 		
-		configStatusbar();
-		
-		JLabel lab = new JLabel();
-		lab.setLayout(new BorderLayout());
-		lab.add(model, BorderLayout.CENTER);
-		lab.add(statusbar, BorderLayout.SOUTH);
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add(tabModel, BorderLayout.CENTER);
+		panel.add(statusbar, BorderLayout.SOUTH);
 		
 		cp.add(createToolbar(), BorderLayout.NORTH);
 		
-		cp.add(lab, BorderLayout.CENTER);
+		cp.add(panel, BorderLayout.CENTER);
 		
 	}	
+	//TODO kad se promjeni current document makni caret listener sa starog i dodaj na novi za status bar
 	
-	
-	private void configStatusbar() {
-		statusbar.setLayout(new GridLayout(1, 0));
-		statusbar.setBorder(BorderFactory.createLineBorder(Color.black));
+	private class Statusbar extends JPanel {
 		
-		JLabel lenght = new JLabel("length: 0");
-		JLabel line = new JLabel("Ln: 1");
-		JLabel column = new JLabel("Col: 1");
-		JLabel selection = new JLabel("Sel: 0");
-		JLabel dateTime = new JLabel("datetime"); //TODO vrijeme i datum
+		private JLabel lenght;
+		private JLabel line;
+		private JLabel column;
+		private JLabel selection;
+		private JLabel dateTime;
+		
+		public Statusbar(){
+			super();
+			setLayout(new BorderLayout());
+			setBorder(BorderFactory.createLineBorder(Color.black));
+			
+			
+			lenght = new JLabel("length: ");
+			line = new JLabel("Ln: ");
+			column = new JLabel("Col: ");
+			selection = new JLabel("Sel: ");
+			dateTime = new JLabel("datetime"); //TODO vrijeme i datum
 				
-		statusbar.add(lenght);
-		statusbar.add(line);
-		statusbar.add(column);
-		statusbar.add(selection);
-		statusbar.add(dateTime);
+			initStatusbar();
+		}
+		
+		private void initStatusbar() {
+			
+			JPanel left = new JPanel();
+
+			left.add(lenght);
+			left.add(line);
+			left.add(column);
+			left.add(selection);
+			
+			add(left, BorderLayout.WEST);
+			add(dateTime, BorderLayout.EAST);
+			
+			//TODO add this
+			tabModel.addMultipleDocumentListener(new MultipleDocumentListener() {
+				
+				/**
+				 *	{@inheritDoc}
+				 */
+				@Override
+				public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+					MultipleDocumentListener.super.currentDocumentChanged(previousModel, currentModel);
+					if(previousModel != null) {
+						previousModel.getTextComponent().removeCaretListener(statsListener);
+					}
+					if(currentModel != null) {
+						currentModel.getTextComponent().addCaretListener(statsListener);
+					}
+					
+				}
+				
+				@Override
+				public void documentRemoved(SingleDocumentModel model) {
+				}
+				
+				@Override
+				public void documentAdded(SingleDocumentModel model) {
+				}
+			});
+		}
+		
+		private final CaretListener statsListener = new CaretListener() {
+			
+			@Override
+			public void caretUpdate(CaretEvent e) {
+				JTextArea area = (JTextArea)e.getSource();
+				lenght.setText("length: " + area.getText().length());
+				
+                int ln = 1;
+                int col = 1;
+                try {
+                    ln = area.getLineOfOffset(area.getCaretPosition());
+                    col = area.getCaretPosition() - area.getLineStartOffset(ln);
+                    ln++;
+                }
+                catch(Exception ex) { 
+                }
+                
+                line.setText("Ln: " + ln);
+                column.setText("Col: " + col);
+                
+                selection.setText("Sel: " + Math.abs((e.getMark() - e.getDot())));
+			}
+		};
 		
 	}
 
@@ -164,42 +210,49 @@ public class JNotepadPP extends JFrame {
 	 */
 	private void createActions() {
 		newDocument.putValue(Action.NAME, "New");
-		openDocument.putValue(Action.NAME, "Open");
-		saveDocument.putValue(Action.NAME, "Save");
-		saveAsDocument.putValue(Action.NAME, "Save as");
-		closeDocument.putValue(Action.NAME, "Close");
-		closeDocument.setEnabled(false);
-		infoAction.putValue(Action.NAME, "Info");
-		infoAction.setEnabled(false);
-		exitAction.putValue(Action.NAME, "Exit");
-				
-//		cutSelectedPart.putValue(Action.NAME,"Cut");
-//		copySelectedPart.putValue(Action.NAME,"Copy");
-//		pasteSelectedPart.putValue(Action.NAME,"Paste");
-
 		newDocument.putValue(Action.SMALL_ICON, loadPic("icons/new.png"));
-		openDocument.putValue(Action.SMALL_ICON, loadPic("icons/open.png"));
-		saveDocument.putValue(Action.SMALL_ICON, loadPic("icons/save.png"));
-		saveAsDocument.putValue(Action.SMALL_ICON, loadPic("icons/save_as.png"));
-		closeDocument.putValue(Action.SMALL_ICON, loadPic("icons/close.png"));
-		infoAction.putValue(Action.SMALL_ICON, loadPic("icons/info.png"));
-		exitAction.putValue(Action.SMALL_ICON, loadPic("icons/exit.png"));
-		
 		newDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control N"));
-		openDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control O"));
-		saveDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control S"));
-		saveAsDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control shift S"));
-		closeDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control W"));
-		infoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
-		exitAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control Q"));
-		
 		newDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_N);
-		openDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O);
-		saveDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
-		saveAsDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
+
+		closeDocument.putValue(Action.NAME, "Close");
+		closeDocument.putValue(Action.SMALL_ICON, loadPic("icons/close.png"));
+		closeDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control W"));
 		closeDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
-		infoAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
+
+		openDocument.putValue(Action.NAME, "Open");
+		openDocument.putValue(Action.SMALL_ICON, loadPic("icons/open.png"));
+		openDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control O"));
+		openDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O);
+
+		saveDocument.putValue(Action.NAME, "Save");
+		saveDocument.putValue(Action.SMALL_ICON, loadPic("icons/save.png"));
+		saveDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control S"));
+		saveDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
+
+		saveAsDocument.putValue(Action.NAME, "Save as");
+		saveAsDocument.putValue(Action.SMALL_ICON, loadPic("icons/save_as.png"));
+		saveAsDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control shift S"));
+		saveAsDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
+		
+		exitAction.putValue(Action.NAME, "Exit");
+		exitAction.putValue(Action.SMALL_ICON, loadPic("icons/exit.png"));
+		exitAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control Q"));
 		exitAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
+
+		infoAction.putValue(Action.NAME, "Info");
+		infoAction.putValue(Action.SMALL_ICON, loadPic("icons/info.png"));
+		infoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
+		infoAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
+
+		cutAction.putValue(Action.NAME,"Cut");
+		cutAction.putValue(Action.SMALL_ICON, loadPic("icons/cut.png"));
+
+		copyAction.putValue(Action.NAME,"Copy");
+		copyAction.putValue(Action.SMALL_ICON, loadPic("icons/copy.png"));
+
+		pasteAction.putValue(Action.NAME,"Paste");
+		pasteAction.putValue(Action.SMALL_ICON, loadPic("icons/paste.png"));
+		
 	}
 
 	/**
@@ -216,14 +269,15 @@ public class JNotepadPP extends JFrame {
 		file.add(new JMenuItem(saveAsDocument));
 		file.add(new JMenuItem(closeDocument));
 		file.addSeparator();
+		file.add(new JMenuItem(infoAction));
+		file.addSeparator();
 		file.add(new JMenuItem(exitAction));
 
 		JMenu edit = new JMenu("Edit");
 		mb.add(edit);
-//		edit.add(new JMenuItem(cutSelectedPart));
-//		edit.add(new JMenuItem(copySelectedPart));
-//		edit.add(new JMenuItem(pasteSelectedPart));
-		edit.add(new JMenuItem(infoAction));
+		edit.add(new JMenuItem(cutAction));
+		edit.add(new JMenuItem(copyAction));
+		edit.add(new JMenuItem(pasteAction));
 		
 		setJMenuBar(mb);
 		
@@ -235,6 +289,8 @@ public class JNotepadPP extends JFrame {
 	 */
 	private JToolBar createToolbar() {
 		JToolBar toolbar = new JToolBar();
+//		toolbar.setLayout(new FlowLayout());
+		//TODO pokusaj staviti flow layout
 		toolbar.setFloatable(true);
 		
 		toolbar.add(new ToolbarButton(newDocument));
@@ -242,11 +298,12 @@ public class JNotepadPP extends JFrame {
 		toolbar.add(new ToolbarButton(saveDocument));
 		toolbar.add(new ToolbarButton(saveAsDocument));
 		toolbar.add(new ToolbarButton(closeDocument));
-//		toolbar.add(new ToolbarButton("Cut")); //TODO Jel mozemo koristiti DefaultEditorKit i kako?
-//		toolbar.add(new ToolbarButton("Copy"));
-//		toolbar.add(new ToolbarButton("Paste"));
 		toolbar.add(new ToolbarButton(infoAction));
 		toolbar.add(new ToolbarButton(exitAction));
+
+		toolbar.add(new ToolbarButton(cutAction));
+		toolbar.add(new ToolbarButton(copyAction));
+		toolbar.add(new ToolbarButton(pasteAction));
 		
 		return toolbar;
 	}
@@ -276,6 +333,12 @@ public class JNotepadPP extends JFrame {
 		return image;
 	}
 	
+//DONE
+	private final Action cutAction = new DefaultEditorKit.CutAction();
+	private final Action copyAction = new DefaultEditorKit.CopyAction();	
+	private final Action pasteAction = new DefaultEditorKit.PasteAction();
+	
+//DONE
 	private final Action infoAction = new AbstractAction() {
 		
 		@Override
@@ -284,24 +347,25 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
-	
+//DONE
 	private final Action newDocument = new AbstractAction() {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			model.createNewDocument();
+			tabModel.createNewDocument();
 		}
 	};
 	
+//DONE
 	private final Action openDocument = new AbstractAction() {
 		
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e) {//TODO neka uvijek bude 1 otvoren
 			load("Load"); //TODO i18n
 		}
 	};
 	
-	
+//DONE
 	private final Action saveDocument = new AbstractAction() {
 		
 		@Override
@@ -310,6 +374,7 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+//DONE
 	private final Action saveAsDocument = new AbstractAction() {
 		
 		@Override
@@ -318,6 +383,7 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+//DONE
 	private final Action closeDocument = new AbstractAction() {
 		
 		@Override
@@ -326,6 +392,7 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+//DONE
 	private final Action exitAction = new AbstractAction() {
 		
 		@Override
@@ -334,8 +401,9 @@ public class JNotepadPP extends JFrame {
 		}
 	};
 	
+//DONE
 	private void info(String text) {
-		String docText = model.getCurrentDocument().getTextComponent().getText();
+		String docText = tabModel.getCurrentDocument().getTextComponent().getText();
 		int numberOfCharacters = docText.length();
 		int numberOfNonBlankCharacters = 0;
 		char[] docTextArray = docText.toCharArray();
@@ -345,7 +413,7 @@ public class JNotepadPP extends JFrame {
 			}
 			++numberOfNonBlankCharacters;
 		}
-		int numberOfLines = model.getCurrentDocument().getTextComponent().getLineCount();
+		int numberOfLines = tabModel.getCurrentDocument().getTextComponent().getLineCount();
 		
 		Object[] options = {"OK"};
 		JOptionPane.showOptionDialog(
@@ -360,14 +428,16 @@ public class JNotepadPP extends JFrame {
 		
 		  
 	}
-			
+	
+//DONE	
 	private void exit(String text) {
-		for(int i = 0; i < model.getNumberOfDocuments(); ++i) {
-			model.setSelectedIndex(i);
-			if(model.getDocument(i).isModified()) {
+		for(int i = 0; i < tabModel.getNumberOfDocuments(); ++i) {
+			tabModel.setSelectedIndex(i);
+			if(tabModel.getDocument(i).isModified()) {
+				String docName = tabModel.getDocument(i).getFilePath() == null ? "(unnamed)" : tabModel.getDocument(i).getFilePath().getFileName().toString();
 				switch(JOptionPane.showConfirmDialog(
 						this,
-						"Document is modified. Do you want to save the chages?",
+						docName + "is modified. Do you want to save the chages?",
 						"Warning",
 						JOptionPane.YES_NO_CANCEL_OPTION)){
 					case JOptionPane.YES_OPTION:
@@ -380,12 +450,21 @@ public class JNotepadPP extends JFrame {
 				}
 			}
 		}
+		
+		for(int i = 0; i < tabModel.getNumberOfDocuments(); ++i) {
+			tabModel.closeDocument(tabModel.getDocument(i));
+		}
+		
 		dispose();
 	}
 	
+//DONE
 	private void load(String text) {
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogTitle(text);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt" ,"txt");
+		jfc.setFileFilter(filter);
+		
 		if(jfc.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
 			return;
 		}
@@ -399,49 +478,77 @@ public class JNotepadPP extends JFrame {
 					JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 				return;
 			} else {
-				model.createNewDocument();
-				model.getCurrentDocument().setFilePath(chosenPath);
+				tabModel.createNewDocument();
+				tabModel.getCurrentDocument().setFilePath(chosenPath);
+				return;
 			}
 		}
 		
-		if(!Files.isWritable(chosenPath)) {
+		if(!Files.isWritable(chosenPath) || !Files.isReadable(chosenPath)) {
 			JOptionPane.showMessageDialog(this, "Don't have permissions to edit this file.");
 			return;
 		}
 		
 		if(chosenPath != null) {
-			model.loadDocument(chosenPath);
+			try {
+				tabModel.loadDocument(chosenPath);
+			} catch(RuntimeException ex) {
+				JOptionPane.showMessageDialog(this, "File cannot be loaded.", "Error loading file", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 	
+//DONE	
 	private void save(String text) {
-		if(model.getCurrentDocument().getFilePath() == null) {
+		if(tabModel.getCurrentDocument().getFilePath() == null) {
 			saveAs(text);
+		} else {
+			try {
+				tabModel.saveDocument(tabModel.getCurrentDocument(), tabModel.getCurrentDocument().getFilePath());
+			} catch(RuntimeException ex) {
+				JOptionPane.showMessageDialog(this, "File cannot be saved.", "Error saving file", JOptionPane.ERROR_MESSAGE);
+			}
 		}
-		model.saveDocument(model.getCurrentDocument(), model.getCurrentDocument().getFilePath());
 	}
 	
+//DONE
 	private void saveAs(String text) {
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogTitle(text);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt" ,"txt");
+		jfc.setFileFilter(filter);
 		if(jfc.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
 			return;
 		}
+		
 		Path chosenPath = jfc.getSelectedFile().toPath();
 		if(Files.exists(chosenPath)) {
-			if(JOptionPane.showConfirmDialog(
-					this,
-					"File already exists. Overwrite?",
-					"Warning",
-					JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-				return; //TODO dodaj while petlju
+			if(JOptionPane.showConfirmDialog(this, "File already exists. Overwrite?", "Warning",	JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+				Object[] options = {"OK"};
+				JOptionPane.showOptionDialog(
+						this,
+						"Save aborted.",
+						"Info",
+						JOptionPane.PLAIN_MESSAGE,
+						JOptionPane.INFORMATION_MESSAGE,
+						null,
+						options,
+						options[0]);
+				return;
 			}
 		}
-		model.saveDocument(model.getCurrentDocument(), chosenPath);
+		try {
+			tabModel.saveDocument(tabModel.getCurrentDocument(), chosenPath);
+		}catch(IllegalArgumentException ex) {
+				JOptionPane.showMessageDialog(this, ex.getMessage(), "Error saving file", JOptionPane.ERROR_MESSAGE);
+		} catch(RuntimeException ex) {
+			JOptionPane.showMessageDialog(this, "File cannot be saved.", "Error saving file", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
+//DONE	
 	private void close() {
-		if(model.getCurrentDocument().isModified()) {
+		if(tabModel.getCurrentDocument().isModified()) {
 			if(JOptionPane.showConfirmDialog(
 					this,
 					"Document is modified. Save changes?",
@@ -450,44 +557,21 @@ public class JNotepadPP extends JFrame {
 				save("Save");//TODO i18n
 			}
 		}
-		model.closeDocument(model.getCurrentDocument());
+		tabModel.closeDocument(tabModel.getCurrentDocument());
 	}
 	
+//DONE	
 	private void setClosingOperations() {
-		//register closing listener
-				addWindowListener(new WindowListener() {
-					
-					@Override
-					public void windowOpened(WindowEvent e) {
-					}
-					
-					@Override
-					public void windowIconified(WindowEvent e) {
-					}
-					
-					@Override
-					public void windowDeiconified(WindowEvent e) {
-					}
-					
-					@Override
-					public void windowDeactivated(WindowEvent e) {
-					}
-					
-					@Override
-					public void windowClosing(WindowEvent e) {
-						exit("Exit");
-					}
-					
-					@Override
-					public void windowClosed(WindowEvent e) {
-					}
-					
-					@Override
-					public void windowActivated(WindowEvent e) {
-					}
-				});
+		addWindowListener(new WindowAdapter() {
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void windowClosing(WindowEvent e) {
+				exit("Exit");
+			}
+		});		
 	}
-	
 	
 	public static void main(String[] args) {	
 		SwingUtilities.invokeLater(()->{

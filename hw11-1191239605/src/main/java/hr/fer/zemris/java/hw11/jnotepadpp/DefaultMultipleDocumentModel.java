@@ -1,8 +1,9 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
+import java.awt.Component;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +13,8 @@ import java.util.Objects;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 
 /**
@@ -29,12 +32,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	private List<MultipleDocumentListener> listeners;
 	
 	private ImageIcon modifiedIcon;
-	private ImageIcon unmodifiedIcon;
-	
-	public void setModifiedIcons(ImageIcon icon1, ImageIcon icon2) {
-		this.modifiedIcon = icon1;
-		this.unmodifiedIcon = icon2;
-	}
+	private ImageIcon unmodifiedIcon;	
 	
 	/**
 	 * 	Constructs a new DefaultMultipleDocumentModel.
@@ -42,11 +40,25 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	 */
 	public DefaultMultipleDocumentModel() {
 		documents = new ArrayList<>();
-			
 		listeners = new ArrayList<>();
+		createNewDocument();
 		
+		addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				SingleDocumentModel previous = currentDocument;
+				currentDocument = documents.get(getSelectedIndex());
+				notifyListenersChanged(previous, currentDocument);
+			}
+		});
 	}
 
+	public void setModifiedIcons(ImageIcon icon1, ImageIcon icon2) {
+		this.modifiedIcon = icon1;
+		this.unmodifiedIcon = icon2;
+	}
+	
 	private SingleDocumentListener update = new SingleDocumentListener() {
 		
 		@Override
@@ -60,7 +72,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		
 		@Override
 		public void documentFilePathUpdated(SingleDocumentModel model) {			
-			setTitleAt(documents.indexOf(model), model.getFilePath().getFileName().toString());
+			setTitleAt(documents.indexOf(model), model.getFilePath().getFileName().toString());//TODO problem za null?
 		}
 	};
 	
@@ -77,18 +89,23 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	 */
 	@Override
 	public SingleDocumentModel createNewDocument() {
-		currentDocument = new DefaultSingleDocumentModel(null, "");
-		currentDocument.addSingleDocumentListener(update);
-		documents.add(currentDocument);
 		
-		for(var l : listeners) {
-			l.documentAdded(currentDocument);
-		}
+		//add new document
+		SingleDocumentModel newDocument = new DefaultSingleDocumentModel(null, "");
+		newDocument.addSingleDocumentListener(update);
+		documents.add(newDocument);
 		
-		addTab("(unnamed)",	new JScrollPane(currentDocument.getTextComponent()));
-		setIconAt(documents.size() - 1, modifiedIcon);
-
-		return currentDocument;
+		notifyListenersAdded(newDocument);
+		
+		//switch tab to new document
+		SingleDocumentModel previousDoc = currentDocument;
+		addTab("(unnamed)", new JScrollPane(newDocument.getTextComponent()));
+		currentDocument = newDocument;
+		setSelectedIndex(documents.indexOf(newDocument));
+		
+		notifyListenersChanged(previousDoc, newDocument);
+		
+		return newDocument;
 	}
 
 	/**
@@ -105,37 +122,45 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	@Override
 	public SingleDocumentModel loadDocument(Path path) {
 		Objects.requireNonNull(path);
+		
 		for(var doc : documents) {
-			if(doc.getFilePath() == null) {
-				continue;
-			}
-			if(doc.getFilePath().equals(path)) {
+			//if file with given path already opened, switch to it
+			if(doc.getFilePath() != null && doc.getFilePath().equals(path)) {
 				currentDocument = doc;
-				
-				setSelectedIndex(documents.indexOf(currentDocument));
-				
-				return currentDocument;
+				setSelectedIndex(documents.indexOf(doc));
+				return doc;
 			}
+		}
+		
+		if(!Files.exists(path)){
+			throw new RuntimeException("Path to a non existing file.");
 		}
 		if(!Files.isReadable(path)) {
-			throw new IllegalArgumentException("Path doesn't lead to a readable file.");//TODO sto ako damo nesto sto nije text?
+			throw new RuntimeException("Path to non readable file.");
 		}
+		
+		
+		SingleDocumentModel newDocument;
 		try {
-			currentDocument = new DefaultSingleDocumentModel(path, Files.readString(path));
-			currentDocument.addSingleDocumentListener(update);
-			documents.add(currentDocument);
-			
-			for(var l : listeners) {
-				l.documentAdded(currentDocument);
-			}
-			
-			addTab(currentDocument.getFilePath().getFileName().toString(),
-					new JScrollPane(currentDocument.getTextComponent()));
-			setSelectedIndex(documents.size() - 1);;
-			return currentDocument;
-		} catch (IOException e) {
-			throw new IllegalArgumentException("Cannot read path.");//TODO nije dobro rjesenje
+			newDocument = new DefaultSingleDocumentModel(path, Files.readString(path));
+		} catch (IOException ex) {
+			throw new RuntimeException(ex.getMessage());
 		}
+		
+		newDocument.addSingleDocumentListener(update);
+		documents.add(newDocument);
+		currentDocument = newDocument;
+		addTab(newDocument.getFilePath().getFileName().toString(), new JScrollPane(newDocument.getTextComponent()));
+		notifyListenersAdded(newDocument);
+		
+		//if there is the only open tab is a default unmodified tab, remove it
+		if(documents.size() == 2 && !currentDocument.isModified() && currentDocument.getFilePath() == null) {
+			closeDocument(currentDocument);
+		}		
+					
+		setSelectedIndex(documents.indexOf(newDocument));
+		return newDocument;
+		
 	}
 	
 	/**
@@ -144,24 +169,26 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	@Override
 	public void saveDocument(SingleDocumentModel model, Path newPath) {
 		Objects.requireNonNull(model);
-		SingleDocumentModel previous = currentDocument;
-		try {//TODO sta s iznimkama, tko ih obraduje?
-			if(newPath == null) {
-				Files.writeString(model.getFilePath(), model.getTextComponent().getText());
-			} else {
-				Files.writeString(newPath, model.getTextComponent().getText());
+
+		if(newPath != null) {
+			for(var doc : documents) {
+				if(model.equals(doc) || doc.getFilePath() == null) {
+					continue;
+				}
+				if(newPath.equals(doc.getFilePath())) {
+					throw new IllegalArgumentException("Another document with the given path is already opened.");
+				}
 			}
+			
+			model.setFilePath(newPath);
+		}
+		
+		try {
+			Files.writeString(model.getFilePath(), model.getTextComponent().getText(), Charset.forName("utf8"));
 		} catch(IOException ex) {
-			//TODO napravi nes
+			throw new RuntimeException(ex.getMessage());
 		}
-		model.setFilePath(newPath);
 		model.setModified(false);
-		
-		setSelectedIndex(documents.indexOf(currentDocument));
-		
-		for(var l : listeners) {
-			l.currentDocumentChanged(previous, currentDocument);
-		}
 	}
 
 	/**
@@ -169,24 +196,38 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	 */
 	@Override
 	public void closeDocument(SingleDocumentModel model) {
-		Objects.requireNonNull(model);
 		
 		int index = documents.indexOf(model);
 		
-		if(documents.size() > 1) {
-			currentDocument = documents.get(index == 0 ? 1 : (index - 1));
-		} else {
-			currentDocument = null;
-		}
-		documents.remove(model);
 		
+		if(currentDocument.equals(model)) {
+			//if closing current document, switch to next
+			if(documents.size() > 1) {
+				int newIndex = index - 1 < 0 ? 0 : (index - 1);
+				currentDocument = documents.get(newIndex);
+				setSelectedIndex(newIndex);
+				notifyListenersChanged(model, currentDocument);
+			//if closing only document, create new empty document as current
+			} else {
+				createNewDocument();
+			}
+		}
+		
+		documents.remove(index);
 		removeTabAt(index);
-		
-		for(var l : listeners) {
-			l.documentRemoved(model);
-		}
+		notifyListenersRemoved(model);
 	}
 
+//	/**
+//	 *	{@inheritDoc}
+//	 */
+//	@Override
+//	public void setSelectedIndex(int index) {
+//		super.setSelectedIndex(index);
+//		//zato da se automatski updatea currentDocument kad user klikne na neki tab //TODO komentar
+//		currentDocument = documents.get(index);
+//	}
+	
 	/**
 	 *	{@inheritDoc}
 	 */
@@ -210,7 +251,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	public int getNumberOfDocuments() {
 		return documents.size();
 	}
-
+//
 	/**
 	 *	{@inheritDoc}
 	 */
@@ -219,4 +260,21 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		return documents.get(index);
 	}
 	
+	private void notifyListenersRemoved(SingleDocumentModel model) {
+		for(var l : listeners) {
+			l.documentRemoved(model);
+		}
+	}
+	
+	private void notifyListenersAdded(SingleDocumentModel model) {
+		for(var l : listeners) {
+			l.documentAdded(model);
+		}
+	}
+	
+	private void notifyListenersChanged(SingleDocumentModel previous, SingleDocumentModel current) {
+		for(var l : listeners) {
+			l.currentDocumentChanged(previous, current);
+		}
+	}
 }

@@ -13,7 +13,7 @@ public interface MultipleDocumentListener {
 	 * 	@param previousModel The previous currentDocument.
 	 * 	@param currentModel The new currentDocument.
 	 */
-	default void currentDocumentChanged(SingleDocumentModel previousModel, 
+	default void currentDocumentChanged(SingleDocumentModel previousModel,
 								SingleDocumentModel currentModel) {
 		if(previousModel == null && currentModel == null) {
 			throw new IllegalArgumentException("Both arguments cannot be null.");
