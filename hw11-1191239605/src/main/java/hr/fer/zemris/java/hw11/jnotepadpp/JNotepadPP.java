@@ -37,6 +37,7 @@ import javax.swing.text.DefaultEditorKit;
 
 import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableAction;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableMenu;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizationProvider;
 
 /**
@@ -65,9 +66,9 @@ public class JNotepadPP extends JFrame {
 	private Action infoAction;
 	private Action exitAction;
 	
-	private Action cutAction = new DefaultEditorKit.CutAction();
-	private Action copyAction = new DefaultEditorKit.CopyAction();	
-	private Action pasteAction = new DefaultEditorKit.PasteAction();
+	private Action cutAction;
+	private Action copyAction;
+	private Action pasteAction;
 
 
 	/**
@@ -325,15 +326,35 @@ public class JNotepadPP extends JFrame {
 		infoAction.putValue(Action.SMALL_ICON, loadPic("icons/info.png"));
 		infoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
 		infoAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
+		
+		cutAction = new LocalizableAction("cut", flp) {
+			private static final long serialVersionUID = 1L;
 
-		//TODO dodati cut,copy,paste kao localizable
-		cutAction.putValue(Action.NAME,"Cut");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new DefaultEditorKit.CutAction().actionPerformed(e);
+			}
+		};
 		cutAction.putValue(Action.SMALL_ICON, loadPic("icons/cut.png"));
 
-		copyAction.putValue(Action.NAME,"Copy");
+		copyAction = new LocalizableAction("copy", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new DefaultEditorKit.CopyAction().actionPerformed(e);
+			}
+		};
 		copyAction.putValue(Action.SMALL_ICON, loadPic("icons/copy.png"));
 
-		pasteAction.putValue(Action.NAME,"Paste");
+		pasteAction = new LocalizableAction("paste", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new DefaultEditorKit.PasteAction().actionPerformed(e);
+			}
+		};
 		pasteAction.putValue(Action.SMALL_ICON, loadPic("icons/paste.png"));
 		
 	}
@@ -344,7 +365,8 @@ public class JNotepadPP extends JFrame {
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
 
-		JMenu file = new JMenu("File");
+		JMenu file = new LocalizableMenu("files", flp);
+		
 		mb.add(file);
 		file.add(new JMenuItem(newDocument));
 		file.add(new JMenuItem(openDocument));
@@ -356,13 +378,13 @@ public class JNotepadPP extends JFrame {
 		file.addSeparator();
 		file.add(new JMenuItem(exitAction));
 
-		JMenu edit = new JMenu("Edit");
+		JMenu edit = new LocalizableMenu("edit", flp);
 		mb.add(edit);
 		edit.add(new JMenuItem(cutAction));
 		edit.add(new JMenuItem(copyAction));
 		edit.add(new JMenuItem(pasteAction));
 
-		JMenu lang = new JMenu("Languages");
+		JMenu lang = new LocalizableMenu("languages", flp);
 		mb.add(lang);
 		
 		JMenuItem hrv = new JMenuItem(new LocalizableAction("hrv", flp) {
@@ -395,16 +417,16 @@ public class JNotepadPP extends JFrame {
 		});
 		lang.add(ger);
 		
-		JMenu tools = new JMenu("Tools");
+		JMenu tools = new LocalizableMenu("tools", flp);
 		mb.add(tools);
 		
-		JMenu changeCase = new JMenu("Change case");
+		JMenu changeCase = new LocalizableMenu("changeCase", flp);
 		tools.add(changeCase);
 //		changeCase.add(new JMenuItem(toUppercaseAction));
 //		changeCase.add(new JMenuItem(toLowercaseAction));
 //		changeCase.add(new JMenuItem(invertCaseAction));
 		
-		JMenu sort = new JMenu("Sort");
+		JMenu sort = new LocalizableMenu("sort", flp);
 		tools.add(sort);
 //		sort.add(new JMenuItem(ascendingAction));
 //		sort.add(new JMenuItem(descendingAction));
