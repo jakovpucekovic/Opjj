@@ -29,7 +29,6 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel{
 	 * 	and the given text.
 	 * 	@param filePath {@link Path} to the document.
 	 * 	@param textContent Content of the document.
-	 * 	TODO javadoc
 	 */
 	public DefaultSingleDocumentModel(Path filePath, String textContent) {
 		this.path = filePath;

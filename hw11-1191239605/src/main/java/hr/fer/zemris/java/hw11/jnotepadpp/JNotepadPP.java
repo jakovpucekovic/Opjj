@@ -3,14 +3,11 @@ package hr.fer.zemris.java.hw11.jnotepadpp;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,12 +15,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EventObject;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -37,15 +32,12 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.DefaultEditorKit.CopyAction;
-import javax.swing.text.DefaultEditorKit.CutAction;
-import javax.swing.text.DefaultEditorKit.PasteAction;
+
+import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableAction;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizationProvider;
 
 /**
  *	JNotepadPP TODO javadoc
@@ -56,16 +48,35 @@ import javax.swing.text.DefaultEditorKit.PasteAction;
 
 public class JNotepadPP extends JFrame {	
 	
+	private static final long serialVersionUID = 1L;
+
 	private DefaultMultipleDocumentModel tabModel;
 	
 	private Statusbar statusbar;
 	
+	private FormLocalizationProvider flp;
 	
+	
+	private Action newDocument;
+	private Action openDocument;
+	private Action saveDocument;
+	private Action saveAsDocument;
+	private Action closeDocument;
+	private Action infoAction;
+	private Action exitAction;
+	
+	private Action cutAction = new DefaultEditorKit.CutAction();
+	private Action copyAction = new DefaultEditorKit.CopyAction();	
+	private Action pasteAction = new DefaultEditorKit.PasteAction();
+
+
 	/**
 	 * 	Constructs a new JNotepadPP.
 	 * 	TODO javadoc
 	 */
 	public JNotepadPP() {
+		flp = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
+
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setLocation(10, 10);
 		setTitle("(unnamed) - JNotepad++");
@@ -155,6 +166,8 @@ public class JNotepadPP extends JFrame {
 	
 	private class Statusbar extends JPanel {
 		
+		private static final long serialVersionUID = 1L;
+		
 		private JLabel lenght;
 		private JLabel line;
 		private JLabel column;
@@ -230,41 +243,90 @@ public class JNotepadPP extends JFrame {
 	 * TODO javadoc
 	 */
 	private void createActions() {
-		newDocument.putValue(Action.NAME, "New");
+		newDocument = new LocalizableAction("new", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tabModel.createNewDocument();
+			}
+		};
 		newDocument.putValue(Action.SMALL_ICON, loadPic("icons/new.png"));
 		newDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control N"));
 		newDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_N);
+		
+		openDocument = new LocalizableAction("open", flp) {
+			private static final long serialVersionUID = 1L;
 
-		closeDocument.putValue(Action.NAME, "Close");
-		closeDocument.putValue(Action.SMALL_ICON, loadPic("icons/close.png"));
-		closeDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control W"));
-		closeDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
-
-		openDocument.putValue(Action.NAME, "Open");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				load("Load"); //TODO i18n
+			}
+		};
 		openDocument.putValue(Action.SMALL_ICON, loadPic("icons/open.png"));
 		openDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control O"));
 		openDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_O);
+	
+		saveDocument = new LocalizableAction("save" , flp) {
+			private static final long serialVersionUID = 1L;
 
-		saveDocument.putValue(Action.NAME, "Save");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				save("Save"); //TODO i18n
+			}
+		};
 		saveDocument.putValue(Action.SMALL_ICON, loadPic("icons/save.png"));
 		saveDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control S"));
 		saveDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
+		saveAsDocument = new LocalizableAction("saveAs", flp) {
+			private static final long serialVersionUID = 1L;
 
-		saveAsDocument.putValue(Action.NAME, "Save as");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveAs("Save as"); //TODO i18n
+			}
+		};
 		saveAsDocument.putValue(Action.SMALL_ICON, loadPic("icons/save_as.png"));
 		saveAsDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control shift S"));
 		saveAsDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
 		
-		exitAction.putValue(Action.NAME, "Exit");
+		closeDocument = new LocalizableAction("close", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				close();
+			}
+		};
+		closeDocument.putValue(Action.SMALL_ICON, loadPic("icons/close.png"));
+		closeDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control W"));
+		closeDocument.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+		
+		exitAction = new LocalizableAction("exit", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				exit("Exit"); //TODO i18n
+			}
+		};
 		exitAction.putValue(Action.SMALL_ICON, loadPic("icons/exit.png"));
 		exitAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control Q"));
 		exitAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_E);
 
-		infoAction.putValue(Action.NAME, "Info");
+		infoAction = new LocalizableAction("statInfo", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				info("Statistics"); //TODO i18n
+			}
+		};
 		infoAction.putValue(Action.SMALL_ICON, loadPic("icons/info.png"));
 		infoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
 		infoAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
 
+		//TODO dodati cut,copy,paste kao localizable
 		cutAction.putValue(Action.NAME,"Cut");
 		cutAction.putValue(Action.SMALL_ICON, loadPic("icons/cut.png"));
 
@@ -281,7 +343,7 @@ public class JNotepadPP extends JFrame {
 	 */
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
-		//TODO add info
+
 		JMenu file = new JMenu("File");
 		mb.add(file);
 		file.add(new JMenuItem(newDocument));
@@ -299,6 +361,55 @@ public class JNotepadPP extends JFrame {
 		edit.add(new JMenuItem(cutAction));
 		edit.add(new JMenuItem(copyAction));
 		edit.add(new JMenuItem(pasteAction));
+
+		JMenu lang = new JMenu("Languages");
+		mb.add(lang);
+		
+		JMenuItem hrv = new JMenuItem(new LocalizableAction("hrv", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("hr");
+			}
+		});
+		lang.add(hrv);
+
+		JMenuItem eng = new JMenuItem(new LocalizableAction("eng", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("en");
+			}
+		});
+		lang.add(eng);
+
+		JMenuItem ger = new JMenuItem(new LocalizableAction("ger", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("de");
+			}
+		});
+		lang.add(ger);
+		
+		JMenu tools = new JMenu("Tools");
+		mb.add(tools);
+		
+		JMenu changeCase = new JMenu("Change case");
+		tools.add(changeCase);
+//		changeCase.add(new JMenuItem(toUppercaseAction));
+//		changeCase.add(new JMenuItem(toLowercaseAction));
+//		changeCase.add(new JMenuItem(invertCaseAction));
+		
+		JMenu sort = new JMenu("Sort");
+		tools.add(sort);
+//		sort.add(new JMenuItem(ascendingAction));
+//		sort.add(new JMenuItem(descendingAction));
+		
+//		tools.add(new JMenuItem(uniqueAction));
 		
 		setJMenuBar(mb);
 		
@@ -333,6 +444,8 @@ public class JNotepadPP extends JFrame {
 	//my button class which hides text
 	private class ToolbarButton extends JButton{
 		
+		private static final long serialVersionUID = 1L;
+
 		/**
 		 * 	Constructs a new JNotepadPP.ToolbarButton.
 		 * 	TODO javadoc
@@ -348,81 +461,12 @@ public class JNotepadPP extends JFrame {
 		try(InputStream is = this.getClass().getResourceAsStream(path)){
 			bytes = is.readAllBytes();
 		} catch(Exception ex) {
-			System.err.println("Couldnt load pic"); //TODO exception
+			System.err.println("Couldnt load pic"); //TODO sto ako ne moze ucitat sliku
 		}
 		ImageIcon image = new ImageIcon(bytes);
 		return image;
 	}
-	
-//DONE
-	private final Action cutAction = new DefaultEditorKit.CutAction();
-	private final Action copyAction = new DefaultEditorKit.CopyAction();	
-	private final Action pasteAction = new DefaultEditorKit.PasteAction();
-	
-//DONE
-	private final Action infoAction = new AbstractAction() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			info("Statistics"); //TODO i18n
-		}
-	};
-	
-//DONE
-	private final Action newDocument = new AbstractAction() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			tabModel.createNewDocument();
-		}
-	};
-	
-//DONE
-	private final Action openDocument = new AbstractAction() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			load("Load"); //TODO i18n
-		}
-	};
-	
-//DONE
-	private final Action saveDocument = new AbstractAction() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			save("Save"); //TODO i18n
-		}
-	};
-	
-//DONE
-	private final Action saveAsDocument = new AbstractAction() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			saveAs("Save as"); //TODO i18n
-		}
-	};
-	
-//DONE
-	private final Action closeDocument = new AbstractAction() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			close();
-		}
-	};
-	
-//DONE
-	private final Action exitAction = new AbstractAction() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			exit("Exit"); //TODO i18n
-		}
-	};
-	
-//DONE
+
 	private void info(String text) {
 		String docText = tabModel.getCurrentDocument().getTextComponent().getText();
 		int numberOfCharacters = docText.length();
@@ -450,7 +494,6 @@ public class JNotepadPP extends JFrame {
 		  
 	}
 	
-//DONE	
 	private void exit(String text) {
 		for(int i = 0; i < tabModel.getNumberOfDocuments(); ++i) {
 			tabModel.setSelectedIndex(i);
@@ -480,7 +523,6 @@ public class JNotepadPP extends JFrame {
 		dispose();
 	}
 	
-//DONE
 	private void load(String text) {
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogTitle(text);
@@ -520,7 +562,6 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 	
-//DONE	
 	private void save(String text) {
 		if(tabModel.getCurrentDocument().getFilePath() == null) {
 			saveAs(text);
@@ -533,7 +574,6 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 	
-//DONE
 	private void saveAs(String text) {
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogTitle(text);
@@ -568,7 +608,6 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 	
-//DONE	
 	private void close() {
 		if(tabModel.getCurrentDocument().isModified()) {
 			if(JOptionPane.showConfirmDialog(
@@ -582,12 +621,8 @@ public class JNotepadPP extends JFrame {
 		tabModel.closeDocument(tabModel.getCurrentDocument());
 	}
 	
-//DONE	
 	private void setClosingOperations() {
 		addWindowListener(new WindowAdapter() {
-			/**
-			 *	{@inheritDoc}
-			 */
 			@Override
 			public void windowClosing(WindowEvent e) {
 				exit("Exit");

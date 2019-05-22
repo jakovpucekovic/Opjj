@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
-import java.awt.Component;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -25,7 +24,9 @@ import javax.swing.event.ChangeListener;
  */
 
 public class DefaultMultipleDocumentModel extends JTabbedPane implements MultipleDocumentModel {
-
+	
+	private static final long serialVersionUID = 1L;
+	
 	private List<SingleDocumentModel> documents;
 	private SingleDocumentModel currentDocument;
 	
@@ -35,8 +36,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	private ImageIcon unmodifiedIcon;	
 	
 	/**
-	 * 	Constructs a new DefaultMultipleDocumentModel.
-	 * 	TODO javadoc
+	 * 	Constructs a new {@link DefaultMultipleDocumentModel}.
 	 */
 	public DefaultMultipleDocumentModel() {
 		documents = new ArrayList<>();
@@ -216,16 +216,6 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		removeTabAt(index);
 		notifyListenersRemoved(model);
 	}
-
-//	/**
-//	 *	{@inheritDoc}
-//	 */
-//	@Override
-//	public void setSelectedIndex(int index) {
-//		super.setSelectedIndex(index);
-//		//zato da se automatski updatea currentDocument kad user klikne na neki tab //TODO komentar
-//		currentDocument = documents.get(index);
-//	}
 	
 	/**
 	 *	{@inheritDoc}
