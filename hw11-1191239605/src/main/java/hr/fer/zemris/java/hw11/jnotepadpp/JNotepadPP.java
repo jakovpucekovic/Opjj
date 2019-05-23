@@ -11,9 +11,20 @@ import java.awt.event.WindowEvent;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Collator;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EventObject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -32,10 +43,17 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.JTextComponent;
 
 import hr.fer.zemris.java.hw11.jnotepadpp.local.FormLocalizationProvider;
+import hr.fer.zemris.java.hw11.jnotepadpp.local.ILocalizationProvider;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableAction;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableMenu;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizationProvider;
@@ -70,6 +88,16 @@ public class JNotepadPP extends JFrame {
 	private Action copyAction;
 	private Action pasteAction;
 
+	private Action hrvLanguageAction;
+	private Action engLanguageAction;
+	private Action gerLanguageAction;
+	
+	private Action toUpperCaseAction;
+	private Action toLowerCaseAction;
+	private Action invertCaseAction;
+	private Action ascendingSortAction;
+	private Action descendingSortAction;
+	private Action uniqueAction;
 
 	/**
 	 * 	Constructs a new JNotepadPP.
@@ -80,8 +108,6 @@ public class JNotepadPP extends JFrame {
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setLocation(10, 10);
-		setTitle("(unnamed) - JNotepad++");
-		setSize(500, 500);
 		
 		statusbar = new Statusbar();
 		
@@ -160,6 +186,42 @@ public class JNotepadPP extends JFrame {
 					setTitle(doc.getFilePath().toAbsolutePath().toString() + " - JNotepad++");
 				} else {
 					setTitle("(unnamed) - JNotepad++");
+				}
+			}
+		});
+		
+		//registers a caret listener on current active document which enables and disables buttons
+		tabModel.addMultipleDocumentListener(new MultipleDocumentListenerAdapter() {
+			
+			private CaretListener enableDisableActions = new CaretListener() {
+				
+				@Override
+				public void caretUpdate(CaretEvent e) {
+					boolean isSelected = e.getDot() != e.getMark();
+					toUpperCaseAction.setEnabled(isSelected);
+					toLowerCaseAction.setEnabled(isSelected);
+					invertCaseAction.setEnabled(isSelected);
+					ascendingSortAction.setEnabled(isSelected);
+					descendingSortAction.setEnabled(isSelected);	
+				}
+			};
+			
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void currentDocumentChanged(SingleDocumentModel previousModel, SingleDocumentModel currentModel) {
+				super.currentDocumentChanged(previousModel, currentModel);
+				toUpperCaseAction.setEnabled(false);
+				toLowerCaseAction.setEnabled(false);
+				invertCaseAction.setEnabled(false);
+				ascendingSortAction.setEnabled(false);
+				descendingSortAction.setEnabled(false);
+				if(previousModel != null) {
+					previousModel.getTextComponent().removeCaretListener(enableDisableActions);
+				}
+				if(currentModel != null) {
+					currentModel.getTextComponent().addCaretListener(enableDisableActions);
 				}
 			}
 		});
@@ -244,6 +306,84 @@ public class JNotepadPP extends JFrame {
 	 * TODO javadoc
 	 */
 	private void createActions() {
+		createFilesActions();
+		createEditActions();
+		createLanguageActions();
+		createCaseSwitchActions();
+		createSortActions();
+		
+		uniqueAction = new LocalizableAction("unique", flp) {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTextComponent editor = tabModel.getCurrentDocument().getTextComponent();
+				Document doc = editor.getDocument();
+				Element root = doc.getDefaultRootElement();
+				
+				int len = Math.abs(editor.getCaret().getMark() - editor.getCaret().getDot());
+				if(len == 0) return;
+				
+				int startPos = Math.min(editor.getCaret().getDot(), editor.getCaret().getMark());
+				int endPos = startPos + len;
+				
+				int startIndex = root.getElementIndex(startPos);
+				int endIndex = root.getElementIndex(endPos);
+				try {
+					
+					List<String> list = Arrays.asList(doc.getText(0, doc.getLength()).split("\\n"));
+										
+					Set<String> set = list.subList(startIndex, endIndex + 1)
+										  .stream()
+										  .filter(s->!s.isBlank())
+										  .collect(Collectors.toSet());
+										
+					doc.remove(0, doc.getLength());
+					//write other
+					for(int i = 0; i < startIndex ; ++i) {
+						if(i == 0) {
+							doc.insertString(0, list.get(i) + "\n", null);
+						} else {
+							doc.insertString(root.getElement(i-1).getEndOffset(), list.get(i) + "\n", null);	
+						}
+					}
+					//write unique
+					int j = startIndex;
+					int placedCounter = j;
+					while(!set.isEmpty() && j <= endIndex) {
+						if(!set.contains(list.get(j))){
+							j++;
+							continue;
+						}
+						
+						if(j == 0) {
+							doc.insertString(0, list.get(j) + "\n", null);
+						} else {
+							doc.insertString(root.getElement(placedCounter - 1).getEndOffset(), list.get(j) + "\n", null);
+							
+						}
+						set.remove(list.get(j));
+						placedCounter++;
+						j++;
+					}
+					//write other
+					for(int i = endIndex + 1; i < list.size() ; ++i) {
+						doc.insertString(root.getElement(placedCounter - 1).getEndOffset(), list.get(i) + "\n", null);
+						placedCounter++;
+					}
+					
+					
+				} catch(BadLocationException ignorable) {
+				}
+			}
+		};
+		uniqueAction.putValue(Action.SMALL_ICON, loadPic("icons/unique.png"));
+		uniqueAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control E"));
+		uniqueAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
+	}
+
+	private void createFilesActions() {
 		newDocument = new LocalizableAction("new", flp) {
 			private static final long serialVersionUID = 1L;
 
@@ -320,45 +460,215 @@ public class JNotepadPP extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				info("Statistics"); //TODO i18n
+				info();
 			}
 		};
 		infoAction.putValue(Action.SMALL_ICON, loadPic("icons/info.png"));
 		infoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
 		infoAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
-		
+	}
+	
+	private void createEditActions() {
 		cutAction = new LocalizableAction("cut", flp) {
 			private static final long serialVersionUID = 1L;
-
+	
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new DefaultEditorKit.CutAction().actionPerformed(e);
 			}
 		};
 		cutAction.putValue(Action.SMALL_ICON, loadPic("icons/cut.png"));
-
+	
 		copyAction = new LocalizableAction("copy", flp) {
 			private static final long serialVersionUID = 1L;
-
+	
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new DefaultEditorKit.CopyAction().actionPerformed(e);
 			}
 		};
 		copyAction.putValue(Action.SMALL_ICON, loadPic("icons/copy.png"));
-
+	
 		pasteAction = new LocalizableAction("paste", flp) {
 			private static final long serialVersionUID = 1L;
-
+	
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new DefaultEditorKit.PasteAction().actionPerformed(e);
 			}
 		};
 		pasteAction.putValue(Action.SMALL_ICON, loadPic("icons/paste.png"));
+	}
+	
+	private void createLanguageActions() {
+		hrvLanguageAction = new LocalizableAction("hrv", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("hr");
+			}
+		};
+		
+		engLanguageAction = new LocalizableAction("eng", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("en");
+			}
+		};
+		
+		gerLanguageAction = new LocalizableAction("ger", flp) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalizationProvider.getInstance().setLanguage("de");
+			}
+		};
+	}
+	
+	private void createCaseSwitchActions() {
+		toUpperCaseAction = new CaseAction("toUpperCase", flp, String::toUpperCase);
+		toUpperCaseAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
+		toUpperCaseAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control U"));
+		toUpperCaseAction.putValue(Action.SMALL_ICON, loadPic("icons/touppercase.png"));
+		
+		toLowerCaseAction = new CaseAction("toLowerCase", flp, String::toLowerCase);
+		toLowerCaseAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_L);
+		toLowerCaseAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control L"));
+		toLowerCaseAction.putValue(Action.SMALL_ICON, loadPic("icons/tolowercase.png"));
+
+		invertCaseAction = new CaseAction("invertCase", flp, text -> invertCase(text));
+		invertCaseAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
+		invertCaseAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control I"));
+		invertCaseAction.putValue(Action.SMALL_ICON, loadPic("icons/invertcase.png"));
+	}
+	
+	private class CaseAction extends LocalizableAction{
+
+		private static final long serialVersionUID = 1L;
+
+		private Function<String, String> f;
+		
+		/**
+		 * 	Constructs a new CaseAction.
+		 * 	TODO javadoc
+		 * 	@param key
+		 * 	@param lp
+		 */
+		public CaseAction(String key, ILocalizationProvider lp, Function<String, String> f) {
+			super(key, lp);
+			this.f = f;
+		}
+
+		/**
+		 *	{@inheritDoc}
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JTextComponent editor = tabModel.getCurrentDocument().getTextComponent();
+			int start = Math.min(editor.getCaret().getDot(), editor.getCaret().getMark());
+			int len = Math.abs(editor.getCaret().getDot() - editor.getCaret().getMark());
+			
+			if(len < 1) return;
+			
+			Document doc = editor.getDocument();
+			
+			try {
+				String text = doc.getText(start, len);
+				text = f.apply(text);
+				
+				doc.remove(start, len);
+				doc.insertString(start, text, null);
+			} catch(BadLocationException ignorable) {
+			}	
+		}
+	}
+	
+	
+	private String invertCase(String text) {
+		char[] chars = text.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			if(Character.isUpperCase(chars[i])) {
+				chars[i] = Character.toLowerCase(chars[i]);
+			} else if(Character.isLowerCase(chars[i])) {
+				chars[i] = Character.toUpperCase(chars[i]);
+			}
+		}
+		return new String(chars);
+	}
+	
+	private class SortAction extends LocalizableAction{
+
+		private static final long serialVersionUID = 1L;
+
+		private boolean ascending;
+		Locale locale;
+		Collator collator;
+		
+		/**
+		 * 	Constructs a new SortAction.
+		 * 	TODO javadoc
+		 * 	@param key
+		 * 	@param lp
+		 */
+		public SortAction(String key, ILocalizationProvider lp, boolean ascending) {
+			super(key, lp);
+			this.ascending = ascending;
+			this.locale = new Locale(flp.getCurrentLanguage());
+			this.collator = Collator.getInstance(locale);
+		}
+
+		/**
+		 *	{@inheritDoc}
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JTextComponent editor = tabModel.getCurrentDocument().getTextComponent();
+			Document doc = editor.getDocument();
+			Element root = doc.getDefaultRootElement();
+			
+			int len = Math.abs(editor.getCaret().getMark() - editor.getCaret().getDot());
+			if(len == 0) return;
+			
+			int startPos = Math.min(editor.getCaret().getDot(), editor.getCaret().getMark());
+			int endPos = startPos + len;
+			
+			try {
+				String[] arr = doc.getText(0, doc.getLength()).split("\\n");
+				
+				arr = Arrays.stream(arr).filter(x->!x.isBlank()).toArray(String[]::new);
+				
+				Arrays.sort(arr,
+							root.getElementIndex(startPos),
+							root.getElementIndex(endPos) == arr.length ? root.getElementIndex(endPos) : root.getElementIndex(endPos) + 1,
+							ascending ? collator : collator.reversed());
+				
+				doc.remove(0, doc.getLength());
+				for(int i = 0; i < arr.length; ++i) {
+					if(i == 0) {
+						doc.insertString(0, arr[0] + "\n", null);
+					} else {
+						doc.insertString(root.getElement(i-1).getEndOffset(), arr[i] + "\n", null);
+					}
+				}
+				
+			} catch(BadLocationException ignorable) {
+			}
+		}
 		
 	}
-
+	
+	private void createSortActions() {
+		ascendingSortAction = new SortAction("ascending", flp, true);
+		ascendingSortAction.putValue(Action.SMALL_ICON, loadPic("icons/sort_asc.png"));
+		
+		descendingSortAction = new SortAction("descending", flp, false);
+		descendingSortAction.putValue(Action.SMALL_ICON, loadPic("icons/sort_desc.png"));
+	}
+	
 	/**
 	 *TODO javadoc
 	 */
@@ -386,52 +696,26 @@ public class JNotepadPP extends JFrame {
 
 		JMenu lang = new LocalizableMenu("languages", flp);
 		mb.add(lang);
-		
-		JMenuItem hrv = new JMenuItem(new LocalizableAction("hrv", flp) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				LocalizationProvider.getInstance().setLanguage("hr");
-			}
-		});
-		lang.add(hrv);
-
-		JMenuItem eng = new JMenuItem(new LocalizableAction("eng", flp) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				LocalizationProvider.getInstance().setLanguage("en");
-			}
-		});
-		lang.add(eng);
-
-		JMenuItem ger = new JMenuItem(new LocalizableAction("ger", flp) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				LocalizationProvider.getInstance().setLanguage("de");
-			}
-		});
-		lang.add(ger);
+		lang.add(new JMenuItem(hrvLanguageAction));
+		lang.add(new JMenuItem(engLanguageAction));
+		lang.add(new JMenuItem(gerLanguageAction));
 		
 		JMenu tools = new LocalizableMenu("tools", flp);
 		mb.add(tools);
 		
 		JMenu changeCase = new LocalizableMenu("changeCase", flp);
+		changeCase.setIcon(loadPic("icons/case.png"));
 		tools.add(changeCase);
-//		changeCase.add(new JMenuItem(toUppercaseAction));
-//		changeCase.add(new JMenuItem(toLowercaseAction));
-//		changeCase.add(new JMenuItem(invertCaseAction));
+		changeCase.add(new JMenuItem(toUpperCaseAction));
+		changeCase.add(new JMenuItem(toLowerCaseAction));
+		changeCase.add(new JMenuItem(invertCaseAction));
 		
 		JMenu sort = new LocalizableMenu("sort", flp);
+		sort.setIcon(loadPic("icons/sort.png"));
 		tools.add(sort);
-//		sort.add(new JMenuItem(ascendingAction));
-//		sort.add(new JMenuItem(descendingAction));
-		
-//		tools.add(new JMenuItem(uniqueAction));
+		sort.add(new JMenuItem(ascendingSortAction));
+		sort.add(new JMenuItem(descendingSortAction));
+		tools.add(new JMenuItem(uniqueAction));
 		
 		setJMenuBar(mb);
 		
@@ -443,8 +727,6 @@ public class JNotepadPP extends JFrame {
 	 */
 	private JToolBar createToolbar() {
 		JToolBar toolbar = new JToolBar();
-//		toolbar.setLayout(new FlowLayout());
-		//TODO pokusaj staviti flow layout
 		toolbar.setFloatable(true);
 		
 		toolbar.add(new ToolbarButton(newDocument));
@@ -461,22 +743,23 @@ public class JNotepadPP extends JFrame {
 		
 		return toolbar;
 	}
-
 	
 	//my button class which hides text
 	private class ToolbarButton extends JButton{
-		
+	
 		private static final long serialVersionUID = 1L;
 
 		/**
-		 * 	Constructs a new JNotepadPP.ToolbarButton.
-		 * 	TODO javadoc
+		 * 	Constructs a new {@link ToolbarButton}
+		 * 	which by default hides the {@link Action} text.
+		 * 	@param a {@link Action} to perform when the button is pressed.
 		 */
 		public ToolbarButton(Action a) {
 			super(a);
 			setHideActionText(true);
 		}
 	}
+	
 	
 	private ImageIcon loadPic(String path) {
 		byte[] bytes = null;
@@ -489,7 +772,7 @@ public class JNotepadPP extends JFrame {
 		return image;
 	}
 
-	private void info(String text) {
+	private void info() {
 		String docText = tabModel.getCurrentDocument().getTextComponent().getText();
 		int numberOfCharacters = docText.length();
 		int numberOfNonBlankCharacters = 0;
@@ -503,10 +786,11 @@ public class JNotepadPP extends JFrame {
 		int numberOfLines = tabModel.getCurrentDocument().getTextComponent().getLineCount();
 		
 		Object[] options = {"OK"};
+		String[] messageParts = flp.getString("statInfoDialogMessage").split("\\*");
 		JOptionPane.showOptionDialog(
 				this,
-				"Your document has " + numberOfCharacters + " characters, " + numberOfNonBlankCharacters + " non-blank characters and " + numberOfLines + " lines.",
-				"Statistical info",
+				String.format("%s%d%s%d%s%d%s", messageParts[0], numberOfCharacters, messageParts[1], numberOfNonBlankCharacters, messageParts[2], numberOfLines, messageParts[3]),
+				flp.getString("statInfoDialogTitle"),
 				JOptionPane.PLAIN_MESSAGE,
 				JOptionPane.INFORMATION_MESSAGE,
 				null,
@@ -655,7 +939,7 @@ public class JNotepadPP extends JFrame {
 	public static void main(String[] args) {	
 		SwingUtilities.invokeLater(()->{
 			JNotepadPP notepadpp = new JNotepadPP();
-//			notepadpp.pack();// TODO jel bolje preko pack ili dati neki fiksni default size?
+			notepadpp.pack();
 			notepadpp.setVisible(true);
 		});
 	}

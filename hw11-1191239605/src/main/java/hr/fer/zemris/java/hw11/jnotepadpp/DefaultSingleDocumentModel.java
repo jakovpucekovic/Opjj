@@ -1,5 +1,6 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
+import java.awt.Dimension;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class DefaultSingleDocumentModel implements SingleDocumentModel{
 		this.path = filePath;
 		listeners = new ArrayList<>();
 		textArea = new JTextArea(textContent);
+		textArea.setPreferredSize(new Dimension(600, 800));
 		textArea.getDocument().addDocumentListener(new DocumentListener() {
 			
 			@Override
