@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 /**
- *	MultipleDocumentModel TODO javadoc
+ *	Interface which represents a collection of {@link SingleDocumentModel}s.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

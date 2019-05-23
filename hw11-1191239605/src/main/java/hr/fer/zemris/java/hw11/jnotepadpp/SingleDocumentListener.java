@@ -1,7 +1,8 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
 /**
- *	SingleDocumentListener TODO javadoc
+ *	Interface which describes a listener capable of registering
+ *	to {@link SingleDocumentModel}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

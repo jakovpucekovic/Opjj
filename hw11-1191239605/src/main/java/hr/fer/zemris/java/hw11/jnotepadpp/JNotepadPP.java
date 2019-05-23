@@ -13,15 +13,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Collator;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.EventObject;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -59,44 +55,61 @@ import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizableMenu;
 import hr.fer.zemris.java.hw11.jnotepadpp.local.LocalizationProvider;
 
 /**
- *	JNotepadPP TODO javadoc
+ *	Class which is a clone of Notepad++.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class JNotepadPP extends JFrame {	
 	
 	private static final long serialVersionUID = 1L;
 
+	/***/
 	private DefaultMultipleDocumentModel tabModel;
 	
+	/***/
 	private Statusbar statusbar;
 	
+	/***/
 	private FormLocalizationProvider flp;
 	
-	
+	/***/
 	private Action newDocument;
+	/***/
 	private Action openDocument;
+	/***/
 	private Action saveDocument;
+	/***/
 	private Action saveAsDocument;
+	/***/
 	private Action closeDocument;
+	/***/
 	private Action infoAction;
+	/***/
 	private Action exitAction;
-	
+	/***/
 	private Action cutAction;
+	/***/
 	private Action copyAction;
+	/***/
 	private Action pasteAction;
-
+	/***/
 	private Action hrvLanguageAction;
+	/***/
 	private Action engLanguageAction;
+	/***/
 	private Action gerLanguageAction;
-	
+	/***/
 	private Action toUpperCaseAction;
+	/***/
 	private Action toLowerCaseAction;
+	/***/
 	private Action invertCaseAction;
+	/***/
 	private Action ascendingSortAction;
+	/***/
 	private Action descendingSortAction;
+	/***/
 	private Action uniqueAction;
 
 	/**
@@ -119,7 +132,9 @@ public class JNotepadPP extends JFrame {
 		setClosingOperations();
 	}
 	
-	//TODO javadoc
+	/**
+	 * 
+	 */
 	private void initGUI() {
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
@@ -138,6 +153,9 @@ public class JNotepadPP extends JFrame {
 		cp.add(panel, BorderLayout.CENTER);
 	}	
 	
+	/**
+	 * 
+	 */
 	private void addListeners() {
 		//updates the statusbar when tab comes into focus
 		tabModel.addMultipleDocumentListener(new MultipleDocumentListenerAdapter() {
@@ -203,6 +221,7 @@ public class JNotepadPP extends JFrame {
 					invertCaseAction.setEnabled(isSelected);
 					ascendingSortAction.setEnabled(isSelected);
 					descendingSortAction.setEnabled(isSelected);	
+					uniqueAction.setEnabled(isSelected);
 				}
 			};
 			
@@ -217,6 +236,7 @@ public class JNotepadPP extends JFrame {
 				invertCaseAction.setEnabled(false);
 				ascendingSortAction.setEnabled(false);
 				descendingSortAction.setEnabled(false);
+				uniqueAction.setEnabled(false);
 				if(previousModel != null) {
 					previousModel.getTextComponent().removeCaretListener(enableDisableActions);
 				}
@@ -227,6 +247,9 @@ public class JNotepadPP extends JFrame {
 		});
 	}
 	
+	/**
+	 * 
+	 */
 	private class Statusbar extends JPanel {
 		
 		private static final long serialVersionUID = 1L;
@@ -238,6 +261,9 @@ public class JNotepadPP extends JFrame {
 		private JLabel dateTime;
 		Timer clock;
 		
+		/**
+		 * 
+		 */
 		public Statusbar(){
 			super();
 			setLayout(new BorderLayout());
@@ -262,6 +288,9 @@ public class JNotepadPP extends JFrame {
 			initStatusbar();
 		}
 		
+		/**
+		 * 
+		 */
 		private void initStatusbar() {
 			JPanel left = new JPanel();
 
@@ -274,12 +303,18 @@ public class JNotepadPP extends JFrame {
 			add(dateTime, BorderLayout.EAST);
 		}
 		
+		/**
+		 * 
+		 */
 		private void updateStatusbar(EventObject e) {
 			JTextArea area = (JTextArea)e.getSource();
 			updateStatusbar(area);
 			
 		}
 		
+		/**
+		 * 
+		 */
 		private void updateStatusbar(JTextArea area) {
 			lenght.setText("Length: " + area.getText().length());
 			
@@ -383,6 +418,9 @@ public class JNotepadPP extends JFrame {
 		uniqueAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
 	}
 
+	/**
+	 * 
+	 */
 	private void createFilesActions() {
 		newDocument = new LocalizableAction("new", flp) {
 			private static final long serialVersionUID = 1L;
@@ -468,6 +506,9 @@ public class JNotepadPP extends JFrame {
 		infoAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_I);
 	}
 	
+	/**
+	 * 
+	 */
 	private void createEditActions() {
 		cutAction = new LocalizableAction("cut", flp) {
 			private static final long serialVersionUID = 1L;
@@ -500,6 +541,9 @@ public class JNotepadPP extends JFrame {
 		pasteAction.putValue(Action.SMALL_ICON, loadPic("icons/paste.png"));
 	}
 	
+	/**
+	 * 
+	 */
 	private void createLanguageActions() {
 		hrvLanguageAction = new LocalizableAction("hrv", flp) {
 			private static final long serialVersionUID = 1L;
@@ -529,6 +573,9 @@ public class JNotepadPP extends JFrame {
 		};
 	}
 	
+	/**
+	 * 
+	 */
 	private void createCaseSwitchActions() {
 		toUpperCaseAction = new CaseAction("toUpperCase", flp, String::toUpperCase);
 		toUpperCaseAction.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_U);
@@ -546,6 +593,9 @@ public class JNotepadPP extends JFrame {
 		invertCaseAction.putValue(Action.SMALL_ICON, loadPic("icons/invertcase.png"));
 	}
 	
+	/**
+	 * 
+	 */
 	private class CaseAction extends LocalizableAction{
 
 		private static final long serialVersionUID = 1L;
@@ -587,7 +637,9 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 	
-	
+	/**
+	 * 
+	 */
 	private String invertCase(String text) {
 		char[] chars = text.toCharArray();
 		for (int i = 0; i < chars.length; i++) {
@@ -600,6 +652,9 @@ public class JNotepadPP extends JFrame {
 		return new String(chars);
 	}
 	
+	/**
+	 * 
+	 */
 	private class SortAction extends LocalizableAction{
 
 		private static final long serialVersionUID = 1L;
@@ -661,6 +716,9 @@ public class JNotepadPP extends JFrame {
 		
 	}
 	
+	/**
+	 * 
+	 */
 	private void createSortActions() {
 		ascendingSortAction = new SortAction("ascending", flp, true);
 		ascendingSortAction.putValue(Action.SMALL_ICON, loadPic("icons/sort_asc.png"));
@@ -744,7 +802,9 @@ public class JNotepadPP extends JFrame {
 		return toolbar;
 	}
 	
-	//my button class which hides text
+	/**
+	 * 
+	 */
 	private class ToolbarButton extends JButton{
 	
 		private static final long serialVersionUID = 1L;
@@ -760,18 +820,23 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 	
-	
+	/**
+	 * 
+	 */
 	private ImageIcon loadPic(String path) {
 		byte[] bytes = null;
 		try(InputStream is = this.getClass().getResourceAsStream(path)){
 			bytes = is.readAllBytes();
 		} catch(Exception ex) {
-			System.err.println("Couldnt load pic"); //TODO sto ako ne moze ucitat sliku
+			System.err.println("Couldnt load pic");
 		}
 		ImageIcon image = new ImageIcon(bytes);
 		return image;
 	}
 
+	/**
+	 * 
+	 */
 	private void info() {
 		String docText = tabModel.getCurrentDocument().getTextComponent().getText();
 		int numberOfCharacters = docText.length();
@@ -800,6 +865,9 @@ public class JNotepadPP extends JFrame {
 		  
 	}
 	
+	/**
+	 * 
+	 */
 	private void exit(String text) {
 		for(int i = 0; i < tabModel.getNumberOfDocuments(); ++i) {
 			tabModel.setSelectedIndex(i);
@@ -829,6 +897,9 @@ public class JNotepadPP extends JFrame {
 		dispose();
 	}
 	
+	/**
+	 * 
+	 */
 	private void load(String text) {
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogTitle(text);
@@ -868,6 +939,9 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void save(String text) {
 		if(tabModel.getCurrentDocument().getFilePath() == null) {
 			saveAs(text);
@@ -880,6 +954,9 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void saveAs(String text) {
 		JFileChooser jfc = new JFileChooser();
 		jfc.setDialogTitle(text);
@@ -914,6 +991,9 @@ public class JNotepadPP extends JFrame {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void close() {
 		if(tabModel.getCurrentDocument().isModified()) {
 			if(JOptionPane.showConfirmDialog(
@@ -927,6 +1007,10 @@ public class JNotepadPP extends JFrame {
 		tabModel.closeDocument(tabModel.getCurrentDocument());
 	}
 	
+	/**
+	 * 	Sets closing operation which exits the program when user clicks
+	 * 	the x button.
+	 */
 	private void setClosingOperations() {
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -936,6 +1020,10 @@ public class JNotepadPP extends JFrame {
 		});		
 	}
 	
+	/**
+	 * 	Main method which runs the application.
+	 * 	@param args None.
+	 */
 	public static void main(String[] args) {	
 		SwingUtilities.invokeLater(()->{
 			JNotepadPP notepadpp = new JNotepadPP();

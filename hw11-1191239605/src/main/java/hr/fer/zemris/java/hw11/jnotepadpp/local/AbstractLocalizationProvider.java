@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *	AbstractLocalizationProvider TODO javadoc
+ *	Abstract class which implements a {@link ILocalizationProvider} and upgrades
+ *	its functionality.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -12,6 +13,7 @@ import java.util.List;
 
 public abstract class AbstractLocalizationProvider implements ILocalizationProvider{
 
+	/**{@link List} of currently registered listeners. */
 	private List<ILocalizationListener> listeners;
 	
 	/**
@@ -45,6 +47,4 @@ public abstract class AbstractLocalizationProvider implements ILocalizationProvi
 			l.localizationChanged();
 		}
 	}
-
-	
 }

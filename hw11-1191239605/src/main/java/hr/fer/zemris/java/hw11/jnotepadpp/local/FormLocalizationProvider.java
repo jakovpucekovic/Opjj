@@ -6,7 +6,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
 /**
- *	FormLocalizationProvider TODO javadoc
+ *	One concrete implementation of {@link LocalizationProviderBridge}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

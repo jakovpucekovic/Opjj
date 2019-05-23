@@ -1,7 +1,8 @@
 package hr.fer.zemris.java.hw11.jnotepadpp;
 
 /**
- *	MultipleDocumentListener TODO javadoc
+ *	Iterface which represents a listener capable of registering to
+ *	{@link MultipleDocumentModel}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -12,6 +13,7 @@ public interface MultipleDocumentListener {
 	 * 	Action that should be executed when the currentDocument is changed.
 	 * 	@param previousModel The previous currentDocument.
 	 * 	@param currentModel The new currentDocument.
+	 * 	@throws IllegalArgumentException If both parameters are <code>null</code>.
 	 */
 	default void currentDocumentChanged(SingleDocumentModel previousModel,
 								SingleDocumentModel currentModel) {

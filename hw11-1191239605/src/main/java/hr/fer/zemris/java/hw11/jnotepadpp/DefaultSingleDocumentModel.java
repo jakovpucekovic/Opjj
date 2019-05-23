@@ -11,7 +11,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 /**
- *	DefaultSingleDocumentModel TODO javadoc
+ *	One implementation of {@link SingleDocumentModel} interface.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -19,9 +19,13 @@ import javax.swing.event.DocumentListener;
 
 public class DefaultSingleDocumentModel implements SingleDocumentModel{
 
+	/**Text area of the document*/
 	private JTextArea textArea;
+	/**Path of the document*/
 	private Path path;
+	/**Flag whether the document is modified*/
 	private boolean modified;
+	/**List of registered listeners*/
 	private List<SingleDocumentListener> listeners;	
 	
 	

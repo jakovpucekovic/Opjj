@@ -17,7 +17,8 @@ import javax.swing.event.ChangeListener;
 
 
 /**
- *	DefaultMultipleDocumentModel TODO javadoc
+ *	Implementation of {@link MultipleDocumentModel} which is also a {@link JTabbedPane}
+ *	component.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -27,12 +28,17 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**{@link List} of all other documnets.*/
 	private List<SingleDocumentModel> documents;
+	/**Currently open document.*/
 	private SingleDocumentModel currentDocument;
 	
+	/**{@link List} of registered listeners.*/
 	private List<MultipleDocumentListener> listeners;
 	
+	/**Icon which is shown when a documnet is modified.*/
 	private ImageIcon modifiedIcon;
+	/**Icon which is shown when a document is not modified.*/
 	private ImageIcon unmodifiedIcon;	
 	
 	/**
@@ -53,11 +59,19 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		});
 	}
 
+	/**
+	 * 	Sets the modified and unmodified icons.
+	 * 	@param icon1 The modified icon.
+	 * 	@param icon2 The unmodified icon.
+	 */
 	public void setModifiedIcons(ImageIcon icon1, ImageIcon icon2) {
 		this.modifiedIcon = icon1;
 		this.unmodifiedIcon = icon2;
 	}
 	
+	/**
+	 * 	{@link SingleDocumentListener} which updates the modified icon when a document is modified.
+	 */
 	private SingleDocumentListener update = new SingleDocumentListener() {
 		
 		@Override
@@ -195,9 +209,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	 */
 	@Override
 	public void closeDocument(SingleDocumentModel model) {
-		
 		int index = documents.indexOf(model);
-		
 		
 		if(currentDocument.equals(model)) {
 			//if closing current document, switch to next
@@ -240,7 +252,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 	public int getNumberOfDocuments() {
 		return documents.size();
 	}
-//
+
 	/**
 	 *	{@inheritDoc}
 	 */
@@ -249,18 +261,31 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 		return documents.get(index);
 	}
 	
+	/**
+	 * 	Notifies all listeners that a {@link SingleDocumentModel} was removed.
+	 * 	@param model The removed {@link SingleDocumentModel}.
+	 */
 	private void notifyListenersRemoved(SingleDocumentModel model) {
 		for(var l : listeners) {
 			l.documentRemoved(model);
 		}
 	}
 	
+	/**
+	 * 	Notifies all listeners that a new {@link SingleDocumentModel} was added.
+	 * 	@param model The added {@link SingleDocumentModel}.
+	 */
 	private void notifyListenersAdded(SingleDocumentModel model) {
 		for(var l : listeners) {
 			l.documentAdded(model);
 		}
 	}
 	
+	/**
+	 * 	Notifies all listeners that the current {@link SingleDocumentModel} changed.
+	 * 	@param previous Previous {@link SingleDocumentModel}.
+	 *	@param current New current {@link SingleDocumentModel}.
+	 */
 	private void notifyListenersChanged(SingleDocumentModel previous, SingleDocumentModel current) {
 		for(var l : listeners) {
 			l.currentDocumentChanged(previous, current);

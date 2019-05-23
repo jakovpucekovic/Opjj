@@ -6,7 +6,8 @@ import java.util.Objects;
 import javax.swing.JTextArea;
 
 /**
- *	SingleDocumentModel TODO javadoc
+ *	Interface which represents a single document and tracks
+ *	it's modification status.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
