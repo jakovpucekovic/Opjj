@@ -172,6 +172,7 @@ public class DefaultMultipleDocumentModel extends JTabbedPane implements Multipl
 					
 		currentDocument = newDocument;
 		setSelectedIndex(documents.indexOf(newDocument));
+		setIconAt(documents.indexOf(newDocument), modifiedIcon);
 		return newDocument;
 		
 	}

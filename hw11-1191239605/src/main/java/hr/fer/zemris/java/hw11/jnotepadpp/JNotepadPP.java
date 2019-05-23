@@ -64,57 +64,60 @@ public class JNotepadPP extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
-	/***/
+	/**MultipleDocumentModel which takes care off all documents we use.*/
 	private DefaultMultipleDocumentModel tabModel;
 	
-	/***/
+	/**Statusbar*/
 	private Statusbar statusbar;
 	
-	/***/
+	/**FormLocalizationProvider which does the localization*/
 	private FormLocalizationProvider flp;
 	
-	/***/
+	/**Creates new document*/
 	private Action newDocument;
-	/***/
+	/**Opens existing document*/
 	private Action openDocument;
-	/***/
+	/**Saves current document*/
 	private Action saveDocument;
-	/***/
+	/**Saves current document as*/
 	private Action saveAsDocument;
-	/***/
+	/**Closes current document*/
 	private Action closeDocument;
-	/***/
+	/**Gives info about current document*/
 	private Action infoAction;
-	/***/
+	/**Exits the application*/
 	private Action exitAction;
-	/***/
+	
+	/**Cuts the selected text*/
 	private Action cutAction;
-	/***/
+	/**Copies the selected text*/
 	private Action copyAction;
-	/***/
+	/**Pasted the cut/copied text*/
 	private Action pasteAction;
-	/***/
+	
+	/**Sets croatian as current language*/
 	private Action hrvLanguageAction;
-	/***/
+	/**Sets english as current language*/
 	private Action engLanguageAction;
-	/***/
+	/**Sets german as current language*/
 	private Action gerLanguageAction;
-	/***/
+	
+	/**Switches selected text to upper case*/
 	private Action toUpperCaseAction;
-	/***/
+	/**Switches selected text to lower case*/
 	private Action toLowerCaseAction;
-	/***/
+	/**Switches lower case to upper case and vice-versa*/
 	private Action invertCaseAction;
-	/***/
+	
+	/**Sorts the selected lines ascending*/
 	private Action ascendingSortAction;
-	/***/
+	/**Sorts the selected lines descending*/
 	private Action descendingSortAction;
-	/***/
+	/**Removes duplicate lines from selected lines*/
 	private Action uniqueAction;
 
 	/**
-	 * 	Constructs a new JNotepadPP.
-	 * 	TODO javadoc
+	 * 	Constructs a new {@link JNotepadPP}.
 	 */
 	public JNotepadPP() {
 		flp = new FormLocalizationProvider(LocalizationProvider.getInstance(), this);
@@ -133,7 +136,7 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 *  Initializes the GUI.
 	 */
 	private void initGUI() {
 		Container cp = getContentPane();
@@ -154,7 +157,7 @@ public class JNotepadPP extends JFrame {
 	}	
 	
 	/**
-	 * 
+	 *  Adds all the needed listeners. 
 	 */
 	private void addListeners() {
 		//updates the statusbar when tab comes into focus
@@ -248,21 +251,30 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 *  Private class which models the statusbar on the bottom.
+	 *  
+	 *  @author Jakov Pucekovic
+	 *  @version 1.0
 	 */
 	private class Statusbar extends JPanel {
 		
 		private static final long serialVersionUID = 1L;
 		
+		/**Label which tells the length of the open document.*/
 		private JLabel lenght;
+		/**Label which tells the line position*/
 		private JLabel line;
+		/**Label which tells the column position*/
 		private JLabel column;
+		/**Label which holds the number of selected characters*/
 		private JLabel selection;
+		/**Label which holds the date and time*/
 		private JLabel dateTime;
+		/**Times used for measuring time*/
 		Timer clock;
 		
 		/**
-		 * 
+		 *  Creates a new {@link Statusbar}.
 		 */
 		public Statusbar(){
 			super();
@@ -289,7 +301,8 @@ public class JNotepadPP extends JFrame {
 		}
 		
 		/**
-		 * 
+		 * 	Initializes the statusbar, places labels on a component,
+		 * 	using {@link BorderLayout}.
 		 */
 		private void initStatusbar() {
 			JPanel left = new JPanel();
@@ -304,16 +317,17 @@ public class JNotepadPP extends JFrame {
 		}
 		
 		/**
-		 * 
+		 *  Updates the {@link Statusbar} from the given {@link EventObject}.
+		 * 	@param e {@link EventObject} from which is the {@link Statusbar} updated.
 		 */
 		private void updateStatusbar(EventObject e) {
 			JTextArea area = (JTextArea)e.getSource();
 			updateStatusbar(area);
-			
 		}
 		
 		/**
-		 * 
+		 * 	Updates the {@link Statusbar}.
+		 * 	@param area {@link JTextArea} for which the statusbar shows things.
 		 */
 		private void updateStatusbar(JTextArea area) {
 			lenght.setText("Length: " + area.getText().length());
@@ -333,12 +347,11 @@ public class JNotepadPP extends JFrame {
             
             selection.setText("Sel: " + Math.abs((area.getCaret().getMark() - area.getCaret().getDot())));
 		}
-		
 	}
 
 
 	/**
-	 * TODO javadoc
+	 * 	Private method for creating actions.
 	 */
 	private void createActions() {
 		createFilesActions();
@@ -419,7 +432,8 @@ public class JNotepadPP extends JFrame {
 	}
 
 	/**
-	 * 
+	 * 	Creates the actions in the Files section by initializing them, giving them their
+	 * 	appropriate icon and mnemonics and accelerator keys.
 	 */
 	private void createFilesActions() {
 		newDocument = new LocalizableAction("new", flp) {
@@ -439,7 +453,7 @@ public class JNotepadPP extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				load("Load"); //TODO i18n
+				load();
 			}
 		};
 		openDocument.putValue(Action.SMALL_ICON, loadPic("icons/open.png"));
@@ -451,7 +465,7 @@ public class JNotepadPP extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				save("Save"); //TODO i18n
+				save(); 
 			}
 		};
 		saveDocument.putValue(Action.SMALL_ICON, loadPic("icons/save.png"));
@@ -462,8 +476,7 @@ public class JNotepadPP extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveAs("Save as"); //TODO i18n
-			}
+				saveAs(); 			}
 		};
 		saveAsDocument.putValue(Action.SMALL_ICON, loadPic("icons/save_as.png"));
 		saveAsDocument.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control shift S"));
@@ -486,7 +499,7 @@ public class JNotepadPP extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				exit("Exit"); //TODO i18n
+				exit();
 			}
 		};
 		exitAction.putValue(Action.SMALL_ICON, loadPic("icons/exit.png"));
@@ -507,7 +520,8 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 * 	Creates the actions in the Edit section by initializing them, giving them their
+	 * 	appropriate icon and mnemonics and accelerator keys.
 	 */
 	private void createEditActions() {
 		cutAction = new LocalizableAction("cut", flp) {
@@ -542,7 +556,7 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 * 	Creates the actions in the Language section by initializing them.
 	 */
 	private void createLanguageActions() {
 		hrvLanguageAction = new LocalizableAction("hrv", flp) {
@@ -574,7 +588,8 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 * 	Creates the actions in the case switch section by initializing them, giving them their
+	 * 	appropriate icon and mnemonics and accelerator keys.
 	 */
 	private void createCaseSwitchActions() {
 		toUpperCaseAction = new CaseAction("toUpperCase", flp, String::toUpperCase);
@@ -594,19 +609,24 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
+	 * 	Private class for Actions which change case, because they all do it in the same
+	 * 	way, only the case changing function is different.
 	 * 
+	 * 	@author Jakov Pucekovic
+	 * 	@version 1.0
 	 */
 	private class CaseAction extends LocalizableAction{
 
 		private static final long serialVersionUID = 1L;
 
+		/**Function which changes the case of the text.*/
 		private Function<String, String> f;
 		
 		/**
-		 * 	Constructs a new CaseAction.
-		 * 	TODO javadoc
-		 * 	@param key
-		 * 	@param lp
+		 * 	Constructs a new {@link CaseAction}.
+		 * 	@param key Key for getting the localized values.
+		 * 	@param lp {@link LocalizationProvider} which does the localization.
+		 * 	@param f Function which changes the case of the {@link String}.
 		 */
 		public CaseAction(String key, ILocalizationProvider lp, Function<String, String> f) {
 			super(key, lp);
@@ -638,7 +658,9 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 * 	Inverts the case on the given {@link String}.
+	 *	@param text Text to invert the casing of.
+	 *	@return New {@link String} which is the same as given but with inverted casing. 
 	 */
 	private String invertCase(String text) {
 		char[] chars = text.toCharArray();
@@ -653,21 +675,29 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
+	 * 	Private class for Actions which sort, because they all do it in the same
+	 * 	way.
 	 * 
+	 * 	@author Jakov Pucekovic
+	 * 	@version 1.0
 	 */
 	private class SortAction extends LocalizableAction{
 
 		private static final long serialVersionUID = 1L;
 
+		/**Flag which tells if to sort ascending or descending.*/
 		private boolean ascending;
+		/**Locale*/
 		Locale locale;
+		/**For comparing text in current language.*/
 		Collator collator;
 		
 		/**
-		 * 	Constructs a new SortAction.
-		 * 	TODO javadoc
-		 * 	@param key
-		 * 	@param lp
+		 * 	Constructs a new {@link SortAction}.
+		 * 	@param key Key for getting the localized values.
+		 * 	@param lp {@link LocalizationProvider} which does the localization.
+		 * 	@param ascending Flag which signals if the sorting should be done ascending,
+		 * 					 or descending.
 		 */
 		public SortAction(String key, ILocalizationProvider lp, boolean ascending) {
 			super(key, lp);
@@ -717,7 +747,7 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 *  Creates the sorting actions and adds them their icons.
 	 */
 	private void createSortActions() {
 		ascendingSortAction = new SortAction("ascending", flp, true);
@@ -728,13 +758,12 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 *TODO javadoc
+	 *	Creates menus.
 	 */
 	private void createMenus() {
 		JMenuBar mb = new JMenuBar();
 
 		JMenu file = new LocalizableMenu("files", flp);
-		
 		mb.add(file);
 		file.add(new JMenuItem(newDocument));
 		file.add(new JMenuItem(openDocument));
@@ -776,12 +805,12 @@ public class JNotepadPP extends JFrame {
 		tools.add(new JMenuItem(uniqueAction));
 		
 		setJMenuBar(mb);
-		
 	}
 
 
 	/**
-	 * @return //TODO javadoc
+	 * 	Creates a toolbar.
+	 * 	@return The created toolbar.
 	 */
 	private JToolBar createToolbar() {
 		JToolBar toolbar = new JToolBar();
@@ -803,7 +832,8 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 * 	Private class which represents buttons that are on a toolbar.
+	 * 	Such buttons only have their icon displayed, so their name is set to hidden.
 	 */
 	private class ToolbarButton extends JButton{
 	
@@ -821,7 +851,9 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 *  Loads the picture at the given path.
+	 *  @param path Path to the picture.
+	 * 	@return {@link ImageIcon} containing the loaded picture.
 	 */
 	private ImageIcon loadPic(String path) {
 		byte[] bytes = null;
@@ -861,25 +893,29 @@ public class JNotepadPP extends JFrame {
 				null,
 				options,
 				options[0]);
-		
 		  
 	}
 	
 	/**
-	 * 
+	 *  Exits the application after asking user to save all unsaved documents.
 	 */
-	private void exit(String text) {
+	private void exit() {
 		for(int i = 0; i < tabModel.getNumberOfDocuments(); ++i) {
 			tabModel.setSelectedIndex(i);
 			if(tabModel.getDocument(i).isModified()) {
+				Object[] options = {flp.getString("yes"), flp.getString("no"), flp.getString("cancel")};
 				String docName = tabModel.getDocument(i).getFilePath() == null ? "(unnamed)" : tabModel.getDocument(i).getFilePath().getFileName().toString();
-				switch(JOptionPane.showConfirmDialog(
+				switch(JOptionPane.showOptionDialog(
 						this,
-						docName + "is modified. Do you want to save the chages?",
-						"Warning",
-						JOptionPane.YES_NO_CANCEL_OPTION)){
+						docName + " " + flp.getString("isModified"),
+						flp.getString("warning"),
+						JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.WARNING_MESSAGE,
+						null,
+						options,
+						options[0])){
 					case JOptionPane.YES_OPTION:
-						save("Save");
+						save();
 						break;
 					case JOptionPane.NO_OPTION:
 						break;
@@ -898,11 +934,10 @@ public class JNotepadPP extends JFrame {
 	}
 	
 	/**
-	 * 
+	 *  Loads another {@link SingleDocumentModel} and switches focus to it.
 	 */
-	private void load(String text) {
+	private void load() {
 		JFileChooser jfc = new JFileChooser();
-		jfc.setDialogTitle(text);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt" ,"txt");
 		jfc.setFileFilter(filter);
 		
@@ -914,7 +949,7 @@ public class JNotepadPP extends JFrame {
 		if(!Files.exists(chosenPath)) {
 			if(JOptionPane.showConfirmDialog(
 					this,
-					"Document you're trying to open doesn't exist. Create one instead?", //TODO i18n
+					"Document you're trying to open doesn't exist. Create one instead?",
 					"Warning",
 					JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 				return;
@@ -934,32 +969,31 @@ public class JNotepadPP extends JFrame {
 			try {
 				tabModel.loadDocument(chosenPath);
 			} catch(RuntimeException ex) {
-				JOptionPane.showMessageDialog(this, "File cannot be loaded.", "Error loading file", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "File cannot be loaded.", flp.getString("error"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 	
 	/**
-	 * 
+	 *  Saves the current {@link SingleDocumentModel}.
 	 */
-	private void save(String text) {
+	private void save() {
 		if(tabModel.getCurrentDocument().getFilePath() == null) {
-			saveAs(text);
+			saveAs();
 		} else {
 			try {
 				tabModel.saveDocument(tabModel.getCurrentDocument(), tabModel.getCurrentDocument().getFilePath());
 			} catch(RuntimeException ex) {
-				JOptionPane.showMessageDialog(this, "File cannot be saved.", "Error saving file", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, flp.getString("saveError"), flp.getString("error"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 	
 	/**
-	 * 
+	 *  Saves the current {@link SingleDocumentModel} giving it a new name.
 	 */
-	private void saveAs(String text) {
+	private void saveAs() {
 		JFileChooser jfc = new JFileChooser();
-		jfc.setDialogTitle(text);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(".txt" ,"txt");
 		jfc.setFileFilter(filter);
 		if(jfc.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
@@ -968,14 +1002,14 @@ public class JNotepadPP extends JFrame {
 		
 		Path chosenPath = jfc.getSelectedFile().toPath();
 		if(Files.exists(chosenPath)) {
-			if(JOptionPane.showConfirmDialog(this, "File already exists. Overwrite?", "Warning",	JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+			if(JOptionPane.showConfirmDialog(this, flp.getString("overwrite"), flp.getString("warning"), JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 				Object[] options = {"OK"};
 				JOptionPane.showOptionDialog(
 						this,
-						"Save aborted.",
-						"Info",
+						flp.getString("saveAborted"),
+						flp.getString("warning"),
 						JOptionPane.PLAIN_MESSAGE,
-						JOptionPane.INFORMATION_MESSAGE,
+						JOptionPane.WARNING_MESSAGE,
 						null,
 						options,
 						options[0]);
@@ -985,23 +1019,23 @@ public class JNotepadPP extends JFrame {
 		try {
 			tabModel.saveDocument(tabModel.getCurrentDocument(), chosenPath);
 		}catch(IllegalArgumentException ex) {
-				JOptionPane.showMessageDialog(this, ex.getMessage(), "Error saving file", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, flp.getString("saveError"), flp.getString("error"), JOptionPane.ERROR_MESSAGE);
 		} catch(RuntimeException ex) {
-			JOptionPane.showMessageDialog(this, "File cannot be saved.", "Error saving file", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, flp.getString("saveError"), flp.getString("error"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
 	/**
-	 * 
+	 *  Closes the current {@link SingleDocumentModel}.
 	 */
 	private void close() {
 		if(tabModel.getCurrentDocument().isModified()) {
 			if(JOptionPane.showConfirmDialog(
 					this,
-					"Document is modified. Save changes?",
-					"Warning",
+					flp.getString("docIsModified"),
+					flp.getString("warning"),
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-				save("Save");//TODO i18n
+				save();
 			}
 		}
 		tabModel.closeDocument(tabModel.getCurrentDocument());
@@ -1015,7 +1049,7 @@ public class JNotepadPP extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				exit("Exit");
+				exit();
 			}
 		});		
 	}
