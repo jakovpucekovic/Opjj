@@ -267,6 +267,7 @@ public class RequestContext {
 	 * 	@throws IOException If there is an error when writing.
 	 */
 	public RequestContext write(String text) throws IOException{
+		charset = Charset.forName(encoding);
 		return write(text.getBytes(charset));
 	}
 	
