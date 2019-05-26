@@ -30,13 +30,20 @@ public class ElementConstantDouble extends Element {
 	}
 	
 	/**
+	 *	Returns the stored value as string.
+	 *	@return Stored value as string.
+	 */
+	@Override
+	public String asText() {
+		return Double.toString(value);
+	}
+
+	/**
 	 *	{@inheritDoc}
 	 */
 	@Override
 	public String toString() {
 		return Double.toString(value);
 	}
-	
-	
 	
 }

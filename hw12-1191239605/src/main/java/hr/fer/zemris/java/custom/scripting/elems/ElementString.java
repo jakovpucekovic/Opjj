@@ -28,12 +28,13 @@ public class ElementString extends Element {
 	public String getValue() {
 		return value;
 	}
-
+	
 	/**
-	 *	{@inheritDoc}
+	 *	Returns the stored string as text.
+	 *	@return Stored string as text.
 	 */
 	@Override
-	public String toString() {
+	public String asText() {
 		if(value.equals("")) {
 			return "";
 		}
@@ -44,6 +45,12 @@ public class ElementString extends Element {
 
 		return builder.toString();
 	}
-	
-	
+
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return value;
+	}
 }

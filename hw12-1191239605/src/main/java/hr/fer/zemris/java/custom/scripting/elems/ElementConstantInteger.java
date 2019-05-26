@@ -30,6 +30,15 @@ public class ElementConstantInteger extends Element {
 	}
 	
 	/**
+	 *	Returns the stored expression as string.
+	 *	@return Stored value as string.
+	 */
+	@Override
+	public String asText() {
+		return Integer.toString(value);
+	}
+
+	/**
 	 *	{@inheritDoc}
 	 */
 	@Override

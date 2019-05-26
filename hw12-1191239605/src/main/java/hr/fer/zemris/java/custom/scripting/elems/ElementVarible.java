@@ -28,6 +28,15 @@ public class ElementVarible extends Element {
 	public String getName() {
 		return name;
 	}
+	
+	/**
+	 *	Returns the stored name as string.
+	 *	@return Stored name as string.
+	 */
+	@Override
+	public String asText() {
+		return name;
+	}
 
 	/**
 	 *	{@inheritDoc}

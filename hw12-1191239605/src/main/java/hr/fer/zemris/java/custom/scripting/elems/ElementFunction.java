@@ -28,13 +28,22 @@ public class ElementFunction extends Element {
 	public String getName() {
 		return name;
 	}
+	
+	/**
+	 *	Returns the stored expression as text.
+	 *	@return Stored value as text.
+	 */
+	@Override
+	public String asText() {
+		return name;
+	}
 
 	/**
 	 *	{@inheritDoc}
 	 */
 	@Override
 	public String toString() {
-		return "@"+name;
+		return name;
 	}
 	
 }

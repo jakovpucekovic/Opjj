@@ -28,6 +28,15 @@ public class ElementOperator extends Element {
 	public String getSymbol() {
 		return symbol;
 	}
+	
+	/**
+	 *	Returns the stored symbol as string.
+	 *	@return Stored symbol as string.
+	 */
+	@Override
+	public String asText() {
+		return symbol;
+	}
 
 	/**
 	 *	{@inheritDoc}
@@ -36,6 +45,5 @@ public class ElementOperator extends Element {
 	public String toString() {
 		return symbol;
 	}
-	
 	
 }
