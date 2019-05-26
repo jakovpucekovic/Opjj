@@ -1,7 +1,11 @@
 package hr.fer.zemris.java.hw03;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import hr.fer.zemris.java.custom.scripting.elems.Element;
-import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
@@ -9,10 +13,6 @@ import hr.fer.zemris.java.custom.scripting.nodes.Node;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
-import java.nio.file.Files;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 
 /**
  *	
@@ -46,11 +46,12 @@ public class SmartScriptTester {
 		
 		try {
 			parser = new SmartScriptParser(docBody);
-		} catch(SmartScriptParserException e) {
-			System.out.println("Unable to parse document!");
-			System.exit(-1);
-		} catch( Exception e) {
-			System.out.println("U failed");
+//		} catch(SmartScriptParserException e) {
+//			System.out.println("Unable to parse document!");
+//			System.exit(-1);
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+//			System.out.println("U failed");
 			System.exit(-1);
 		}
 		

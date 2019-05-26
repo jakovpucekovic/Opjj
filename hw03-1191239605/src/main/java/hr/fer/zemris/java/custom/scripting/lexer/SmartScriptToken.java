@@ -45,6 +45,15 @@ public class SmartScriptToken {
 	public Object getValue() {
 		return value;
 	}
+
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "(" + type + ", " + value + ")";
+	}
+	
 }
 
 

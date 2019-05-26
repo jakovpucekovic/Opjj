@@ -2,10 +2,6 @@ package hr.fer.zemris.java.hw03.prob1;
 
 import java.util.Objects;
 
-import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptLexerException;
-import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptToken;
-import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptTokenType;
-
 /**
  *	Class Lexer which performs the grouping
  *	of the input into {@link Token}s with the rules

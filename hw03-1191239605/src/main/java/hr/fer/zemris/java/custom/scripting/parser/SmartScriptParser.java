@@ -11,6 +11,7 @@ import hr.fer.zemris.java.custom.scripting.elems.ElementOperator;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.elems.ElementVarible;
 import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptLexer;
+import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptLexerException;
 import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptLexerState;
 import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptToken;
 import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptTokenType;
@@ -116,15 +117,18 @@ public class SmartScriptParser {
 	 *	@throws SmartScriptParserException If the for-loop cannot be parsed.
 	 */
 	private ForLoopNode parseFor(SmartScriptLexer lexer) {		
+		ElementVarible var;
+		try {
+			lexer.nextToken();
+			if(lexer.getToken().getType() != SmartScriptTokenType.VARIABLE) {
+				throw new SmartScriptParserException("Invalid for loop");
+			}
 		
-		lexer.nextToken();
-		if(lexer.getToken().getType() != SmartScriptTokenType.VARIABLE) {
-			throw new SmartScriptParserException("Invalid for loop");
+			var = new ElementVarible((String) lexer.getToken().getValue());
+			lexer.nextToken();
+		} catch(SmartScriptLexerException ex) {
+			throw new SmartScriptParserException(ex.getMessage());
 		}
-		
-		ElementVarible var = new ElementVarible((String) lexer.getToken().getValue());
-		lexer.nextToken();
-	
 		Element start, end, step = null;
 		
 		try {
@@ -139,6 +143,8 @@ public class SmartScriptParser {
 		try {
 			step = parseStartEndStepExpression(lexer);
 			lexer.nextToken();
+		} catch(SmartScriptLexerException ex) {
+			throw new SmartScriptParserException("For loop not closed");
 		} catch(SmartScriptParserException ex) {
 			step = new ElementString("");
 		}

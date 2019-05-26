@@ -1,7 +1,5 @@
 package hr.fer.zemris.java.hw03.prob1;
 
-import hr.fer.zemris.java.custom.scripting.lexer.SmartScriptLexer;
-
 /**
  *	Class Token which represents tokens to
  *	which the {@link Lexer} groups the input.

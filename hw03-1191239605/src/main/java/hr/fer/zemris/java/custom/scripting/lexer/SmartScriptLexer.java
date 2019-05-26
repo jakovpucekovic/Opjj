@@ -251,7 +251,7 @@ public class SmartScriptLexer {
 	/**
 	 *	Tries to parse DOUBLE and INTEGER token from current position in IN_TAG mode. Double must be in digit-dot-digit format.
 	 * 	@return <code>true</code> if it succeeded, <code>false</code> otherwise
-	 * 	@throws LexerException If the number cannot be parsed as {@link Double} or {@link Integer}.
+	 * 	@throws SmartScriptLexerException If the number cannot be parsed as {@link Double} or {@link Integer}.
 	 */
 	private boolean parseNumber() {
 		StringBuilder number = new StringBuilder();
@@ -277,10 +277,12 @@ public class SmartScriptLexer {
 							number.append(data[currentIndex]);
 							number.append(data[currentIndex + 1]);
 							currentIndex += 2;
+						} else {
+							throw new SmartScriptLexerException("Number cannot end with \".\"");
 						}
 					}
 				} else {
-					break;
+					throw new SmartScriptLexerException("Number cannot start with \".\" or have more than 1 \".\"");
 				}
 			} else {
 				break;
@@ -342,9 +344,9 @@ public class SmartScriptLexer {
 			token = new SmartScriptToken(SmartScriptTokenType.STRING, string.toString());
 			return true;
 		}
-		return false;
+		throw new SmartScriptLexerException("String doesn't end in quotes");
 		
-		}
+	}
 
 	/**
 	 *	Tries to parse FUNCTION token from current position in IN_TAG mode.
@@ -362,7 +364,7 @@ public class SmartScriptLexer {
 			
 		/*Must start with letter*/
 		if(!Character.isLetter(data[currentIndex])) {
-			return false;
+			throw new SmartScriptLexerException("Function name must start with letter.");
 		}
 		function.append(data[currentIndex]);
 		currentIndex++;
