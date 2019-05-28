@@ -21,7 +21,11 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
+import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
+import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
+import hr.zemris.java.custom.scripting.exec.SmartScriptEngine;
 
 /**
  *	SmartHttpServer TODO javadoc
@@ -132,18 +136,30 @@ public class SmartHttpServer {
 			}
 			
 			String extension = urlPath.substring(urlPath.lastIndexOf(".") + 1);
-			String mimeType = mimeTypes.get(extension);
-			if(mimeType == null) {
-				mimeType = "application/octet-stream";
+			if(extension.equals("smscr")) {
+				try {
+					String script = Files.readString(requestedPath);
+					SmartScriptParser parser = new SmartScriptParser(script);
+					DocumentNode docNode = parser.getDocumentNode();
+					RequestContext rc = new RequestContext(ostream, params, permParams, outputCookies, tempParams, this);
+					SmartScriptEngine engine = new SmartScriptEngine(docNode, rc);
+					engine.execute();
+				} catch(IOException | SmartScriptParserException ex) {
+					sendError(500, "INTERNAL SERVER ERROR");
+				}
+			} else {
+				String mimeType = mimeTypes.get(extension);
+				if(mimeType == null) {
+					mimeType = "application/octet-stream";
+				}
+				//TODO jesu li permParams persistentParameters?
+				RequestContext rc = new RequestContext(ostream, params, permParams, outputCookies);
+				rc.setMimeType(mimeType);
+				rc.setStatusCode(200);
+				rc.setStatusText("OK");
+				
+				sendData(rc, requestedPath);
 			}
-			//TODO jesu li permParams persistentParameters?
-			RequestContext rc = new RequestContext(ostream, params, permParams, outputCookies);
-			rc.setMimeType(mimeType);
-			rc.setStatusCode(200);
-			rc.setStatusText("OK");
-			
-			sendData(rc, requestedPath);
-
 		}
 		
 		private void sendData(RequestContext rc, Path data) {
@@ -231,7 +247,7 @@ public class SmartHttpServer {
 				
 				internalDispatchRequest(path, true);
 				
-				csocket.close();
+				csocket.close();//TODO staviti u finaly
 				
 			} catch (IOException e) {
 				// TODO catch IOException

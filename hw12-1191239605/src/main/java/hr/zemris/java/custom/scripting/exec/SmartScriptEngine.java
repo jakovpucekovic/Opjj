@@ -42,7 +42,7 @@ public class SmartScriptEngine {
 		multistack = new ObjectMultistack();
 		visitor = new SmartVisitor();
 	}
-	
+	//TODO exceptions
 	
 	public void execute() {
 		documentNode.accept(visitor);
@@ -202,11 +202,11 @@ public class SmartScriptEngine {
 			case "tparamSet":
 				String name6 = stack.pop().toString();
 				String value6 = stack.pop().toString();
-				requestContext.setPersistentParameter(name6, value6);
+				requestContext.setTemporaryParameter(name6, value6);
 				return;
 			case "tparamDel":
 				String name7 = stack.pop().toString();
-				requestContext.removePersistentParameter(name7);
+				requestContext.removeTemporaryParameter(name7);
 				return;
 			default:
 				//TODO throw unsupported function;
