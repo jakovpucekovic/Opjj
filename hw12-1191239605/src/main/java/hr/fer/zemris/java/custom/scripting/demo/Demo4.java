@@ -15,16 +15,15 @@ import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 import hr.zemris.java.custom.scripting.exec.SmartScriptEngine;
 
 /**
- *	Demo1 TODO javadoc
+ *	Demo4 TODO javadoc
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
 
-public class Demo1 {
-
+public class Demo4 {
 	public static void main(String[] args) {
-		String documentBody = readFromDisk("./webroot/scripts/osnovni.smscr");
+		String documentBody = readFromDisk("./webroot/scripts/fibonacci.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
 		Map<String,String> persistentParameters = new HashMap<String, String>();
 		List<RCCookie> cookies = new ArrayList<>();
@@ -52,5 +51,4 @@ public class Demo1 {
 		
 		return doc;
 	}
-	
 }

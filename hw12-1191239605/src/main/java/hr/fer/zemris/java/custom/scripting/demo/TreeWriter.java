@@ -1,5 +1,4 @@
 package hr.fer.zemris.java.custom.scripting.demo;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,7 +48,6 @@ public class TreeWriter {
 		
 	}
 
-	//TODO kako napraviti da mi visitor napravi tab svaki put kad ode u dubinu?
 	private static class WriterVisitor implements INodeVisitor{
 
 		/**

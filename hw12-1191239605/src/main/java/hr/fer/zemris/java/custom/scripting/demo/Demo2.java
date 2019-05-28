@@ -15,19 +15,21 @@ import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 import hr.zemris.java.custom.scripting.exec.SmartScriptEngine;
 
 /**
- *	Demo1 TODO javadoc
+ *	Demo2 TODO javadoc
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
 
-public class Demo1 {
+public class Demo2 {
 
 	public static void main(String[] args) {
-		String documentBody = readFromDisk("./webroot/scripts/osnovni.smscr");
+		String documentBody = readFromDisk("./webroot/scripts/zbrajanje.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
 		Map<String,String> persistentParameters = new HashMap<String, String>();
 		List<RCCookie> cookies = new ArrayList<>();
+		parameters.put("a", "4");
+		parameters.put("b", "2");
 		
 		// create engine and execute it
 		new SmartScriptEngine(
@@ -52,5 +54,6 @@ public class Demo1 {
 		
 		return doc;
 	}
+	
 	
 }

@@ -15,25 +15,29 @@ import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 import hr.zemris.java.custom.scripting.exec.SmartScriptEngine;
 
 /**
- *	Demo1 TODO javadoc
+ *	Demo3 TODO javadoc
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
 
-public class Demo1 {
+public class Demo3 {
 
 	public static void main(String[] args) {
-		String documentBody = readFromDisk("./webroot/scripts/osnovni.smscr");
+		String documentBody = readFromDisk("./webroot/scripts/brojPoziva.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
 		Map<String,String> persistentParameters = new HashMap<String, String>();
 		List<RCCookie> cookies = new ArrayList<>();
+		persistentParameters.put("brojPoziva", "3");
+		RequestContext rc = new RequestContext(System.out, parameters, persistentParameters,
+		cookies);
 		
 		// create engine and execute it
 		new SmartScriptEngine(
 			new SmartScriptParser(documentBody).getDocumentNode(),
 			new RequestContext(System.out, parameters, persistentParameters, cookies)
-		).execute();
+		).execute();//TODO fali novi red nakon 3
+		System.out.println("Vrijednost u mapi: "+rc.getPersistentParameter("brojPoziva"));
 	}
 
 	

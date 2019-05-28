@@ -35,6 +35,8 @@ public class RequestContext {
 	private List<RCCookie> outputCookies;
 	private boolean headerGenerated;
 	
+	private IDispatcher dispatcher;
+	
 	
 	/**
 	 * 	Constructs a new {@link RequestContext} with the given parameters.
@@ -49,6 +51,25 @@ public class RequestContext {
 			Map<String, String> parameters,
 			Map<String, String> persistentParameters,
 			List<RCCookie> outputCookies) {
+		this(outputStream, parameters, persistentParameters, outputCookies, null, null);
+	}
+	
+	/**
+	 * 	Constructs a new {@link RequestContext} with the given parameters.
+	 * 	@param outputStream {@link OutputStream} to write to.
+	 * 	@param parameters {@link Map} of parameters or <code>null</code>.
+	 * 	@param persistentParameters {@link Map} of persistent parameters or <code>null</code>.
+	 * 	@param outputCookies {@link List} of {@link RCCookie}s or <code>null</code>.
+	 *	@param dispatcher {@link IDispatcher} which dispatches the {@link RequestContext}.
+	 *	@param temporaryParameters {@link Map} of temporary parameters or <code>null</code>.
+	 * 	@throws NullPointerException If outputStream is <code>null</code>.
+	 */
+	public RequestContext(OutputStream outputStream,
+						  Map<String,String> parameters,
+						  Map<String,String> persistentParameters,
+						  List<RCCookie> outputCookies,
+						  Map<String,String> temporaryParameters,
+						  IDispatcher dispatcher) {
 		
 		Objects.requireNonNull(outputStream);
 		this.outputStream = outputStream;
@@ -64,7 +85,9 @@ public class RequestContext {
 		this.parameters = parameters == null ? new HashMap<>() : parameters;
 		this.persistentParameters = persistentParameters == null ? new HashMap<>() : persistentParameters;
 		this.outputCookies = outputCookies == null ? new ArrayList<>() : outputCookies ;
-	
+		this.dispatcher = dispatcher;
+		this.temporaryParameters = temporaryParameters == null ? new HashMap<>() : temporaryParameters;
+		//TODO kako iskoristiti danu mapu, a ne raditi kopiju?
 	}
 	
 	/**
@@ -221,7 +244,14 @@ public class RequestContext {
 		temporaryParameters.remove(name);
 	}
 	
-	
+	/**
+	 * 	Returns the dispatcher of the {@link RequestContext}.
+	 * 	@return the dispatcher of the {@link RequestContext}.
+	 */
+	public IDispatcher getDispatcher() {
+		return dispatcher;
+	}
+
 	//TODO javadoc
 	public void addRCCookie(RCCookie cookie) {
 		outputCookies.add(cookie);
