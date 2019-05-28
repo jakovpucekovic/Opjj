@@ -328,6 +328,15 @@ public class SmartScriptLexer {
 					if(data[currentIndex + 1] == '\\' || data[currentIndex + 1] == '\"') {
 						string.append(data[currentIndex + 1]);
 						currentIndex += 2;
+					} else if(data[currentIndex + 1] == 'r' ){
+						string.append('\r');
+						currentIndex += 2;
+					} else if(data[currentIndex + 1] == 'n' ){
+						string.append('\n');
+						currentIndex += 2;
+					} else if(data[currentIndex + 1] == 't' ){
+						string.append('\t');
+						currentIndex += 2;
 					} else {
 						throw new SmartScriptLexerException("Invalid escape sequence.");
 					}
