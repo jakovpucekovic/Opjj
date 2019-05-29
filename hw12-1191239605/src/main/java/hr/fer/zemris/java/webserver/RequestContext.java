@@ -252,7 +252,10 @@ public class RequestContext {
 		return dispatcher;
 	}
 
-	//TODO javadoc
+	/**
+	 * 	Adds the given {@link RCCookie} to the {@link List} of outputCookies.
+	 * 	@param cookie {@link RCCookie} to add.
+	 */
 	public void addRCCookie(RCCookie cookie) {
 		outputCookies.add(cookie);
 	}
@@ -335,8 +338,9 @@ public class RequestContext {
 				}
 				sb.append("\r\n");
 			}
+		} else {
+			sb.append("\r\n");
 		}
-		sb.append("\r\n");
 		
 		headerGenerated = true;
 		

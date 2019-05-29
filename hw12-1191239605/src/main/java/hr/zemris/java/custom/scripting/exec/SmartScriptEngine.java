@@ -26,14 +26,23 @@ import hr.fer.zemris.java.webserver.RequestContext;
 
 public class SmartScriptEngine {
 
+	/**{@link DocumentNode} to execute.*/
 	private DocumentNode documentNode;
+	
+	/**{@link RequestContext} in which to execute the {@link DocumentNode}.*/
 	private RequestContext requestContext;
+	
+	/**{@link ObjectMultistack} used for storing values during execution.*/
 	private ObjectMultistack multistack;
+	
+	/**{@link INodeVisitor} which does the execution.*/
 	private INodeVisitor visitor;
 	
 	/**
-	 * 	Constructs a new SmartScriptEngine.
-	 * 	TODO javadoc
+	 * 	Constructs a new {@link SmartScriptEngine} which can execute
+	 * 	the given {@link DocumentNode} structure in the given {@link RequestContext}.
+	 * 	@param documentNode {@link DocumentNode} to execute.
+	 * 	@param requestContext {@link RequestContext} in which the script should be executed.
 	 */
 	public SmartScriptEngine(DocumentNode documentNode, RequestContext requestContext) {
 		this.documentNode = documentNode;
@@ -44,12 +53,29 @@ public class SmartScriptEngine {
 	}
 	//TODO exceptions
 	
+	/**
+	 *	Executes the smart script given in the form of nodes.
+	 */
 	public void execute() {
 		documentNode.accept(visitor);
 	}
 	
 	
+	/**
+	 * 	Private class which does the actual execution of the smart
+	 * 	script implementing the visitor design pattern.
+	 */
 	private class SmartVisitor implements INodeVisitor{
+
+		/**
+		 *	{@inheritDoc}
+		 */
+		@Override
+		public void visitDocumentNode(DocumentNode node) {
+			for(int i = 0; i < node.numberOfChildren(); ++i) {
+				node.getChild(i).accept(this);
+			}
+		}
 
 		/**
 		 *	{@inheritDoc}
@@ -59,8 +85,7 @@ public class SmartScriptEngine {
 			try {
 				requestContext.write(node.getText());
 			} catch(IOException ex) {
-				//TODO sto radim ako se dogodi IOException kod pisanja
-				System.out.println(ex.getMessage());
+				throw new RuntimeException(ex.getMessage());
 			}
 		}
 
@@ -71,8 +96,9 @@ public class SmartScriptEngine {
 		public void visitForLoopNode(ForLoopNode node) {
 			String varName = node.getVariable().getName(); 
 			ValueWrapper start = new ValueWrapper(node.getStartExpression().asText());
-			ValueWrapper step = new ValueWrapper(node.getStepExpression().asText());
-			ValueWrapper end = new ValueWrapper(node.getEndExpression().asText());
+			ValueWrapper step  = new ValueWrapper(node.getStepExpression().asText());
+			ValueWrapper end   = new ValueWrapper(node.getEndExpression().asText());
+			
 			multistack.push(varName, start);
 			while(multistack.peek(varName).numCompare(end.getValue()) <= 0) {
 				for(int i = 0; i< node.numberOfChildren(); ++i) {
@@ -102,32 +128,13 @@ public class SmartScriptEngine {
 					stack.push(((ElementString) el).getValue());
 				}
 				if(el instanceof ElementVarible) {
-					if(multistack.peek(((ElementVarible) el).getName())!=null) {
+					if(multistack.peek(((ElementVarible) el).getName()) != null) {
 						stack.push(multistack.peek(((ElementVarible)el).getName()).getValue());
 					}
 					//TODO throw ako nema takve varijable
 				}
 				if(el instanceof ElementOperator) {
-					ValueWrapper a = new ValueWrapper(stack.pop());
-					ValueWrapper b = new ValueWrapper(stack.pop());
-					switch (el.asText()) {
-					case "+":
-						b.add(a.getValue());
-						break;
-					case "-":
-						b.subtract(a.getValue());
-						break;
-					case "*":
-						b.multiply(a.getValue());
-						break;
-					case "/":
-						b.divide(a.getValue());
-						break;
-					default:
-						//TODO throw unsuported operation
-						break;
-					}
-					stack.push(b.getValue());
+					applyOperator((ElementOperator)el, stack);
 				}
 				if(el instanceof ElementFunction) {
 					applyFunction((ElementFunction)el, stack);
@@ -137,24 +144,59 @@ public class SmartScriptEngine {
 			for(var v : stack) {
 				try {
 					requestContext.write(v.toString());
-				} catch (IOException e) {
-					// TODO sto ako IOException kod write
-					System.out.println(e.getMessage());
+				} catch (IOException ex) {
+					throw new RuntimeException(ex.getMessage());
 				}
 			}
-			
 		}
 		
+		/**
+		 * 	Private method which executes all operators given in the {@link EchoNode}.
+		 * 	@param elOperator {@link ElementOperator} which contains the operator.
+		 * 	@param stack Stack used for storing values during execution of {@link EchoNode}. 
+		 *	@throws UnsupportedOperationException If the given operator is not supported.
+		 */
+		private void applyOperator(ElementOperator elOperator, Stack<Object> stack) {
+			//We wrap the objects from stack into ValueWrappers to perform operations on them, because
+			//the stack contains Objects and they can be int, double, String or something else
+			ValueWrapper a = new ValueWrapper(stack.pop());
+			ValueWrapper b = new ValueWrapper(stack.pop());
+			switch (elOperator.asText()) {
+			case "+":
+				b.add(a.getValue());
+				break;
+			case "-":
+				b.subtract(a.getValue());
+				break;
+			case "*":
+				b.multiply(a.getValue());
+				break;
+			case "/":
+				b.divide(a.getValue());
+				break;
+			default:
+				throw new UnsupportedOperationException("Operator " + elOperator.asText() + " is not supported.");
+			}
+			stack.push(b.getValue());
+		}
 		
+		/**
+		 *	Private method which executes all functions given in the {@link EchoNode}.
+		 *	@param elFunction {@link ElementFunction} which contains the function.
+		 *	@param stack Stack used for storing values during execution of {@link EchoNode}. 
+		 *	@throws UnsupportedOperationException If the given function is not supported.
+		 */
 		private void applyFunction(ElementFunction elFunction, Stack<Object> stack) {
+			double number;
+			String name, param, value;
 			switch (elFunction.asText()) {
 			case "sin":
-				double value = Double.parseDouble(new ValueWrapper(stack.pop()).getValue().toString());
-				stack.push(Math.sin(Math.toRadians(value)));
+				number = Double.parseDouble(new ValueWrapper(stack.pop()).getValue().toString());
+				stack.push(Math.sin(Math.toRadians(number)));
 				return;
 			case "decfmt":
 				String format = (String) stack.pop();
-				double number = Double.parseDouble(new ValueWrapper(stack.pop()).getValue().toString());
+				number = Double.parseDouble(new ValueWrapper(stack.pop()).getValue().toString());
 				stack.push(new DecimalFormat(format).format(number));
 				return; 
 			case "dup":
@@ -169,63 +211,49 @@ public class SmartScriptEngine {
 				stack.push(b);
 				return;
 			case "setMimeType":
-				String str = stack.pop().toString();
-				requestContext.setMimeType(str);
+				value = stack.pop().toString();
+				requestContext.setMimeType(value);
 				return;
 			case "paramGet":
-				String defaultValue1 = stack.pop().toString();
-				String name1 = stack.pop().toString();
-				String param1 = requestContext.getParameter(name1);
-				stack.push(param1 == null ? defaultValue1 : param1);
+				value = stack.pop().toString();
+				name = stack.pop().toString();
+				param = requestContext.getParameter(name);
+				stack.push(param == null ? value : param);
 				return;
 			case "pparamGet":
-				String defaultValue2 = stack.pop().toString();
-				String name2 = stack.pop().toString();
-				String param2 = requestContext.getPersistentParameter(name2);
-				stack.push(param2 == null ? defaultValue2 : param2);
+				value = stack.pop().toString();
+				name = stack.pop().toString();
+				param = requestContext.getPersistentParameter(name);
+				stack.push(param == null ? value : param);
 				return;
 			case "pparamSet":
-				String name3 = stack.pop().toString();
-				String value3 = stack.pop().toString();
-				requestContext.setPersistentParameter(name3, value3);
+				name = stack.pop().toString();
+				value = stack.pop().toString();
+				requestContext.setPersistentParameter(name, value);
 				return;
 			case "pparamDel":
-				String name4 = stack.pop().toString();
-				requestContext.removePersistentParameter(name4);
+				name = stack.pop().toString();
+				requestContext.removePersistentParameter(name);
 				return;
 			case "tparamGet":
-				String defaultValue5 = stack.pop().toString();
-				String name5 = stack.pop().toString();
-				String param5 = requestContext.getTemporaryParameter(name5);
-				stack.push(param5 == null ? defaultValue5 : param5);
+				value = stack.pop().toString();
+				name = stack.pop().toString();
+				param = requestContext.getTemporaryParameter(name);
+				stack.push(param == null ? value : param);
 				return;
 			case "tparamSet":
-				String name6 = stack.pop().toString();
-				String value6 = stack.pop().toString();
-				requestContext.setTemporaryParameter(name6, value6);
+				name = stack.pop().toString();
+				value = stack.pop().toString();
+				requestContext.setTemporaryParameter(name, value);
 				return;
 			case "tparamDel":
-				String name7 = stack.pop().toString();
-				requestContext.removeTemporaryParameter(name7);
+				name = stack.pop().toString();
+				requestContext.removeTemporaryParameter(name);
 				return;
 			default:
-				//TODO throw unsupported function;
+				throw new UnsupportedOperationException("Function " + elFunction.asText() + " is not supported.");
 			}
-		}
-
-		/**
-		 *	{@inheritDoc}
-		 */
-		@Override
-		public void visitDocumentNode(DocumentNode node) {
-			for(int i = 0; i < node.numberOfChildren(); ++i) {
-				node.getChild(i).accept(this);
-			}
-		}
-		
-		
+		}	
 	}
-	
-	
 	
 }

@@ -35,19 +35,45 @@ import hr.zemris.java.custom.scripting.exec.SmartScriptEngine;
  */
 public class SmartHttpServer {
 
+	/**Ip address of the server.*/
 	private String address;
+	
+	/**Domain name of the server.*/
 	private String domainName;
+	
+	/**Port on which the server listens.*/
 	private int port;
+	
+	/**Number of thread in the thread pool.*/
 	private int workerThreads;
+
+	/**Duration of user sessions in seconds.*/
 	private int sessionTimeout;
+	
+	/**{@link Map} of all supported mimeTypes.*/
 	private Map<String, String> mimeTypes = new HashMap<>();
+	
+	/**Server thread.*/
 	private ServerThread serverThread;
+	
+	/**Thread pool.*/
 	private ExecutorService threadPool;
+	
+	/**{@link Path} to the directory which is the top directory for this server.*/
 	private Path documentRoot;
 	
+	/**{@link Map} of all paths with their respective {@link IWebWorker}s.*/
+	private Map<String, IWebWorker> workersMap = new HashMap<>();
+	
+	/**
+	 * 	Constructs a new {@link SmartHttpServer} from the given configuration file.
+	 * 	The configuration file must contain all of the following: address, domainName,
+	 * 	port, workerThreads, timeout, documentRoot, mimeConfig 
+	 * 	@param configFileName Path to the configuration file for the server.
+	 * 	@param throws {@link IllegalArgumentException} If the server can't be constructed.
+	 */
 	public SmartHttpServer(String configFileName) {
 		try (InputStream input = Files.newInputStream(Paths.get(configFileName))) {
-
             Properties prop = new Properties();
             prop.load(input);
 
@@ -63,23 +89,57 @@ public class SmartHttpServer {
             for(String p : mimeProp.stringPropertyNames()) {
             	mimeTypes.put(p, mimeProp.getProperty(p));
             }
-
-        } catch (IOException ex) {
+            
+            loadWorkers(prop.getProperty("server.workers"));
+        } catch (IOException ex) {//TODO jel bacam IllegalArgument?
         	throw new IllegalArgumentException("Cannot read properties from given file.");
-        }
+        } catch (ClassNotFoundException e) {
+			// TODO catch
+		} catch (InstantiationException e) {
+			// TODO catch
+		} catch (IllegalAccessException e) {
+			// TODO catch
+		}
 	}
 	
+	private void loadWorkers(String filePath) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+		Properties workersProp = new Properties();
+		workersProp.load(Files.newInputStream(Paths.get(filePath)));
+		for(var key : workersProp.keySet()) {//TODO vidi sto se desava ako ima vise linija sa istim pathom
+			String path = (String) key;
+			String fqcn = workersProp.getProperty(path);
+			
+			Class<?> referenceToClass = this.getClass().getClassLoader().loadClass(fqcn);
+			Object newObject = referenceToClass.newInstance();
+			IWebWorker iww = (IWebWorker) newObject;
+			
+			workersMap.put(path, iww);
+		}
+		
+	}
+	
+	/**
+	 * 	Starts the server.
+	 */
 	protected synchronized void start() {
 		serverThread = new ServerThread();
 		serverThread.start();
 		threadPool = Executors.newFixedThreadPool(workerThreads);
 	}
 	
+	/**
+	 * 	Stops the server.
+	 */
 	protected synchronized void stop() {
 		serverThread.interrupt();
 		threadPool.shutdown();
 	}
 	
+	/**
+	 * 	Class which represents a {@link Thread} which listens
+	 * 	for client connections on the server port, accepts the connections
+	 * 	and submits them to the thread pool for execution.
+	 */
 	protected class ServerThread extends Thread{
 	
 		/**
@@ -104,25 +164,56 @@ public class SmartHttpServer {
 		
 	}
 	
+	
+	/**
+	 * 	Class which represents a client and his request that needs 
+	 * 	to be processed.
+	 */
 	private class ClientWorker implements Runnable, IDispatcher{
 		
+		/**Socket at which the client is connected.*/
 		private Socket csocket;
+		
+		/**TODO javadoc*/
 		private PushbackInputStream istream;
+		/***/
 		private OutputStream ostream;
+		/***/
 		private String version;
+		/***/
 		private String method;
+		/***/
 		private String host;
+		
+		/**Map of parameters.*/
 		private Map<String, String> params = new HashMap<>();
+		
+		/**Map of temporary parameters.*/
 		private Map<String, String> tempParams = new HashMap<>();
+		
+		/**Map of permanent parameters.*/
 		private Map<String, String> permParams = new HashMap<>();
+		
+		/**List of output cookies.*/
 		private List<RCCookie> outputCookies = new ArrayList<>();
+		
+		/**TODO Session ID?*/
 		private String SID;
 		
+		private RequestContext context = null;
+		
+		/**
+		 * 	Constructs a new {@link ClientWorker} at the given {@link Socket}.
+		 * 	@param csocket {@link Socket} to which the client is connected.
+		 */
 		public ClientWorker(Socket csocket) {
 			super();
 			this.csocket = csocket;
 		}
 		
+		/**
+		 *  TODO javadoc
+		 */
 		public void internalDispatchRequest(String urlPath, boolean directCall)
 			throws Exception{
 			
@@ -152,7 +243,6 @@ public class SmartHttpServer {
 				if(mimeType == null) {
 					mimeType = "application/octet-stream";
 				}
-				//TODO jesu li permParams persistentParameters?
 				RequestContext rc = new RequestContext(ostream, params, permParams, outputCookies);
 				rc.setMimeType(mimeType);
 				rc.setStatusCode(200);
@@ -162,20 +252,24 @@ public class SmartHttpServer {
 			}
 		}
 		
-		private void sendData(RequestContext rc, Path data) {
-			
-			try(InputStream fis = new BufferedInputStream(Files.newInputStream(data))){
-				byte[] buf = new byte[1024];
-				while(true) {
-					int r = fis.read(buf);
-					if(r < 1) {
-						break;
-					}
-					rc.write(buf, 0, r);				
+		/**
+		 *	Method which writes the data found at the given {@link Path}
+		 *	to the {@link RequestContext}.
+		 *	@param rc {@link RequestContext} to which the data should be written.
+		 *	@param path {@link Path} to file which contains the data.
+		 *	@throws IOException If there is an error writing or reading data.
+		 */
+		private void sendData(RequestContext rc, Path path) throws IOException{	
+			InputStream fis = new BufferedInputStream(Files.newInputStream(path));
+			byte[] buf = new byte[1024];
+			while(true) {
+				int r = fis.read(buf);
+				if(r < 1) {
+					break;
 				}
-			} catch (IOException ex) {
-				// TODO: handle exception
+				rc.write(buf, 0, r);				
 			}
+			fis.close();
 		}
 		
 		/**
@@ -218,7 +312,7 @@ public class SmartHttpServer {
 				
 				version = firstLine[2].toUpperCase();
 				if(!version.equals("HTTP/1.0") && !version.equals("HTTP/1.1")) {
-					sendError(400, "Bad request");
+					sendError(505, "HTTP Version Not Supported");
 					return;
 				}
 				//TODO ako se dogodi iznimka zatvori konekciju i to je to
@@ -247,12 +341,17 @@ public class SmartHttpServer {
 				
 				internalDispatchRequest(path, true);
 				
-				csocket.close();//TODO staviti u finaly
 				
 			} catch (IOException e) {
 				// TODO catch IOException
 			} catch(Exception e) {
 				// TODO catch expcetion
+			} finally {
+				try {
+					csocket.close();
+				} catch (IOException e) {
+					// TODO catch
+				}
 			}
 		}
 		
@@ -318,22 +417,30 @@ public class SmartHttpServer {
 		}
 		
 		
+		/**
+		 * 	Constructs a header with the given status code and status text and
+		 * 	writes it to the {@link OutputStream} of this {@link ClientWorker}.
+		 * 	@param statusCode Error status code.
+		 * 	@param statusText Text describing status code.
+		 * 	@throws IOException If there is an error while writing to {@link OutputStream}.
+		 */
 		private void sendError(int statusCode, String statusText) throws IOException {
-
-				ostream.write(
-					("HTTP/1.1 " + statusCode + " " + statusText + "\r\n" +
-					"Server: simple java server\r\n" +
-					"Content-Type: text/plain;charset=UTF-8\r\n" +
-					"Content-Length: 0\r\n" +
-					"Connection: close\r\n" +
-					"\r\n").getBytes(StandardCharsets.US_ASCII)
-				);
-				ostream.flush();
-
-			}
-		
+			ostream.write(
+				("HTTP/1.1 " + statusCode + " " + statusText + "\r\n" +
+				"Server: simple java server\r\n" +
+				"Content-Type: text/plain;charset=UTF-8\r\n" +
+				"Content-Length: 0\r\n" +
+				"Connection: close\r\n" +
+				"\r\n").getBytes(StandardCharsets.US_ASCII)
+			);
+			ostream.flush();
+		}	
 	}
 	
+	/**
+	 * 	Main method which creates and starts the server.
+	 * 	@param args Path to server.properties.
+	 */
 	public static void main(String[] args) {
 		if(args.length != 1) {
 			System.out.println("Expected path to server.properties.");
@@ -342,6 +449,7 @@ public class SmartHttpServer {
 		
 		SmartHttpServer server = new SmartHttpServer(args[0]);
 		server.start();
+		System.out.println("Server started at port " + server.port);
 	}
 	
 }
