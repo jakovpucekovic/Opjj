@@ -23,11 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
-import hr.zemris.java.custom.scripting.exec.SmartScriptEngine;
 
 /**
  *	Class which represents a simple http server capable of taking
@@ -67,7 +67,7 @@ public class SmartHttpServer {
 	private Path documentRoot;
 	
 	/**{@link Map} of all paths with their respective {@link IWebWorker}s.*/
-	private Map<String, IWebWorker> workersMap = new HashMap<>();
+	private Map<String, IWebWorker> workersMap = new ConcurrentHashMap<>();
 	
 	/**{@link Map} of current sessions.*/
 	private Map<String, SessionMapEntry> sessions = new ConcurrentHashMap<>();

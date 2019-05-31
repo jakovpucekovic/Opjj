@@ -1,7 +1,7 @@
 package hr.fer.zemris.java.custom.scripting.demo;
 
-import hr.zemris.java.custom.scripting.exec.ObjectMultistack;
-import hr.zemris.java.custom.scripting.exec.ValueWrapper;
+import hr.fer.zemris.java.custom.scripting.exec.ObjectMultistack;
+import hr.fer.zemris.java.custom.scripting.exec.ValueWrapper;
 
 /**
  *	Class which contains an example of using {@link ObjectMultistack}

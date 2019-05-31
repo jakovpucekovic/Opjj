@@ -5,4 +5,4 @@
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-package hr.zemris.java.custom.scripting.exec;
+package hr.fer.zemris.java.custom.scripting.exec;

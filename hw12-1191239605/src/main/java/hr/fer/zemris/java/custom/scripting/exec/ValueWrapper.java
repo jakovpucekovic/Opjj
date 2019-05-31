@@ -1,4 +1,4 @@
-package hr.zemris.java.custom.scripting.exec;
+package hr.fer.zemris.java.custom.scripting.exec;
 
 /**
  *	Class {@link ValueWrapper} which stores a value and 

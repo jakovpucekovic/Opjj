@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
-import hr.zemris.java.custom.scripting.exec.SmartScriptEngine;
 
 /**
  *	Demo class which parses and executes the fibonacci.smscr.

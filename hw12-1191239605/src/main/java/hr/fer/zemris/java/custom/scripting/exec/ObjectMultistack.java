@@ -1,4 +1,4 @@
-package hr.zemris.java.custom.scripting.exec;
+package hr.fer.zemris.java.custom.scripting.exec;
 
 import java.util.EmptyStackException;
 import java.util.HashMap;
