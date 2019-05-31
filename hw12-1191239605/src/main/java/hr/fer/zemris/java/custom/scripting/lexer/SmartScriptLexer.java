@@ -116,6 +116,8 @@ public class SmartScriptLexer {
 					if(data[currentIndex + 1] == '$') {
 						break;							
 					}
+					text.append('{');
+					currentIndex++;
 				}
 			} 
 			/*Allow escaping a backslash or { with a backslash.*/

@@ -13,29 +13,55 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- *	RequestContext TODO javadoc
+ *	Class which represents a request from the user to the
+ *	{@link SmartHttpServer}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
 public class RequestContext {
 
+	/**Output stream.*/
 	private OutputStream outputStream;
+	
+	/**Charset in which the the data should be written to outputStream.*/
 	private Charset charset;
 	
+	/**Encoding from which the charset is deduced.*/
 	private String encoding;
+	
+	/**Status code of the response header*/
 	private int statusCode;
+	
+	/**Status text of the response header*/
 	private String statusText;
+	
+	/**Mime type of the reponse header*/
 	private String mimeType;
+	
+	/**Length of the content which is sent.*/
 	private Long contentLength;
 	
+	/**{@link Map} of parameters.*/
 	private Map<String, String> parameters;
+
+	/**{@link Map} of temporary parameters.*/
 	private Map<String, String> temporaryParameters;
+	
+	/**Map of persistent parameters.*/
 	private Map<String, String> persistentParameters;
+	
+	/**{@link List} of output {@link RCCookie}s.*/
 	private List<RCCookie> outputCookies;
+
+	/**Flag signaling whether the header was already generated and sent.*/
 	private boolean headerGenerated;
 	
+	/**{@link IDispatcher} which can dispatch another request.*/
 	private IDispatcher dispatcher;
+	
+	/**Session id*/
+	private String sessionID;
 	
 	
 	/**
@@ -50,8 +76,9 @@ public class RequestContext {
 			OutputStream outputStream,
 			Map<String, String> parameters,
 			Map<String, String> persistentParameters,
-			List<RCCookie> outputCookies) {
-		this(outputStream, parameters, persistentParameters, outputCookies, null, null);
+			List<RCCookie> outputCookies,
+			String sessionId) {
+		this(outputStream, parameters, persistentParameters, outputCookies, null, null, sessionId);
 	}
 	
 	/**
@@ -69,7 +96,8 @@ public class RequestContext {
 						  Map<String,String> persistentParameters,
 						  List<RCCookie> outputCookies,
 						  Map<String,String> temporaryParameters,
-						  IDispatcher dispatcher) {
+						  IDispatcher dispatcher,
+						  String sessionId) {
 		
 		Objects.requireNonNull(outputStream);
 		this.outputStream = outputStream;
@@ -87,7 +115,7 @@ public class RequestContext {
 		this.outputCookies = outputCookies == null ? new ArrayList<>() : outputCookies ;
 		this.dispatcher = dispatcher;
 		this.temporaryParameters = temporaryParameters == null ? new HashMap<>() : temporaryParameters;
-		//TODO kako iskoristiti danu mapu, a ne raditi kopiju?
+		this.sessionID = sessionId;
 	}
 	
 	/**
@@ -221,10 +249,10 @@ public class RequestContext {
 	
 	/**
 	 * 	Returns an identifier which is unique for the current user session.
-	 * 	@return ALWAYS RETURNS EMPTY STRING. TODO javadoc
+	 * 	@return sessionID
 	 */
 	public String getSessionID() {
-		return "";
+		return sessionID;
 	}
 	
 	/**
@@ -349,21 +377,24 @@ public class RequestContext {
 	}
 	
 	
-	
-	
 	/**
-	 * 	TODO javadoc
+	 * 	Class which models a {@link RequestContext} cookie
+	 *  which holds information on the {@link RequestContext}.
 	 */
 	public static class RCCookie{
 				
 		/**Name of the {@link RCCookie}.*/
 		private String name;
+		
 		/**Value of the {@link RCCookie}.*/
 		private String value;
+		
 		/**Domain of the {@link RCCookie}.*/
 		private String domain;
+		
 		/**Path of the {@link RCCookie}.*/
 		private String path;
+		
 		/**Maximum age of the {@link RCCookie}.*/
 		private Integer maxAge;
 		
@@ -391,6 +422,7 @@ public class RequestContext {
 		public String getName() {
 			return name;
 		}
+		
 		/**
 		 * 	Returns the value of the {@link RCCookie}.
 		 * 	@return the value of the {@link RCCookie}.
@@ -398,6 +430,7 @@ public class RequestContext {
 		public String getValue() {
 			return value;
 		}
+		
 		/**
 		 * 	Returns the domain of the {@link RCCookie}.
 		 * 	@return the domain of the {@link RCCookie}.
@@ -405,6 +438,7 @@ public class RequestContext {
 		public String getDomain() {
 			return domain;
 		}
+		
 		/**
 		 * 	Returns the path of the {@link RCCookie}.
 		 * 	@return the path of the {@link RCCookie}.
@@ -412,6 +446,7 @@ public class RequestContext {
 		public String getPath() {
 			return path;
 		}
+		
 		/**
 		 * 	Returns the maxAge of the {@link RCCookie}.
 		 * 	@return the maxAge of the {@link RCCookie}.
@@ -419,7 +454,6 @@ public class RequestContext {
 		public Integer getMaxAge() {
 			return maxAge;
 		}
-	
 	}
 	
 }

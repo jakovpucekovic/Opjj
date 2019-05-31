@@ -15,14 +15,17 @@ import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 import hr.zemris.java.custom.scripting.exec.SmartScriptEngine;
 
 /**
- *	Demo3 TODO javadoc
+ *	Demo class which parses and executes the brojPoziva.smscr.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class Demo3 {
 
+	/**
+	 * 	Main method which run the program.
+	 * 	@param args None.
+	 */
 	public static void main(String[] args) {
 		String documentBody = readFromDisk("./webroot/scripts/brojPoziva.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
@@ -30,17 +33,21 @@ public class Demo3 {
 		List<RCCookie> cookies = new ArrayList<>();
 		persistentParameters.put("brojPoziva", "3");
 		RequestContext rc = new RequestContext(System.out, parameters, persistentParameters,
-		cookies);
+		cookies, null);
 		
 		// create engine and execute it
 		new SmartScriptEngine(
 			new SmartScriptParser(documentBody).getDocumentNode(),
-			new RequestContext(System.out, parameters, persistentParameters, cookies)
-		).execute();//TODO fali novi red nakon 3
+			rc
+		).execute();
 		System.out.println("Vrijednost u mapi: "+rc.getPersistentParameter("brojPoziva"));
 	}
 
-	
+	/**
+	 *  Reads the file at the given path.
+	 * 	@param path Path to the file to read.
+	 * 	@return Read file as {@link String}.
+	 */
 	private static String readFromDisk(String path) {
 		Path p = Paths.get(path);
 		if(!Files.exists(p)) {
@@ -52,8 +59,6 @@ public class Demo3 {
 		} catch (IOException ex) {
 			throw new IllegalArgumentException("Error while reading");
 		}
-		
-		
 		return doc;
 	}
 	

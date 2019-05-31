@@ -15,14 +15,17 @@ import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 import hr.zemris.java.custom.scripting.exec.SmartScriptEngine;
 
 /**
- *	Demo2 TODO javadoc
+ *	Demo class which parses and executes the zbrajanje.smscr.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class Demo2 {
 
+	/**
+	 * 	Main method which run the program.
+	 * 	@param args None.
+	 */
 	public static void main(String[] args) {
 		String documentBody = readFromDisk("./webroot/scripts/zbrajanje.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
@@ -34,11 +37,15 @@ public class Demo2 {
 		// create engine and execute it
 		new SmartScriptEngine(
 			new SmartScriptParser(documentBody).getDocumentNode(),
-			new RequestContext(System.out, parameters, persistentParameters, cookies)
+			new RequestContext(System.out, parameters, persistentParameters, cookies, null)
 		).execute();
 	}
 
-	
+	/**
+	 *  Reads the file at the given path.
+	 * 	@param path Path to the file to read.
+	 * 	@return Read file as {@link String}.
+	 */
 	private static String readFromDisk(String path) {
 		Path p = Paths.get(path);
 		if(!Files.exists(p)) {
@@ -49,11 +56,7 @@ public class Demo2 {
 			doc = Files.readString(p);
 		} catch (IOException ex) {
 			throw new IllegalArgumentException("Error while reading");
-		}
-		
-		
+		}	
 		return doc;
-	}
-	
-	
+	}	
 }

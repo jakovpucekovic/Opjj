@@ -1,0 +1,53 @@
+{$= "text/html" @setMimeType $}
+<!DOCTYPE html>
+<html>
+ <head>
+  <h1>Hello there.</h1>
+  <h2>Wanna try some commands?</h2>
+  <style>
+   body {background-color: #{$= "background" "7F7F7F" @tparamGet $} ;}
+  </style>
+ </head>
+ <body>
+   <table>
+   	<tr><th>Scripts</th></tr>
+	<tr><td><a href="http://www.localhost.com:5721/scripts/osnovni.smscr">Osnovni</a></td></tr> 
+	<tr><td><a href="http://www.localhost.com:5721/scripts/brojPoziva.smscr">Broj poziva</a></td></tr> 
+	<tr><td><a href="http://www.localhost.com:5721/scripts/fibonaccih.smscr">Fibonacci</a></td></tr> 
+	
+	<tr><br></tr>
+	
+	<tr><th>Workers</th></tr>
+	<tr><td><a href="http://www.localhost.com:5721/hello">HelloWorker</a></td></tr> 
+	<tr><td><a href="http://www.localhost.com:5721/cw">CircleWorker</a></td></tr> 
+   </table>
+    
+   <br>
+    
+   <form action="http://www.localhost.com:5721/ext/SumWorker">
+   a:<br>
+   <input type="text" name="a" value="1">
+   <br>
+   b:<br>
+   <input type="text" name="b" value="2">
+   <br><br>
+   <input type="submit" value="Submit">
+   </form> 
+   
+   <br>
+   
+   <p>Select color<p>
+   <select name="bgcolor" form="bgcolor">
+  	<option value="FFFFFF">White</option>
+  	<option value="FFA500">Orange</option>
+  	<option value="FF0000">Red</option>
+  	<option value="00FF00">Green</option>
+   </select>
+   <form action="http://www.localhost.com:5721/setbgcolor" id="bgcolor">
+   <input type="submit" value="Submit">
+   </form>
+   
+   
+ </body>
+</html>
+

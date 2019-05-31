@@ -15,10 +15,12 @@ import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
 import hr.fer.zemris.java.custom.scripting.nodes.INodeVisitor;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
+import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext;
 
 /**
- *	SmartScriptEngine TODO javadoc
+ *	Class which executes a smart script previously parsed by
+ * 	{@link SmartScriptParser} by using the vistor pattern.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -51,7 +53,6 @@ public class SmartScriptEngine {
 		multistack = new ObjectMultistack();
 		visitor = new SmartVisitor();
 	}
-	//TODO exceptions
 	
 	/**
 	 *	Executes the smart script given in the form of nodes.
@@ -103,11 +104,9 @@ public class SmartScriptEngine {
 			while(multistack.peek(varName).numCompare(end.getValue()) <= 0) {
 				for(int i = 0; i< node.numberOfChildren(); ++i) {
 					node.getChild(i).accept(visitor);
-				}
-				
+				}	
 				multistack.peek(varName).add(step.getValue());
 			}
-			
 			multistack.pop(varName);
 		}
 
@@ -130,8 +129,9 @@ public class SmartScriptEngine {
 				if(el instanceof ElementVarible) {
 					if(multistack.peek(((ElementVarible) el).getName()) != null) {
 						stack.push(multistack.peek(((ElementVarible)el).getName()).getValue());
+					} else {
+						throw new RuntimeException("Variable doesn't exist");
 					}
-					//TODO throw ako nema takve varijable
 				}
 				if(el instanceof ElementOperator) {
 					applyOperator((ElementOperator)el, stack);

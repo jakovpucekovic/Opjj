@@ -13,14 +13,19 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParserException;
 
 /**
- *	TreeWriter TODO javadoc
+ *	Class which parses a smart script using the {@link SmartScriptParser}
+ *	and reproduces the parsed document using the visitor pattern to the
+ *	standard output.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class TreeWriter {
 
+	/**
+	 * 	Main function which runs the program.
+	 * 	@param args Path to smart script file to parse.	
+	 */
 	public static void main(String[] args) {
 		if(args.length != 1) {
 			System.out.println("Expected only 1 argument.");
@@ -48,6 +53,11 @@ public class TreeWriter {
 		
 	}
 
+	
+	/**
+	 * 	Implementation of {@link INodeVisitor} which writes
+	 * 	the nodes to stdout.
+	 */
 	private static class WriterVisitor implements INodeVisitor{
 
 		/**

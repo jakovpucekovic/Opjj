@@ -37,6 +37,8 @@ public class CircleWorker implements IWebWorker{
 		g2d.dispose();
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		
+		context.setMimeType("image/png");
 		try {
 			ImageIO.write(bim, "png", bos);
 			context.write(bos.toByteArray());

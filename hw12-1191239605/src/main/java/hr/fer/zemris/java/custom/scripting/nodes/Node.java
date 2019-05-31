@@ -55,7 +55,11 @@ public abstract class Node {
 		return (Node) children.get(index);
 	}
 	
-	//TODO javadoc
+	/**
+	 *	Accepts a {@link INodeVisitor} and should call the appropriate
+	 *	visit method of the given {@link INodeVisitor}.
+	 *	@param visitor {@link INodeVisitor} to visit this {@link Node}. 
+	 */
 	public abstract void accept(INodeVisitor visitor);
 	
 }

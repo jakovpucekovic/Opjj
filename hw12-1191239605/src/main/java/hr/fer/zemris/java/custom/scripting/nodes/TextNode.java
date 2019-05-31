@@ -26,7 +26,7 @@ public class TextNode extends Node {
 	 *	@return The stored text.
 	 */
 	public String getText() {
-		return text.replace("\\", "\\\\").replace("{", "\\{");
+		return text.replace("\\", "\\\\");
 	}
 
 	/**

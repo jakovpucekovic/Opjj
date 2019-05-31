@@ -10,14 +10,12 @@ import java.util.HashMap;
 import hr.fer.zemris.java.webserver.RequestContext;
 
 /**
- *	DemoRequestContext TODO javadoc
+ *	Demo class which showcases the usage of class {@link RequestContext}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class DemoRequestContext {
-
 	
 	public static void main(String[] args) throws IOException {
 		demo1("primjer1.txt", "ISO-8859-2");
@@ -30,7 +28,8 @@ public class DemoRequestContext {
 		OutputStream os = Files.newOutputStream(Paths.get(filePath));
 		RequestContext rc = new RequestContext(os, new HashMap<String, String>(),
 								new HashMap<String, String>(),
-								new ArrayList<RequestContext.RCCookie>());
+								new ArrayList<RequestContext.RCCookie>(),
+								null);
 		rc.setEncoding(encoding);
 		rc.setMimeType("text/plain");
 		rc.setStatusCode(205);
@@ -47,7 +46,8 @@ public class DemoRequestContext {
 		OutputStream os = Files.newOutputStream(Paths.get(filePath));
 		RequestContext rc = new RequestContext(os, new HashMap<String, String>(),
 								new HashMap<String, String>(),
-								new ArrayList<RequestContext.RCCookie>());
+								new ArrayList<RequestContext.RCCookie>(),
+								null);
 		rc.setEncoding(encoding);
 		rc.setMimeType("text/plain");
 		rc.setStatusCode(205);
