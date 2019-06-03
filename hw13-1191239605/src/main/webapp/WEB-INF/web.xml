@@ -12,14 +12,4 @@
      Prva aplikacija
   </description>
 
-  <servlet>
-  	<servlet-name>prviServlet</servlet-name>
-  	<servlet-class>hr.fer.zemris.java.p11.servleti.PrviServlet</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-  	<servlet-name>prviServlet</servlet-name>
-  	<url-pattern>/prvi</url-pattern>
-  </servlet-mapping>
-
 </web-app>
