@@ -16,5 +16,7 @@
 	</form>
 	<br>
 	<a href="${pageContext.request.contextPath}/stories/funny.jsp">Click here for a funny story</a>
+	<br>
+	<a href="${pageContext.request.contextPath}/appinfo.jsp">Current running time</a>	
 </body>
 </html>

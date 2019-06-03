@@ -8,7 +8,7 @@
 </head>
 <body bgcolor="${pickedBgCol}">
   <h1>OS usage</h1>
-  <p>Here are the results of OS usage in a survey that we ompleted.</p>
+  <p>Here are the results of OS usage in a survey that we completed.</p>
 
   <img alt="OS usage" src="${pageContext.request.contextPath}/reportImage">
 	
