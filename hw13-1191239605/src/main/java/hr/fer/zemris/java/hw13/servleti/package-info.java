@@ -8,3 +8,4 @@ package hr.fer.zemris.java.hw13.servleti;
 
 //TODO trebamo li raditi onaj security dio sto je prof spominjao na predavanju?	
 //TODO cemu sluzi session=true u colors.jsp
+//TODO napisi funny story

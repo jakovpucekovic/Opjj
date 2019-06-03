@@ -14,6 +14,7 @@
 	  Završni kut:<br><input type="number" name="b" min="0" max="360" step="1" value="360"><br>
 	  <input type="submit" value="Tabeliraj"><input type="reset" value="Reset">
 	</form>
-	
+	<br>
+	<a href="${pageContext.request.contextPath}/stories/funny.jsp">Click here for a funny story</a>
 </body>
 </html>
