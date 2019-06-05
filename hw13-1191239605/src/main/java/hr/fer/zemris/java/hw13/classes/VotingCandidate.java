@@ -97,8 +97,13 @@ public class VotingCandidate {
 	public void setVotes(int votes) {
 		this.votes = votes;
 	}
-	
-	
-	
+//TODO prikazi linkove samo pobjednicima
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "(" + id + ", " + name + ", " + votes + ")";
+	}
 	
 }

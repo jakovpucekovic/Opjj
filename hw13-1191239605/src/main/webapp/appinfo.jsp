@@ -4,9 +4,14 @@
     pageEncoding="UTF-8" session="true"%>
     
 <%! private void calculateTime(javax.servlet.jsp.JspWriter out, long startTime) throws java.io.IOException {
-		Date timeDifference = new Date(System.currentTimeMillis() - startTime);
-		DateFormat format = new SimpleDateFormat("dd 'days' HH 'hours' mm 'minutes' ss 'seconds and' SSS 'miliseconds'");
-		out.write(format.format(timeDifference));
+		long timeDifference = System.currentTimeMillis() - startTime;
+		String format = "%d days %d hours %d minutes %d seconds and %d miliseconds";
+		//long days = timeDifference / (24*60*60*1000);
+		//long hours = timeDifference - (days*24*60*60*1000);
+		long minutes = timeDifference / 60 * 1000;
+		long seconds = (timeDifference - minutes * 60 * 1000)/ 1000;
+		long miliseconds = timeDifference - seconds * 1000;
+		//out.write(String.format(format, days, hours, minutes, seconds, miliseconds));
 	} 
 %>    
 

@@ -30,7 +30,6 @@ public class TrigonometricServlet extends HttpServlet {
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 			String a = req.getParameter("a");
 			String b = req.getParameter("b");
-			//TODO sto ako su a i b double
 			int varA = 0;
 			int varB = 360;
 			

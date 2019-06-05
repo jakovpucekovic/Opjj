@@ -26,9 +26,7 @@ public class SetColorServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String bgColor = req.getParameter("bgcolor");
 		req.getSession().setAttribute("pickedBgCol", bgColor);
-		//TODO jel postavljam na session ili na request
 		req.getRequestDispatcher("/index.jsp").forward(req, resp);
-		//TODO zasto se ne promijeni url kad napravim forward
 	}
 	
 }

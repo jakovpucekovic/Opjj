@@ -18,7 +18,7 @@ public class RunningTimeListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent sce) {
 		sce.getServletContext().setAttribute("startingTime", System.currentTimeMillis());
 	}
-
+//TODO popravi
 	/**
 	 *	{@inheritDoc}
 	 */

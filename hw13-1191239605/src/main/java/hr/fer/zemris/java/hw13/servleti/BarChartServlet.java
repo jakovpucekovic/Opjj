@@ -23,8 +23,6 @@ import org.jfree.data.general.PieDataset;
  * 	@version 1.0
  */
 @WebServlet(name="barchart", urlPatterns={"/reportImage"})
-//TODO jel bi on trebao ici u WEB-INF tako da bude sakriven od korisnika
-//TODO jel se on treba svaki puta generirati ovako, ili se treba spremiti pa loadati?
 public class BarChartServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
