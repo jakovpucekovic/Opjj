@@ -1,11 +1,7 @@
 package hr.fer.zemris.java.hw13.servleti;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -56,7 +52,7 @@ public class GlasanjePieChartServlet extends HttpServlet {
 	    String rezultatiFileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
 		String definicijaFileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-definicija.txt");
 		
-		List <VotingCandidate> results = VotingCandidate.loadCandidates(definicijaFileName, rezultatiFileName);
+		List <VotingCandidate> results = VotingCandidate.loadCandidatesAndResults(definicijaFileName, rezultatiFileName);
 		
 		DefaultPieDataset dataset = new DefaultPieDataset();
 		for(var entry : results) {

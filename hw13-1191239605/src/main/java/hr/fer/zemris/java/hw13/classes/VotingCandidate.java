@@ -113,12 +113,8 @@ public class VotingCandidate {
 		return "(" + id + ", " + name + ", " + votes + ")";
 	}
 	
-	public static List<VotingCandidate> loadCandidates(String candidatesPath, String resultsPath) throws IOException{	
-		List<VotingCandidate> candidates = Files.readAllLines(Paths.get(candidatesPath))
-												.stream()
-												.map(x->new VotingCandidate(x))
-												.sorted((a,b)-> {return a.getId() - b.getId();})
-												.collect(Collectors.toList());
+	public static List<VotingCandidate> loadCandidatesAndResults(String candidatesPath, String resultsPath) throws IOException{	
+		List<VotingCandidate> candidates = loadCandidates(candidatesPath);
 		
 		Path filePath = Paths.get(resultsPath);
 		if(!Files.exists(filePath)) {
@@ -139,6 +135,16 @@ public class VotingCandidate {
 			}
 		}
 		
+		return candidates;
+	}
+	
+	//TODO javadoc
+	public static List<VotingCandidate> loadCandidates(String candidatesPath) throws IOException{	
+		List<VotingCandidate> candidates = Files.readAllLines(Paths.get(candidatesPath))
+												.stream()
+												.map(x->new VotingCandidate(x))
+												.sorted((a,b)-> {return a.getId() - b.getId();})
+												.collect(Collectors.toList());
 		return candidates;
 	}
 	

@@ -1,10 +1,7 @@
 package hr.fer.zemris.java.hw13.servleti;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,11 +29,7 @@ public class GlasanjeServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-definicija.txt");
 		
-		List<VotingCandidate> candidates = Files.readAllLines(Paths.get(fileName))
-												.stream()
-												.map(x->new VotingCandidate(x))
-												.sorted((a,b)-> {return a.getId() - b.getId();})
-												.collect(Collectors.toList());
+		List<VotingCandidate> candidates = VotingCandidate.loadCandidates(fileName);
 		req.setAttribute("votingCandidates", candidates);
 		
 		req.getRequestDispatcher("/WEB-INF/pages/glasanjeIndex.jsp").forward(req, resp);
