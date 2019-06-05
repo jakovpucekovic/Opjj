@@ -45,8 +45,9 @@ public class GlasanjePieChartServlet extends HttpServlet {
 		resp.getOutputStream().close();
 	}
 	
+	//TODO napravi da nije proziran toliko
 	/**
-	 * Creates a sample dataset
+	 * Creates a sample dataset TODO javadoc
 	 */
 	private  PieDataset createDataset(HttpServletRequest req) throws IOException {
 	    String rezultatiFileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");

@@ -43,68 +43,69 @@ public class VotingCandidate {
 	
 	
 	/**
-	 * 	Returns the id of the VotingCandidate.
-	 * 	@return the id of the VotingCandidate.
+	 * 	Returns the id of the {@link VotingCandidate}.
+	 * 	@return the id of the {@link VotingCandidate}.
 	 */
 	public int getId() {
 		return id;
 	}
+	
 	/**
-	 * 	Sets the id of the VotingCandidate.
-	 * 	@param id the id to set.
+	 * 	Sets the id of the {@link VotingCandidate}.
+	 * 	@param id The id to set.
 	 */
 	public void setId(int id) {
 		this.id = id;
 	}
+	
 	/**
-	 * 	Returns the name of the VotingCandidate.
-	 * 	@return the name of the VotingCandidate.
+	 * 	Returns the name of the {@link VotingCandidate}.
+	 * 	@return the name of the {@link VotingCandidate}.
 	 */
 	public String getName() {
 		return name;
 	}
+	
 	/**
-	 * 	Sets the name of the VotingCandidate.
-	 * 	@param name the name to set.
+	 * 	Sets the name of the {@link VotingCandidate}.
+	 * 	@param name The name to set.
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	/**
-	 * 	Returns the songLink of the VotingCandidate.
-	 * 	@return the songLink of the VotingCandidate.
+	 * 	Returns the songLink of the {@link VotingCandidate}.
+	 * 	@return the songLink of the {@link VotingCandidate}.
 	 */
 	public String getSongLink() {
 		return songLink;
 	}
 
-
-
 	/**
-	 * 	Sets the songLink of the VotingCandidate.
-	 * 	@param songLink the songLink to set.
+	 * 	Sets the songLink of the {@link VotingCandidate}.
+	 * 	@param songLink The songLink to set.
 	 */
 	public void setSongLink(String songLink) {
 		this.songLink = songLink;
 	}
 
-
-
 	/**
-	 * 	Returns the votes of the VotingCandidate.
-	 * 	@return the votes of the VotingCandidate.
+	 * 	Returns the votes of the {@link VotingCandidate}.
+	 * 	@return the votes of the {@link VotingCandidate}.
 	 */
 	public int getVotes() {
 		return votes;
 	}
+	
 	/**
-	 * 	Sets the votes of the VotingCandidate.
-	 * 	@param votes the votes to set.
+	 * 	Sets the votes of the {@link VotingCandidate}.
+	 * 	@param votes The votes to set.
 	 */
 	public void setVotes(int votes) {
 		this.votes = votes;
 	}
-//TODO prikazi linkove samo pobjednicima
+
 	/**
 	 *	{@inheritDoc}
 	 */

@@ -1,3 +1,5 @@
+<%@page import="hr.fer.zemris.java.hw13.classes.VotingCandidate"%>
+<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" session="true"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -36,10 +38,19 @@
 	<p>Primjeri pjesama pobjedničkih bendova:</p>
 	<ul>
 	
-	<c:forEach var="candidate" items="${votingResults}">
-		<li><a href="${candidate.songLink}">${candidate.name}</a></li> 
+	<%
+		List<VotingCandidate> cand = (List<VotingCandidate>) request.getAttribute("votingResults");
+		cand.sort((a,b)-> b.getVotes() - a.getVotes());
+		int max = cand.get(0).getVotes();
+		for(VotingCandidate candidate : cand){
+			if(candidate.getVotes() != max){
+				break;
+			}
+			%><li><a href="<%=candidate.getSongLink()%>"><%=candidate.getName()%></a></li><% 
+		}
+	%>
 	
-	</c:forEach>
+	
 	
 	</ul>
 
