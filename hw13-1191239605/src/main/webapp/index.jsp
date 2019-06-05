@@ -17,6 +17,9 @@
 	<br>
 	<a href="${pageContext.request.contextPath}/stories/funny.jsp">Click here for a funny story</a>
 	<br>
-	<a href="${pageContext.request.contextPath}/appinfo.jsp">Current running time</a>	
+	<a href="${pageContext.request.contextPath}/appinfo.jsp">Current running time</a>
+	<br>
+	<a href="${pageContext.request.contextPath}/powers?a=1&b=100&n=3">Download powers.xls</a>
+	
 </body>
 </html>
