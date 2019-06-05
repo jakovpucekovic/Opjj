@@ -1,20 +1,25 @@
 package hr.fer.zemris.java.hw13.classes;
 
 /**
- *	TrigonometricContainer TODO javadoc
+ *	Class which calculates and stores the sin and cos of a number.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
 public class TrigonometricContainer {
 
+	/**Stored value*/
 	private int value;
+
+	/**Sin of the value*/
 	private double sin;
+	
+	/**Cos of the value*/
 	private double cos;
 	
 	/**
 	 * 	Constructs a new {@link TrigonometricContainer}.
-	 * 	@param value
+	 * 	@param value Value to store.
 	 */
 	public TrigonometricContainer(int value) {
 		super();

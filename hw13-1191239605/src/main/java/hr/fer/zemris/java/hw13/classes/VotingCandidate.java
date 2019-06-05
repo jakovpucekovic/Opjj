@@ -8,23 +8,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *	VotingCandidate TODO javadoc
+ *	Class which represents a candidate for which can be voted.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class VotingCandidate {
 
+	/**Unique id of the candidate*/
 	private int id;
 	
+	/**Name of the candidate*/
 	private String name;
 	
+	/**Link to a song from the candidate*/
 	private String songLink;
 	
+	/**Number of votes the candidate has recieved*/
 	private int votes;
 	
-	
+	/**
+	 *	Constructs a new {@link VotingCandidate} from the given {@link String}.
+	 *	@param s {@link String} which contains a valid {@link VotingCandidate}.
+	 *	@throws IllegalArgumentException If a {@link VotingCandidate} can not be created
+	 *									 from the given {@link String}. 
+	 */
 	public VotingCandidate(String s) {
 		String[] splitted = s.split("\t+");
 		if(splitted.length != 3) {
@@ -39,8 +47,6 @@ public class VotingCandidate {
 		this.name = splitted[1];
 		this.songLink = splitted[2];
 	}
-	
-	
 	
 	/**
 	 * 	Returns the id of the {@link VotingCandidate}.
@@ -114,6 +120,13 @@ public class VotingCandidate {
 		return "(" + id + ", " + name + ", " + votes + ")";
 	}
 	
+	/**
+	 * 	Loads the candidates and results from the given paths and creates
+	 * 	a {@link List} of {@link VotingCandidate}s.
+	 * 	@param candidatesPath Path to file which contains candidate data.
+	 * 	@param resultsPath Path to file which contains voting results data.
+	 * 	@return {@link List} of {@link VotingCandidate}s.
+	 */
 	public static List<VotingCandidate> loadCandidatesAndResults(String candidatesPath, String resultsPath) throws IOException{	
 		List<VotingCandidate> candidates = loadCandidates(candidatesPath);
 		
@@ -125,6 +138,7 @@ public class VotingCandidate {
 									 .stream()
 									 .map(x->x.split("\t+"))
 									 .collect(Collectors.toList());
+		//add votes to VotingCandidates with valid id
 		for(var vote : votes) {
 			int voteId = Integer.parseInt(vote[0]);
 			int voteNumber = Integer.parseInt(vote[1]);
@@ -139,7 +153,12 @@ public class VotingCandidate {
 		return candidates;
 	}
 	
-	//TODO javadoc
+	/**
+	 * 	Loads the candidates from the given paths and creates
+	 * 	a {@link List} of {@link VotingCandidate}s.
+	 * 	@param candidatesPath Path to file which contains candidate data.
+	 * 	@return {@link List} of {@link VotingCandidate}s.
+	 */
 	public static List<VotingCandidate> loadCandidates(String candidatesPath) throws IOException{	
 		List<VotingCandidate> candidates = Files.readAllLines(Paths.get(candidatesPath))
 												.stream()

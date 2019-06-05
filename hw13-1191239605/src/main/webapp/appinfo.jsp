@@ -6,12 +6,12 @@
 <%! private void calculateTime(javax.servlet.jsp.JspWriter out, long startTime) throws java.io.IOException {
 		long timeDifference = System.currentTimeMillis() - startTime;
 		String format = "%d days %d hours %d minutes %d seconds and %d miliseconds";
-		//long days = timeDifference / (24*60*60*1000);
-		//long hours = timeDifference - (days*24*60*60*1000);
-		long minutes = timeDifference / 60 * 1000;
-		long seconds = (timeDifference - minutes * 60 * 1000)/ 1000;
-		long miliseconds = timeDifference - seconds * 1000;
-		//out.write(String.format(format, days, hours, minutes, seconds, miliseconds));
+		long days = timeDifference / (24*60*60*1000);
+		long hours = (timeDifference - (days*24*60*60*1000))/(60*60*1000);
+		long minutes = (timeDifference - (days*24*60*60*1000) - (hours*60*60*1000))/(60*1000);
+		long seconds = (timeDifference - (days*24*60*60*1000) - (hours*60*60*1000) - (minutes*60*1000))/(1000);
+		long miliseconds = timeDifference - (days*24*60*60*1000) - (hours*60*60*1000) - (minutes*60*1000) - seconds*1000;
+		out.write(String.format(format, days, hours, minutes, seconds, miliseconds));
 	} 
 %>    
 

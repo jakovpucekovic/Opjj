@@ -8,7 +8,9 @@
 </head>
 <body bgcolor="${pickedBgCol}">
 	<a href="${pageContext.request.contextPath}/colors.jsp">Background color chooser</a>
-	<br>	
+	<br>
+	<a href="${pageContext.request.contextPath}/trigonometric?a=0&b=90">Click here for trigonometric values from 0 to 90 degrees</a>	
+	<br>
 	<form action="trigonometric" method="GET">
  	  Početni kut:<br><input type="number" name="a" min="0" max="360" step="1" value="0"><br>
 	  Završni kut:<br><input type="number" name="b" min="0" max="360" step="1" value="360"><br>

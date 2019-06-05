@@ -17,7 +17,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 
 /**
- *	BarChartServlet TODO javadoc
+ * 	Servlet which creates a sample pie chart.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -43,9 +43,10 @@ public class BarChartServlet extends HttpServlet {
 	}
 	
 	/**
-	 * Creates a sample dataset
+	 * 	Creates a sample dataset.
+	 * 	@return {@link PieDataset} The created dataset.
 	 */
-	private  PieDataset createDataset() {
+	private PieDataset createDataset() {
 	    DefaultPieDataset result = new DefaultPieDataset();
 	    result.setValue("Linux", 64);
 	    result.setValue("Mac", 27);
@@ -55,7 +56,9 @@ public class BarChartServlet extends HttpServlet {
 	}
 		
 	/**
-	 * Creates a chart
+	 * 	Creates a chart with the given title from the given dataset.
+	 * 	@param dataset {@link PieDataset} which the pie chart shows.
+	 * 	@param title Title of the chart.
 	 */
 	private JFreeChart createChart(PieDataset dataset, String title) {
 		

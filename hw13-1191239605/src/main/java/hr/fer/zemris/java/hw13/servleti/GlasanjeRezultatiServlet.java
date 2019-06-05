@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import hr.fer.zemris.java.hw13.classes.VotingCandidate;
 
 /**
- *	GlasanjeRezultatiServlet TODO javadoc
+ *	Servlet which loads voting candidates and results and sets the appropriate
+ *	attribute.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

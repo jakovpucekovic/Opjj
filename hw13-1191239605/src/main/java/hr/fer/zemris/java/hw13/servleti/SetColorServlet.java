@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *	SetColorServlet TODO javadoc
+ *	Servlet which chages the <code>pickedBgCol</code> attribute to the
+ *	picked color.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

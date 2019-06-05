@@ -20,7 +20,7 @@ import org.jfree.data.general.PieDataset;
 import hr.fer.zemris.java.hw13.classes.VotingCandidate;
 
 /**
- *	BarChartServlet TODO javadoc
+ *	Servlet which creates a pie chart which shows the voting statistics.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -45,9 +45,11 @@ public class GlasanjePieChartServlet extends HttpServlet {
 		resp.getOutputStream().close();
 	}
 	
-	//TODO napravi da nije proziran toliko
+
 	/**
-	 * Creates a sample dataset TODO javadoc
+	 * 	Creates a sample dataset.
+	 * 	@param req {@link HttpServletRequest} from which the paths to files which should be read can be gotten.
+	 * 	@return The created dataset.
 	 */
 	private  PieDataset createDataset(HttpServletRequest req) throws IOException {
 	    String rezultatiFileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
@@ -65,7 +67,10 @@ public class GlasanjePieChartServlet extends HttpServlet {
 	}
 		
 	/**
-	 * Creates a chart
+	 * 	Creates a chart with the given title from the given {@link PieDataset}.
+	 * 	@param dataset {@link PieDataset} which the chart shows.
+	 * 	@param title Title of the chart.
+	 * 	@return The created PieChart.
 	 */
 	private JFreeChart createChart(PieDataset dataset, String title) {
 		

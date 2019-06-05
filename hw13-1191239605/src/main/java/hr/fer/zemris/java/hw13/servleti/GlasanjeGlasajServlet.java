@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *	GlasanjeGlasajServlet TODO javadoc
+ *	Servlet which does the actual voting.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -30,6 +30,7 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		//load voting results
 		String fileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
 		Path filePath = Paths.get(fileName);
 		if(!Files.exists(filePath)) {
@@ -42,6 +43,7 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 									 .collect(Collectors.toList());
 		String newVote = req.getParameter("id");
 		
+		//add vote
 		boolean added = false;
 		if(newVote != null) {
 			for(var candidate : votes) {
@@ -57,6 +59,7 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 			}
 		}
 		
+		//write changes
 		Files.writeString(filePath, "");
 		for(var candidate : votes) {
 			Files.writeString(filePath, candidate[0] + "\t" + candidate[1] + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);

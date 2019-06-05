@@ -33,6 +33,8 @@
 	<img alt="Pie-chart" src="${pageContext.request.contextPath}/glasanje-grafika">
 	
 	<h2>Rezultati u XLS formatu</h2>
+	<p>Rezultati u XLS formatu dostupni su <a href="${pageContext.request.contextPath}/glasanje-xls">ovdje</a></p>
+
 	
 	<h2>Razno</h2>
 	<p>Primjeri pjesama pobjedničkih bendova:</p>

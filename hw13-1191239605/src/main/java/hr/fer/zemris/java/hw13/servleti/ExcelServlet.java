@@ -1,6 +1,5 @@
 package hr.fer.zemris.java.hw13.servleti;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -14,7 +13,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
- *	ExcelServlet TODO javadoc
+ *	Servlet which creates a sample xls document which contains numbers in the given range
+ *	and their powers.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -30,6 +30,7 @@ public class ExcelServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	
+		//get parameters
 		String a = req.getParameter("a");
 		String b = req.getParameter("b");
 		String n = req.getParameter("n");
@@ -48,7 +49,7 @@ public class ExcelServlet extends HttpServlet {
 			return;
 		}
 		
-		
+		//create xls spreadsheet
 		HSSFWorkbook hwb = new HSSFWorkbook();
 		for(int i = 1; i <= varN; ++i) {
 			HSSFSheet sheet =  hwb.createSheet(Integer.toString(i));
