@@ -1,5 +1,12 @@
 package hr.fer.zemris.java.hw13.classes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  *	VotingCandidate TODO javadoc
  * 
@@ -104,6 +111,35 @@ public class VotingCandidate {
 	@Override
 	public String toString() {
 		return "(" + id + ", " + name + ", " + votes + ")";
+	}
+	
+	public static List<VotingCandidate> loadCandidates(String candidatesPath, String resultsPath) throws IOException{	
+		List<VotingCandidate> candidates = Files.readAllLines(Paths.get(candidatesPath))
+												.stream()
+												.map(x->new VotingCandidate(x))
+												.sorted((a,b)-> {return a.getId() - b.getId();})
+												.collect(Collectors.toList());
+		
+		Path filePath = Paths.get(resultsPath);
+		if(!Files.exists(filePath)) {
+			Files.createFile(filePath);
+		}
+		List<String[]> votes = Files.readAllLines(filePath)
+									 .stream()
+									 .map(x->x.split("\t+"))
+									 .collect(Collectors.toList());
+		for(var vote : votes) {
+			int voteId = Integer.parseInt(vote[0]);
+			int voteNumber = Integer.parseInt(vote[1]);
+			for(var candidate : candidates) {
+				if(voteId == candidate.getId()) {
+					candidate.setVotes(voteNumber);
+					break;
+				}
+			}
+		}
+		
+		return candidates;
 	}
 	
 }

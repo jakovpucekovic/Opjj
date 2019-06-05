@@ -28,6 +28,7 @@
 	</table>
 
 	<h2>Grafički prikaz rezultata</h2>
+	<img alt="Pie-chart" src="${pageContext.request.contextPath}/glasanje-grafika">
 	
 	<h2>Rezultati u XLS formatu</h2>
 	
