@@ -1,5 +1,10 @@
 package hr.fer.zemris.java.p12.dao;
 
+import java.util.List;
+
+import hr.fer.zemris.java.p12.model.Poll;
+import hr.fer.zemris.java.p12.model.VotingCandidate;
+
 /**
  * Sučelje prema podsustavu za perzistenciju podataka.
  * 
@@ -8,21 +13,14 @@ package hr.fer.zemris.java.p12.dao;
  */
 public interface DAO {
 
-//	/**
-//	 * Dohvaća sve postojeće unose u bazi, ali puni samo dva podatka:
-//	 * id i title.
-//	 * 
-//	 * @return listu unosa
-//	 * @throws DAOException u slučaju pogreške
-//	 */
-//	public List<Object> dohvatiOsnovniPopisUnosa() throws DAOException;
-//	
-//	/**
-//	 * Dohvaća Unos za zadani id. Ako unos ne postoji, vraća <code>null</code>.
-//	 * @param id
-//	 * @return
-//	 * @throws DAOException
-//	 */
-//	public Object dohvatiUnos(long id) throws DAOException;
+	List<VotingCandidate> getAllVotingCandidates(long pollId) throws DAOException;
+	
+//	VotingCandidate getVotingCandidate(long id) throws DAOException;
+	
+	List<Poll> getAllPolls() throws DAOException;
+	
+	Poll getPoll(long id) throws DAOException;
+	
+	void addVote(long id) throws DAOException;
 	
 }
