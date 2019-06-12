@@ -60,6 +60,39 @@ public class SQLDAO implements DAO {
 	 *	{@inheritDoc}
 	 */
 	@Override
+	public VotingCandidate getVotingCandidate(long candidateID) throws DAOException {
+		VotingCandidate candidate = new VotingCandidate();
+		Connection con = SQLConnectionProvider.getConnection();
+		PreparedStatement pst = null;
+		try {
+			pst = con.prepareStatement("select id,optionTitle,optionLink,votesCount from PollOptions where ID=?");
+			pst.setLong(1, candidateID);
+			
+			try {
+				ResultSet rs = pst.executeQuery();
+				try {
+					while(rs!=null && rs.next()) {
+						candidate.setId(rs.getLong(1));
+						candidate.setName(rs.getString(2));
+						candidate.setLink(rs.getString(3));
+						candidate.setVotes(rs.getLong(4));
+					}
+				} finally {
+					try { rs.close(); } catch(Exception ignorable) {}
+				}
+			} finally {
+				try { pst.close(); } catch(Exception ignorable) {}
+			}
+		} catch(Exception ex) {
+			throw new DAOException("Pogreška prilikom dohvata korisnika.", ex);
+		}
+		return candidate;
+	}
+	
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
 	public List<Poll> getAllPolls() throws DAOException {
 		List<Poll> polls = new ArrayList<>();
 		Connection con = SQLConnectionProvider.getConnection();
@@ -83,7 +116,7 @@ public class SQLDAO implements DAO {
 				try { pst.close(); } catch(Exception ignorable) {}
 			}
 		} catch(Exception ex) {
-			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
+			throw new DAOException("Pogreška prilikom dohvata liste anketa.", ex);
 		}
 		return polls;
 	
@@ -116,7 +149,7 @@ public class SQLDAO implements DAO {
 				try { pst.close(); } catch(Exception ignorable) {}
 			}
 		} catch(Exception ex) {
-			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
+			throw new DAOException("Pogreška prilikom dohvata ankete.", ex);
 		} 
 		return poll;
 	
@@ -126,33 +159,24 @@ public class SQLDAO implements DAO {
 	 *	{@inheritDoc}
 	 */
 	@Override
-	public void addVote(long id) throws DAOException {
+	public void updateVotingCandidate(VotingCandidate candidate) throws DAOException {
 		Connection con = SQLConnectionProvider.getConnection();
 		PreparedStatement pst = null;
-		PreparedStatement pst2 = null;
 		try {
-			pst = con.prepareStatement("update PollOptions set votesCount=? where id=?");
-			pst.setLong(2, id);
+			pst = con.prepareStatement("update PollOptions set optionTitle=?, optionLink=?, votesCount=? where id=?");
+			pst.setString(1, candidate.getName());
+			pst.setString(2, candidate.getLink());
+			pst.setLong(3, candidate.getVotes());
+			pst.setLong(4, candidate.getId());
 			
-			pst2 = con.prepareStatement("select votesCount from PollOptions where id=?");
-			pst2.setLong(1, id);
-			
-			try {
-				ResultSet rset = pst2.executeQuery();
-				if(!rset.next()) {
-					throw new DAOException("Id doesn't exist");
-				}
-				
-				pst.setLong(1, rset.getLong(1));
-				
+			try {				
 				pst.executeUpdate();
 			} finally {
-				try { pst.close(); pst2.close(); } catch(Exception ignorable) {}
+				try { pst.close(); } catch(Exception ignorable) {}
 			}
 		} catch(Exception ex) {
-			throw new DAOException("Pogreška prilikom dohvata liste korisnika.", ex);
-		}
-		
+			throw new DAOException("Pogreška prilikom updatea kandidata.", ex);
+		}	
 	}
 
 }

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import hr.fer.zemris.java.p12.dao.DAOProvider;
+import hr.fer.zemris.java.p12.model.VotingCandidate;
 
 /**
  *	Servlet which does the actual voting.
@@ -29,8 +30,12 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 		String newVote = req.getParameter("id");
 		String pollID = req.getParameter("pollID");
 		
-		DAOProvider.getDao().addVote(Long.parseLong(newVote));
-				
-		resp.sendRedirect(req.getContextPath() + "/glasanje-rezultati?pollID=" + pollID);
+//		DAOProvider.getDao().addVote(Long.parseLong(newVote));
+
+		VotingCandidate candidate = DAOProvider.getDao().getVotingCandidate(Long.parseLong(newVote));
+		candidate.setVotes(candidate.getVotes() + 1);
+		DAOProvider.getDao().updateVotingCandidate(candidate);
+		
+		resp.sendRedirect(req.getContextPath() + "/servleti/glasanje-rezultati?pollID=" + pollID);
 	}
 }

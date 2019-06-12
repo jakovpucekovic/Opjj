@@ -30,10 +30,10 @@
 	</table>
 
 	<h2>Grafički prikaz rezultata</h2>
-	<img alt="Pie-chart" src="${pageContext.request.contextPath}/glasanje-grafika">
+	<img alt="Pie-chart" src="${pageContext.request.contextPath}/servleti/glasanje-grafika?pollID=${param.pollID}">
 	
 	<h2>Rezultati u XLS formatu</h2>
-	<p>Rezultati u XLS formatu dostupni su <a href="${pageContext.request.contextPath}/glasanje-xls">ovdje</a></p>
+	<p>Rezultati u XLS formatu dostupni su <a href="${pageContext.request.contextPath}/servleti/glasanje-xls?pollID=${param.pollID}">ovdje</a></p>
 
 	
 	<h2>Razno</h2>
@@ -51,8 +51,6 @@
 			%><li><a href="<%=candidate.getLink()%>"><%=candidate.getName()%></a></li><% 
 		}
 	%>
-	
-	
 	
 	</ul>
 

@@ -19,7 +19,7 @@ import hr.fer.zemris.java.p12.model.VotingCandidate;
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-@WebServlet(name="glasanjeRezultati", urlPatterns={"/glasanje-rezultati"})
+@WebServlet(name="glasanjeRezultati", urlPatterns={"/servleti/glasanje-rezultati"})
 public class GlasanjeRezultatiServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

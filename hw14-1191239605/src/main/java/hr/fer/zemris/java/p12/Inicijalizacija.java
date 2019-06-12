@@ -80,22 +80,27 @@ public class Inicijalizacija implements ServletContextListener {
 			DatabaseMetaData dbmd   = con.getMetaData();
 			ResultSet pollsRS 		= dbmd.getTables(null, null, "POLLS", null);
 			ResultSet pollOptionsRS = dbmd.getTables(null, null, "POLLOPTIONS", null);
-			if(!pollsRS.next() || !pollOptionsRS.next()) {
+			//TODO odvoji popunjavanje tablica ako nema nista u njima
+			if(!pollsRS.next()) {
 				createPolls(con);
-				createPollOptions(con);
 
+				
+				Path bandPath = Paths.get(sce.getServletContext().getRealPath("/WEB-INF/band-votes.txt"));				
 				long poll1Id = populatePolls(con, "Glasanje za omiljeni bend", "Od sljedećih bendova, koji Vam je bend najdraži? Kliknite na link kako\n" + 
 						"biste glasali!");
+				populatePollOptions(con, poll1Id, bandPath);
+			}
+
+			if(!pollOptionsRS.next()) {
 				
+				createPollOptions(con);
+					
+					
+					
+				Path seriesPath = Paths.get(sce.getServletContext().getRealPath("/WEB-INF/series-votes.txt"));
 				long poll2Id = populatePolls(con, "Glasanje za omiljene TV serije", "Od sljedećih TV serija, koja Vam je serija najdraža? Kliknite na link kako\n" + 
 						"biste glasali!");
-				
-				Path bandPath = Paths.get(sce.getServletContext().getRealPath("/WEB-INF/band-votes.txt"));
-				Path seriesPath = Paths.get(sce.getServletContext().getRealPath("/WEB-INF/series-votes.txt"));
-				
-				populatePollOptions(con, poll1Id, bandPath);
 				populatePollOptions(con, poll2Id, seriesPath);
-			
 			}
 		} catch(Exception ex) {
 			throw new RuntimeException(ex.getMessage());
@@ -172,7 +177,7 @@ public class Inicijalizacija implements ServletContextListener {
 			ex.printStackTrace();
 		}		//TODO sto generalno radimo s exceptionima, bacamo stack trace ili nesto drugo?
 	}
-	//TODO jel ima smisla novu konekciju za svaku od ovih stvari?
+	
 	private void createPolls(Connection con) {
 		PreparedStatement pst = null;
 		try {

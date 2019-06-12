@@ -13,14 +13,14 @@ import hr.fer.zemris.java.p12.model.VotingCandidate;
  */
 public interface DAO {
 
-	List<VotingCandidate> getAllVotingCandidates(long pollId) throws DAOException;
+	List<VotingCandidate> getAllVotingCandidates(long pollID) throws DAOException;
 	
-//	VotingCandidate getVotingCandidate(long id) throws DAOException;
+	VotingCandidate getVotingCandidate(long candidateID) throws DAOException;
 	
 	List<Poll> getAllPolls() throws DAOException;
 	
-	Poll getPoll(long id) throws DAOException;
+	Poll getPoll(long pollID) throws DAOException;
 	
-	void addVote(long id) throws DAOException;
-	
+	void updateVotingCandidate(VotingCandidate candidate) throws DAOException;
+		
 }

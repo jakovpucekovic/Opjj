@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw13.servleti;
+package hr.fer.zemris.java.hw14.servlets;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.chart.util.Rotation;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 
+import hr.fer.zemris.java.p12.dao.DAOProvider;
 import hr.fer.zemris.java.p12.model.VotingCandidate;
 
 /**
@@ -25,7 +27,7 @@ import hr.fer.zemris.java.p12.model.VotingCandidate;
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-@WebServlet(name="glasanjePiechart", urlPatterns={"/glasanje-grafika"})
+@WebServlet(name="glasanjePiechart", urlPatterns={"/servleti/glasanje-grafika"})
 public class GlasanjePieChartServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -52,15 +54,15 @@ public class GlasanjePieChartServlet extends HttpServlet {
 	 * 	@return The created dataset.
 	 */
 	private  PieDataset createDataset(HttpServletRequest req) throws IOException {
-	    String rezultatiFileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-rezultati.txt");
-		String definicijaFileName = req.getServletContext().getRealPath("/WEB-INF/glasanje-definicija.txt");
+	    
+		long pollID = Long.parseLong(req.getParameter("pollID"));
 		
-//		List <VotingCandidate> results = VotingCandidate.loadCandidatesAndResults(definicijaFileName, rezultatiFileName);
+		List <VotingCandidate> results = DAOProvider.getDao().getAllVotingCandidates(pollID);
 		
 		DefaultPieDataset dataset = new DefaultPieDataset();
-//		for(var entry : results) {
-//			dataset.setValue(entry.getName(), entry.getVotes());
-//		}
+		for(var entry : results) {
+			dataset.setValue(entry.getName(), entry.getVotes());//TODO mybe maknuti one za koje nije glasano
+		}
 		
 		return dataset;
 		
@@ -86,6 +88,7 @@ public class GlasanjePieChartServlet extends HttpServlet {
 	    plot.setStartAngle(290);
 	    plot.setDirection(Rotation.CLOCKWISE);
 	    plot.setForegroundAlpha(0.5f);
+	    plot.setIgnoreZeroValues(true);
 	    return chart;
 	}
 		
