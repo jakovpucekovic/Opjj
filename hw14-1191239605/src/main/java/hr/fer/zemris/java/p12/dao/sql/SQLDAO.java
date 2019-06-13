@@ -24,6 +24,9 @@ import hr.fer.zemris.java.p12.model.VotingCandidate;
  */
 public class SQLDAO implements DAO {
 
+	/**
+	 *	{@inheritDoc}
+	 */
 	@Override
 	public List<VotingCandidate> getAllVotingCandidates(long pollId) throws DAOException {
 		List<VotingCandidate> candidates = new ArrayList<>();

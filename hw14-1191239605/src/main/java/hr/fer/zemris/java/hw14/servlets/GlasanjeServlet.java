@@ -31,15 +31,16 @@ public class GlasanjeServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		String pollID = (String) req.getParameter("pollID");
-		long pollId = Long.parseLong(pollID);
-		
-		List<VotingCandidate> candidates = DAOProvider.getDao().getAllVotingCandidates(pollId);
-		req.setAttribute("votingCandidates", candidates);
-		
-		Poll pollInfo = DAOProvider.getDao().getPoll(pollId);
-		req.setAttribute("poll", pollInfo);
-		
-		req.getRequestDispatcher("/WEB-INF/pages/glasanjeIndex.jsp").forward(req, resp);
+		if(pollID != null) {
+			long pollId = Long.parseLong(pollID);
+			
+			List<VotingCandidate> candidates = DAOProvider.getDao().getAllVotingCandidates(pollId);
+			req.setAttribute("votingCandidates", candidates);
+			
+			Poll pollInfo = DAOProvider.getDao().getPoll(pollId);
+			req.setAttribute("poll", pollInfo);
+			req.getRequestDispatcher("/WEB-INF/pages/glasanjeIndex.jsp").forward(req, resp);
+		}
 	}
 	
 }

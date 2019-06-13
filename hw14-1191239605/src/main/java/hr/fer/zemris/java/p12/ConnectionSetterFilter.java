@@ -15,17 +15,31 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.sql.DataSource;
 
+/**
+ * 	Filter which provides connections.
+ * 	
+ * 	@author marcupic
+ */
 @WebFilter(filterName="f1",urlPatterns={"/servleti/*"})
 public class ConnectionSetterFilter implements Filter {
 	
+	/**
+	 *	{@inheritDoc}
+	 */
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 	}
 	
+	/**
+	 *	{@inheritDoc}
+	 */
 	@Override
 	public void destroy() {
 	}
 	
+	/**
+	 *	{@inheritDoc}
+	 */
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {

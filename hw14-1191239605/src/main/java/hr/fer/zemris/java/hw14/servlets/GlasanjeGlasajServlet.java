@@ -30,8 +30,6 @@ public class GlasanjeGlasajServlet extends HttpServlet {
 		String newVote = req.getParameter("id");
 		String pollID = req.getParameter("pollID");
 		
-//		DAOProvider.getDao().addVote(Long.parseLong(newVote));
-
 		VotingCandidate candidate = DAOProvider.getDao().getVotingCandidate(Long.parseLong(newVote));
 		candidate.setVotes(candidate.getVotes() + 1);
 		DAOProvider.getDao().updateVotingCandidate(candidate);

@@ -17,7 +17,7 @@
 	
 	<table border="1">
 	  <tr>
-	  	<th>Bend</th>
+	  	<th>Kandidat</th>
 	  	<th>Broj glasova</th>
 	  </tr>
 	  
@@ -37,7 +37,7 @@
 
 	
 	<h2>Razno</h2>
-	<p>Primjeri pjesama pobjedničkih bendova:</p>
+	<p>Linkovi pobjednika:</p>
 	<ul>
 	
 	<%

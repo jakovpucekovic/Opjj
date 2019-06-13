@@ -31,12 +31,12 @@ public class GlasanjeRezultatiServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		String pollID = (String) req.getParameter("pollID");
-		
-		List<VotingCandidate> results = DAOProvider.getDao().getAllVotingCandidates(Long.parseLong(pollID));
-			
-		req.setAttribute("votingResults", results);		
+		if(pollID != null) {
+			List<VotingCandidate> results = DAOProvider.getDao().getAllVotingCandidates(Long.parseLong(pollID));
 				
-		req.getRequestDispatcher("/WEB-INF/pages/glasanjeRez.jsp").forward(req, resp);
+			req.setAttribute("votingResults", results);		
+			req.getRequestDispatcher("/WEB-INF/pages/glasanjeRez.jsp").forward(req, resp);
+		}
 	}
 	
 }

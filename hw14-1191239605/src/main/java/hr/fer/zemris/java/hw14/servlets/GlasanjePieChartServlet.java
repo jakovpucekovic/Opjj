@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.PieSectionLabelGenerator;
 import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.chart.util.Rotation;
 import org.jfree.data.general.DefaultPieDataset;
@@ -47,7 +46,6 @@ public class GlasanjePieChartServlet extends HttpServlet {
 		resp.getOutputStream().close();
 	}
 	
-
 	/**
 	 * 	Creates a sample dataset.
 	 * 	@param req {@link HttpServletRequest} from which the paths to files which should be read can be gotten.
@@ -55,17 +53,19 @@ public class GlasanjePieChartServlet extends HttpServlet {
 	 */
 	private  PieDataset createDataset(HttpServletRequest req) throws IOException {
 	    
-		long pollID = Long.parseLong(req.getParameter("pollID"));
+		String pollID = req.getParameter("pollID");
+		if(pollID != null) {
 		
-		List <VotingCandidate> results = DAOProvider.getDao().getAllVotingCandidates(pollID);
-		
-		DefaultPieDataset dataset = new DefaultPieDataset();
-		for(var entry : results) {
-			dataset.setValue(entry.getName(), entry.getVotes());//TODO mybe maknuti one za koje nije glasano
-		}
-		
-		return dataset;
-		
+			List <VotingCandidate> results = DAOProvider.getDao().getAllVotingCandidates(Long.parseLong(pollID));
+			
+			DefaultPieDataset dataset = new DefaultPieDataset();
+			for(var entry : results) {
+				dataset.setValue(entry.getName(), entry.getVotes());
+			}
+			
+			return dataset;
+		} 
+		return null;
 	}
 		
 	/**
@@ -93,4 +93,3 @@ public class GlasanjePieChartServlet extends HttpServlet {
 	}
 		
 }
-

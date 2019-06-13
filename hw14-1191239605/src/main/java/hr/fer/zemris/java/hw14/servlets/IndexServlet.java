@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *	IndexServlet TODO javadoc
+ *	{@link HttpServlet} which redirects the default page to /servleti/index.html
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
