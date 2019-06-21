@@ -6,71 +6,69 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import hr.fer.zemris.java.hw06.crypto.Crypto;
 import hr.fer.zemris.java.tecaj_13.dao.DAOProvider;
+import hr.fer.zemris.java.tecaj_13.web.servlets.util.Crypto;
 
 /**
- *	BlogUserForn TODO javadoc za sve
+ *	{@link RegisterUserForm} is a class which allows for the registration
+ *	of new users.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class RegisterUserForm {
-
 	
+	/**Unique id of the user.*/
 	private String id;
 	
+	/**Last name of the user.*/
 	private String lastName;
 	
+	/**First name of the user.*/
 	private String firstName;
 	
+	/**Nickname of the user.*/
 	private String nick;
 	
+	/**Password of the user.*/
 	private String password;
 	
+	/**Email of the user.*/
 	private String email;
 
-	/**
-	 * Mapa s pogreškama. Očekuje se da su ključevi nazivi svojstava a vrijednosti
-	 * tekstovi pogrešaka.
-	 */
+	/**{@link Map} of errors created during validation.*/
 	Map<String, String> errors = new HashMap<>();
 	
 	/**
-	 * Dohvaća poruku pogreške za traženo svojstvo.
-	 * 
-	 * @param ime naziv svojstva za koje se traži poruka pogreške
-	 * @return poruku pogreške ili <code>null</code> ako svojstvo nema pridruženu pogrešku
+	 * 	Should be called after validation.
+	 * 	@param name Name of the error.
+	 * 	@return The error with the given name.
 	 */
 	public String getError(String name) {
 		return errors.get(name);
 	}
 	
 	/**
-	 * Provjera ima li barem jedno od svojstava pridruženu pogrešku.
-	 * 
-	 * @return <code>true</code> ako ima, <code>false</code> inače.
+	 *  Should be called after validation.
+	 *  @return <code>true</code> if there are errors, <code>false</code> if not.
 	 */
 	public boolean hasErrors() {
 		return !errors.isEmpty();
 	}
 	
 	/**
-	 * Provjerava ima li traženo svojstvo pridruženu pogrešku. 
-	 * 
-	 * @param ime naziv svojstva za koje se ispituje postojanje pogreške
-	 * @return <code>true</code> ako ima, <code>false</code> inače.
+	 *	Should be called after validation.
+	 *	@param name Name of the error.
+	 *	@return <code>true</code> if there is such an error. 
 	 */
 	public boolean hasError(String name) {
 		return errors.containsKey(name);
 	}
 	
 	/**
-	 * Na temelju parametara primljenih kroz {@link HttpServletRequest} popunjava
-	 * svojstva ovog formulara.
-	 * 
-	 * @param req objekt s parametrima
+	 *	Fills this {@link LoginUserForm} with the data given in the
+	 *	{@link HttpServletRequest}.
+	 *	@param req {@link HttpServletRequest} which holds the data. 
 	 */
 	public void fillFromHttpRequest(HttpServletRequest req) {
 		this.id = setup(req.getParameter("id"));
@@ -82,9 +80,8 @@ public class RegisterUserForm {
 	}
 
 	/**
-	 * Na temelju predanog {@link Record}-a popunjava ovaj formular.
-	 * 
-	 * @param r objekt koji čuva originalne podatke
+	 *	Fills this {@link LoginUserForm} with the data in the given {@link BlogUser}. 
+	 *	@param user {@link BlogUser} which provides the data.
 	 */
 	public void fillFromBlogUser(BlogUser r) {
 		if(r.getId()==null) {
@@ -97,15 +94,12 @@ public class RegisterUserForm {
 		this.lastName = r.getLastName();
 		this.nick = r.getNick();
 		this.email = r.getEmail();
-//		this.password = r.getPasswordHash(); //TODO
 	}
 
 	/**
-	 * Temeljem sadržaja ovog formulara puni svojstva predanog domenskog
-	 * objekta. Metodu ne bi trebalo pozivati ako formular prethodno nije
-	 * validiran i ako nije utvrđeno da nema pogrešaka.
-	 * 
-	 * @param r domenski objekt koji treba napuniti
+	 * 	Fills the given {@link BlogUser} with the data stored in this
+	 * 	{@link LoginUserForm}.
+	 * 	@param user {@link BlogUser} to fill.
 	 */
 	public void fillBlogUser(BlogUser user) {
 		if(this.id.isEmpty()) {
@@ -123,9 +117,8 @@ public class RegisterUserForm {
 	}
 	
 	/**
-	 * Metoda obavlja validaciju formulara. Formular je prethodno na neki način potrebno
-	 * napuniti. Metoda provjerava semantičku korektnost svih podataka te po potrebi
-	 * registrira pogreške u mapu pogrešaka.
+	 * 	Checks if this {@link LoginUserForm} contains valid data
+	 * 	and fills the errors map if there is data which is not valid.
 	 */
 	public void validate() {
 		errors.clear();
@@ -180,27 +173,42 @@ public class RegisterUserForm {
 	}
 	
 	/**
-	 * Pomoćna metoda koja <code>null</code> stringove konvertira u prazne stringove, što je
-	 * puno pogodnije za uporabu na webu.
-	 * 
-	 * @param s string
-	 * @return primljeni string ako je različit od <code>null</code>, prazan string inače.
+	 * 	Helper method which converts <code>null</code> string into empty strings.
+	 * 	@param s string
+	 * 	@return The same string if received <code>non-null</code> string, empty string otherwise.
 	 */
 	private String setup(String s) {
 		if(s==null) return "";
 		return s.trim();
 	}
 	
+	/**
+	 * 	Private method which checks if an user with the given nickname
+	 * 	already exists.
+	 * 	@param name Nickname of the user.
+	 * 	@return <code>true</code> if yes, <code>false</code> if no.
+	 */
 	private boolean usernameExists(String name) {
-		List<BlogUser> users = DAOProvider.getDAO().getAllBlogUsers();
-		for(var u : users) {
-			if(u.getNick().equals(name)) {
-				return true;
-			}
+//		List<BlogUser> users = DAOProvider.getDAO().getAllBlogUsers();
+//		for(var u : users) {
+//			if(u.getNick().equals(name)) {
+//				return true;
+//			}
+//		}
+//		return false; TODO obrisi
+		
+		if(DAOProvider.getDAO().getBlogUserByName(name) == null) {
+			return false;
 		}
-		return false;
+		return true;
 	}
-
+	
+	/**
+	 * 	Private method which checks if an user with the given email
+	 * 	already exists.
+	 * 	@param email Email of the user.
+	 * 	@return <code>true</code> if yes, <code>false</code> if no.
+	 */
 	private boolean emailExists(String email) {
 		List<BlogUser> users = DAOProvider.getDAO().getAllBlogUsers();
 		for(var u : users) {
@@ -212,15 +220,15 @@ public class RegisterUserForm {
 	}
 	
 	/**
-	 * 	Returns the id of the BlogUserForm.
-	 * 	@return the id of the BlogUserForm.
+	 * 	Returns the id of the {@link RegisterUserForm}.
+	 * 	@return the id of the {@link RegisterUserForm}.
 	 */
 	public String getId() {
 		return id;
 	}
 
 	/**
-	 * 	Sets the id of the BlogUserForm.
+	 * 	Sets the id of the {@link RegisterUserForm}.
 	 * 	@param id the id to set.
 	 */
 	public void setId(String id) {
@@ -228,15 +236,15 @@ public class RegisterUserForm {
 	}
 
 	/**
-	 * 	Returns the lastName of the BlogUserForm.
-	 * 	@return the lastName of the BlogUserForm.
+	 * 	Returns the lastName of the {@link RegisterUserForm}.
+	 * 	@return the lastName of the {@link RegisterUserForm}.
 	 */
 	public String getLastName() {
 		return lastName;
 	}
 
 	/**
-	 * 	Sets the lastName of the BlogUserForm.
+	 * 	Sets the lastName of the {@link RegisterUserForm}.
 	 * 	@param lastName the lastName to set.
 	 */
 	public void setLastName(String lastName) {
@@ -244,15 +252,15 @@ public class RegisterUserForm {
 	}
 
 	/**
-	 * 	Returns the firstName of the BlogUserForm.
-	 * 	@return the firstName of the BlogUserForm.
+	 * 	Returns the firstName of the {@link RegisterUserForm}.
+	 * 	@return the firstName of the {@link RegisterUserForm}.
 	 */
 	public String getFirstName() {
 		return firstName;
 	}
 
 	/**
-	 * 	Sets the firstName of the BlogUserForm.
+	 * 	Sets the firstName of the {@link RegisterUserForm}.
 	 * 	@param firstName the firstName to set.
 	 */
 	public void setFirstName(String firstName) {
@@ -260,15 +268,15 @@ public class RegisterUserForm {
 	}
 
 	/**
-	 * 	Returns the nick of the BlogUserForm.
-	 * 	@return the nick of the BlogUserForm.
+	 * 	Returns the nick of the {@link RegisterUserForm}.
+	 * 	@return the nick of the {@link RegisterUserForm}.
 	 */
 	public String getNick() {
 		return nick;
 	}
 
 	/**
-	 * 	Sets the nick of the BlogUserForm.
+	 * 	Sets the nick of the {@link RegisterUserForm}.
 	 * 	@param nick the nick to set.
 	 */
 	public void setNick(String nick) {
@@ -276,15 +284,15 @@ public class RegisterUserForm {
 	}
 
 	/**
-	 * 	Returns the password of the BlogUserForm.
-	 * 	@return the password of the BlogUserForm.
+	 * 	Returns the password of the {@link RegisterUserForm}.
+	 * 	@return the password of the {@link RegisterUserForm}.
 	 */
 	public String getPassword() {
 		return password;
 	}
 
 	/**
-	 * 	Sets the password of the BlogUserForm.
+	 * 	Sets the password of the {@link RegisterUserForm}.
 	 * 	@param password the password to set.
 	 */
 	public void setPassword(String password) {
@@ -292,20 +300,19 @@ public class RegisterUserForm {
 	}
 
 	/**
-	 * 	Returns the email of the BlogUserForm.
-	 * 	@return the email of the BlogUserForm.
+	 * 	Returns the email of the {@link RegisterUserForm}.
+	 * 	@return the email of the {@link RegisterUserForm}.
 	 */
 	public String getEmail() {
 		return email;
 	}
 
 	/**
-	 * 	Sets the email of the BlogUserForm.
+	 * 	Sets the email of the {@link RegisterUserForm}.
 	 * 	@param email the email to set.
 	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
 	
 }

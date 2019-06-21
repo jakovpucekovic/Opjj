@@ -99,7 +99,6 @@ public class BlogUserForm {
 		this.lastName = r.getLastName();
 		this.nick = r.getNick();
 		this.email = r.getEmail();
-//		this.password = r.getPasswordHash(); //TODO
 	}
 
 	/**

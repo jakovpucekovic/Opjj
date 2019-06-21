@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.tecaj_13.web.servlets;
+package hr.fer.zemris.java.tecaj_13.model;
 
 import java.io.IOException;
 
@@ -9,14 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *	StartingPageServlet TODO javadoc
+ *	BlogEntriesServlet TODO javadoc
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
-@WebServlet("/index.jsp")
-public class StartingPageServlet extends HttpServlet {
+@WebServlet("/servleti/author/*")
+public class BlogEntriesServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,8 +24,8 @@ public class StartingPageServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.sendRedirect(req.getContextPath() + "/servleti/main");
-	}
 	
+		resp.getOutputStream().write("nick".getBytes());
+	}
 	
 }

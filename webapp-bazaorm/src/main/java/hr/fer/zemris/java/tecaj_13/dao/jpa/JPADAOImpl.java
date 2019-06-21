@@ -29,7 +29,7 @@ public class JPADAOImpl implements DAO {
 	 */
 	@Override
 	public BlogUser getBlogUserByName(String nick) throws DAOException {
-//		List<BlogUser> list = JPAEMProvider.getEntityManager().createQuery("Select bu from BlogUser bu where bu.nick=" + nick, BlogUser.class).getResultList(); TODO 
+//		List<BlogUser> list = JPAEMProvider.getEntityManager().createQuery("Select bu from BlogUser bu where bu.nick=" + nick, BlogUser.class).getResultList(); TODO upit 
 		List<BlogUser> list = JPAEMProvider.getEntityManager().createQuery("Select bu from BlogUser bu", BlogUser.class).getResultList();
 		for(var u : list) {
 			if(u.getNick().equals(nick)) {

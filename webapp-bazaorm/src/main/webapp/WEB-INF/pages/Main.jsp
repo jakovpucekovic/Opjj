@@ -63,7 +63,7 @@
 			<ol>
 			<c:forEach var="user" items="${blogUsers}">
 			<li>
-			  <c:out value="${user.nick}"/> 
+			  <a href="${pageContext.request.contextPath}/servleti/author/${user.nick}">${user.nick}</a> 
 			</li>
 			</c:forEach>
 			</ol>

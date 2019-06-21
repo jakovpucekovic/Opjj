@@ -39,6 +39,9 @@ public class RegistrationServlet extends HttpServlet {
 		processRequest(req, resp);
 	}
 	
+	/**
+	 *	Method which does the actuall registration. 
+	 */
 	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		req.setCharacterEncoding("UTF-8");

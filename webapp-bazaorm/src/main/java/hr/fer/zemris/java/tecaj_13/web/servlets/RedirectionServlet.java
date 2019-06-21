@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *	Servlet which does the user logout process.
+ *	RedirectionServlet TODO javadoc
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-@WebServlet("/servleti/logout")
-public class LogoutServlet extends HttpServlet {
+@WebServlet("/index.jsp")
+public class RedirectionServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -24,9 +24,7 @@ public class LogoutServlet extends HttpServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.getSession().invalidate();
-		
-		resp.sendRedirect(req.getServletContext().getContextPath() + "/servleti/main");
+		req.getRequestDispatcher("/servleti/main").forward(req, resp);
 	}
 	
 }

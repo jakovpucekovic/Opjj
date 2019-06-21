@@ -1,44 +1,43 @@
 package hr.fer.zemris.java.tecaj_13.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
-
+/**
+ * 	Class which represents an user on our blog website.
+ * 
+ *  @author Jakov Pucekovic
+ *  @version 1.0	
+ */
 @Entity
 @Table(name="blog_users")
 public class BlogUser {
 
-private Long id;
+	/**Unique id of the blog user.*/
+	private Long id;
 	
+	/**First name of the blog user.*/
 	private String firstName;
 	
+	/**Last name of the blog user.*/
 	private String lastName;
 	
 	//TODO kako napraviti nick unique
+	/**Nickname of the blog user.*/
 	private String nick;
 
+	/**Email of the blog user.*/
 	private String email;
 	
+	/**Password hash of the blog user.*/
 	private String passwordHash;
 	
 	/**
-	 * 	Returns the id of the BlogUser.
-	 * 	@return the id of the BlogUser.
+	 * 	Returns the id of the {@link BlogUser}.
+	 * 	@return the id of the {@link BlogUser}.
 	 */
 	@Id @GeneratedValue
 	public Long getId() {
@@ -46,7 +45,7 @@ private Long id;
 	}
 	
 	/**
-	 * 	Sets the id of the BlogUser.
+	 * 	Sets the id of the {@link BlogUser}.
 	 * 	@param id the id to set.
 	 */
 	public void setId(Long id) {
@@ -54,8 +53,8 @@ private Long id;
 	}
 	
 	/**
-	 * 	Returns the firstName of the BlogUser.
-	 * 	@return the firstName of the BlogUser.
+	 * 	Returns the firstName of the {@link BlogUser}.
+	 * 	@return the firstName of the {@link BlogUser}.
 	 */
 	@Column(length=50,nullable=false)
 	public String getFirstName() {
@@ -63,7 +62,7 @@ private Long id;
 	}
 	
 	/**
-	 * 	Sets the firstName of the BlogUser.
+	 * 	Sets the firstName of the {@link BlogUser}.
 	 * 	@param firstName the firstName to set.
 	 */
 	public void setFirstName(String firstName) {
@@ -71,8 +70,8 @@ private Long id;
 	}
 	
 	/**
-	 * 	Returns the lastName of the BlogUser.
-	 * 	@return the lastName of the BlogUser.
+	 * 	Returns the lastName of the {@link BlogUser}.
+	 * 	@return the lastName of the {@link BlogUser}.
 	 */
 	@Column(length=80,nullable=false)
 	public String getLastName() {
@@ -80,7 +79,7 @@ private Long id;
 	}
 	
 	/**
-	 * 	Sets the lastName of the BlogUser.
+	 * 	Sets the lastName of the {@link BlogUser}.
 	 * 	@param lastName the lastName to set.
 	 */
 	public void setLastName(String lastName) {
@@ -88,8 +87,8 @@ private Long id;
 	}
 	
 	/**
-	 * 	Returns the nick of the BlogUser.
-	 * 	@return the nick of the BlogUser.
+	 * 	Returns the nick of the {@link BlogUser}.
+	 * 	@return the nick of the {@link BlogUser}.
 	 */
 	@Column(length=20,nullable=false)
 	public String getNick() {
@@ -97,7 +96,7 @@ private Long id;
 	}
 	
 	/**
-	 * 	Sets the nick of the BlogUser.
+	 * 	Sets the nick of the {@link BlogUser}.
 	 * 	@param nick the nick to set.
 	 */
 	public void setNick(String nick) {
@@ -105,8 +104,8 @@ private Long id;
 	}
 	
 	/**
-	 * 	Returns the email of the BlogUser.
-	 * 	@return the email of the BlogUser.
+	 * 	Returns the email of the {@link BlogUser}.
+	 * 	@return the email of the {@link BlogUser}.
 	 */
 	@Column(length=50,nullable=false)
 	public String getEmail() {
@@ -114,7 +113,7 @@ private Long id;
 	}
 	
 	/**
-	 * 	Sets the email of the BlogUser.
+	 * 	Sets the email of the {@link BlogUser}.
 	 * 	@param email the email to set.
 	 */
 	public void setEmail(String email) {
@@ -122,8 +121,8 @@ private Long id;
 	}
 	
 	/**
-	 * 	Returns the passwordHash of the BlogUser.
-	 * 	@return the passwordHash of the BlogUser.
+	 * 	Returns the passwordHash of the {@link BlogUser}.
+	 * 	@return the passwordHash of the {@link BlogUser}.
 	 */
 	@Column(length=40,nullable=false)
 	public String getPasswordHash() {
@@ -131,7 +130,7 @@ private Long id;
 	}
 	
 	/**
-	 * 	Sets the passwordHash of the BlogUser.
+	 * 	Sets the passwordHash of the {@link BlogUser}.
 	 * 	@param passwordHash the passwordHash to set.
 	 */
 	public void setPasswordHash(String passwordHash) {

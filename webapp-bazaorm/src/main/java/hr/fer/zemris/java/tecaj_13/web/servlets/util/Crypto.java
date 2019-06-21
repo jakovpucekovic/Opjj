@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw06.crypto;
+package hr.fer.zemris.java.tecaj_13.web.servlets.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

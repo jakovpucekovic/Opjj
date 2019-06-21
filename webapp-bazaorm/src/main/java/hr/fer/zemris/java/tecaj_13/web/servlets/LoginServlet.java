@@ -13,7 +13,7 @@ import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 import hr.fer.zemris.java.tecaj_13.model.LoginUserForm;
 
 /**
- *	LoginServlet TODO javadoc
+ *	Servlet which does the user login process.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -50,7 +50,7 @@ public class LoginServlet extends HttpServlet {
 		userForm.fillBlogUser(user);
 		user = DAOProvider.getDAO().getBlogUserByName(user.getNick());
 		
-		req.getSession().setAttribute("current.user.id", user.getId());//TODO popravi s tockama
+		req.getSession().setAttribute("current.user.id", user.getId());
 		req.getSession().setAttribute("current.user.fn", user.getFirstName());
 		req.getSession().setAttribute("current.user.ln", user.getLastName());
 		req.getSession().setAttribute("current.user.nick", user.getNick());
