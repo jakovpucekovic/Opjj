@@ -60,4 +60,7 @@ public interface DAO {
 	 */
 	public void saveBlogComment(BlogComment comment) throws DAOException;
 	
+	//TODO javadoc
+	public List<BlogEntry> getBlogEntriesByAuthor(BlogUser user) throws DAOException;
+	
 }

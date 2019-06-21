@@ -33,7 +33,9 @@ public class BlogEntry {
 	private Date lastModifiedAt;
 	private String title;
 	private String text;
-	
+	private BlogUser creator; //TODO jel stavljam blogUsera ili njegov id?
+	//TODO dodaj getter i setter za creatora
+
 	@Id @GeneratedValue
 	public Long getId() {
 		return id;
@@ -90,6 +92,23 @@ public class BlogEntry {
 	public void setText(String text) {
 		this.text = text;
 	}
+
+//	/**
+//	 * 	Returns the creator of the BlogEntry.
+//	 * 	@return the creator of the BlogEntry.
+//	 */
+//	//TODO fali spec i veza
+//	public BlogUser getCreator() {
+//		return creator;
+//	}
+//
+//	/**
+//	 * 	Sets the creator of the BlogEntry.
+//	 * 	@param creator the creator to set.
+//	 */
+//	public void setCreator(BlogUser creator) {
+//		this.creator = creator;
+//	}
 
 	@Override
 	public int hashCode() {

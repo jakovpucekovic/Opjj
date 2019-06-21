@@ -78,12 +78,20 @@ public class JPADAOImpl implements DAO {
 	 */
 	@Override
 	public void saveBlogComment(BlogComment comment) throws DAOException {
-//		JPAEMProvider.getEntityManager().getTransaction().begin();
 		if(comment.getId() == null) {
 			JPAEMProvider.getEntityManager().persist(comment);
 		} else {
 			JPAEMProvider.getEntityManager().merge(comment);
 		}
+	}
+
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public List<BlogEntry> getBlogEntriesByAuthor(BlogUser user) throws DAOException {
+		List<BlogEntry> list = JPAEMProvider.getEntityManager().createQuery("Select be from BlogEntry be", BlogEntry.class).getResultList();//TODO where autor = nick
+		return list;
 	}
 	
 }
