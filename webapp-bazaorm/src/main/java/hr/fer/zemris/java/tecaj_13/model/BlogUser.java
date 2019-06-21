@@ -1,24 +1,29 @@
 package hr.fer.zemris.java.tecaj_13.model;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-/**
- *	BlogUser TODO javadoc
- * 
- * 	@author Jakov Pucekovic
- * 	@version 1.0
- */
 
 @Entity
 @Table(name="blog_users")
-//TODO cacheable?
 public class BlogUser {
 
-	private Long id;
+private Long id;
 	
 	private String firstName;
 	
@@ -120,7 +125,7 @@ public class BlogUser {
 	 * 	Returns the passwordHash of the BlogUser.
 	 * 	@return the passwordHash of the BlogUser.
 	 */
-	@Column(length=20,nullable=false)
+	@Column(length=40,nullable=false)
 	public String getPasswordHash() {
 		return passwordHash;
 	}
@@ -163,5 +168,4 @@ public class BlogUser {
 			return false;
 		return true;
 	}
-	
 }

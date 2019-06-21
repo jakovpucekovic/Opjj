@@ -5,7 +5,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>hr.fer.zemris.java.jmbag1191239605.webapps</groupId>
-  <artifactId>hw15-1191239605</artifactId>
+  <artifactId>hw15a-1191239605</artifactId>
   <version>1.0</version>
   <packaging>war</packaging>
 
@@ -17,7 +17,7 @@
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 		<junit.jupiter.version>5.4.0</junit.jupiter.version>
-		<hibernateVersion>5.3.6.Final</hibernateVersion>
+		<hibernateVersion>5.3.1.Final</hibernateVersion>
 	</properties>
 
   <dependencies>

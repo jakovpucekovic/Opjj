@@ -14,7 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -34,7 +33,6 @@ public class BlogEntry {
 	private Date lastModifiedAt;
 	private String title;
 	private String text;
-	private BlogUser creator;
 	
 	@Id @GeneratedValue
 	public Long getId() {
@@ -91,23 +89,6 @@ public class BlogEntry {
 
 	public void setText(String text) {
 		this.text = text;
-	}
-
-	/**
-	 * 	Returns the creator of the BlogEntry.
-	 * 	@return the creator of the BlogEntry.
-	 */
-//	@Column(nullable=false) //TODO one to one veza	
-	public BlogUser getCreator() {
-		return creator;
-	}
-
-	/**
-	 * 	Sets the creator of the BlogEntry.
-	 * 	@param creator the creator to set.
-	 */
-	public void setCreator(BlogUser creator) {
-		this.creator = creator;
 	}
 
 	@Override

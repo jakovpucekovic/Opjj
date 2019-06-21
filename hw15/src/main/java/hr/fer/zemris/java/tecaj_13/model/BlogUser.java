@@ -18,24 +18,29 @@ import javax.persistence.Table;
 //TODO cacheable?
 public class BlogUser {
 
+	@Id @GeneratedValue
 	private Long id;
 	
+	@Column(length=50, nullable=false)
 	private String firstName;
 	
+	@Column(length=80, nullable=false)
 	private String lastName;
 	
+	@Column(length=20, nullable=false)
 	//TODO kako napraviti nick unique
 	private String nick;
 
+	@Column(length=50, nullable=false)
 	private String email;
 	
+	@Column(length=20, nullable=false)
 	private String passwordHash;
 	
 	/**
 	 * 	Returns the id of the BlogUser.
 	 * 	@return the id of the BlogUser.
 	 */
-	@Id @GeneratedValue
 	public Long getId() {
 		return id;
 	}
@@ -52,7 +57,6 @@ public class BlogUser {
 	 * 	Returns the firstName of the BlogUser.
 	 * 	@return the firstName of the BlogUser.
 	 */
-	@Column(length=50,nullable=false)
 	public String getFirstName() {
 		return firstName;
 	}
@@ -69,7 +73,6 @@ public class BlogUser {
 	 * 	Returns the lastName of the BlogUser.
 	 * 	@return the lastName of the BlogUser.
 	 */
-	@Column(length=80,nullable=false)
 	public String getLastName() {
 		return lastName;
 	}
@@ -86,7 +89,6 @@ public class BlogUser {
 	 * 	Returns the nick of the BlogUser.
 	 * 	@return the nick of the BlogUser.
 	 */
-	@Column(length=20,nullable=false)
 	public String getNick() {
 		return nick;
 	}
@@ -103,7 +105,6 @@ public class BlogUser {
 	 * 	Returns the email of the BlogUser.
 	 * 	@return the email of the BlogUser.
 	 */
-	@Column(length=50,nullable=false)
 	public String getEmail() {
 		return email;
 	}
@@ -120,7 +121,6 @@ public class BlogUser {
 	 * 	Returns the passwordHash of the BlogUser.
 	 * 	@return the passwordHash of the BlogUser.
 	 */
-	@Column(length=20,nullable=false)
 	public String getPasswordHash() {
 		return passwordHash;
 	}
