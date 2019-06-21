@@ -1,9 +1,14 @@
 package hr.fer.zemris.java.tecaj_13.model;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -33,6 +38,9 @@ public class BlogUser {
 	
 	/**Password hash of the blog user.*/
 	private String passwordHash;
+	
+	/**List of entries written by this user.*/
+	private List<BlogEntry> entries;
 	
 	/**
 	 * 	Returns the id of the {@link BlogUser}.
@@ -134,6 +142,23 @@ public class BlogUser {
 	 */
 	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
+	}
+	
+	/**
+	 * 	Returns the entries of the {@link BlogUser}.
+	 * 	@return the entries of the {@link BlogUser}.
+	 */
+	@OneToMany(mappedBy = "creator", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+	public List<BlogEntry> getEntries() {
+		return entries;
+	}
+
+	/**
+	 * 	Sets the entries of the {@link BlogUser}.
+	 * 	@param entries the entries to set.
+	 */
+	public void setEntries(List<BlogEntry> entries) {
+		this.entries = entries;
 	}
 
 	/**

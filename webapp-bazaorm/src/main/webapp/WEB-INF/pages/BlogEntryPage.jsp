@@ -20,7 +20,7 @@
 	
 		<h1>Add comment</h1>
 
-		<form action="${pageContext.request.contextPath}/servleti/author/NICK/new" method="post">
+		<form action="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/new" method="post">
 
 		<div>
 		 <div>

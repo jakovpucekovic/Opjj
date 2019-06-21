@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -46,8 +48,7 @@ public class BlogEntry {
 	private String text;
 	
 	/**Creator of the blog entry.*/
-	private BlogUser creator; //TODO dodaj list<BlogEntry> u blog user
-	//TODO dodaj getter i setter za creatora
+	private BlogUser creator;
 
 	/**
 	 * 	Returns the id of the {@link BlogEntry}.
@@ -150,22 +151,23 @@ public class BlogEntry {
 		this.text = text;
 	}
 
-//	/**
-//	 * 	Returns the creator of the BlogEntry.
-//	 * 	@return the creator of the BlogEntry.
-//	 */
-//	//TODO fali spec i veza
-//	public BlogUser getCreator() {
-//		return creator;
-//	}
-//
-//	/**
-//	 * 	Sets the creator of the BlogEntry.
-//	 * 	@param creator the creator to set.
-//	 */
-//	public void setCreator(BlogUser creator) {
-//		this.creator = creator;
-//	}
+	/**
+	 * 	Returns the creator of the BlogEntry.
+	 * 	@return the creator of the BlogEntry.
+	 */
+	@ManyToOne
+	@JoinColumn(nullable = false)
+	public BlogUser getCreator() {
+		return creator;
+	}
+
+	/**
+	 * 	Sets the creator of the BlogEntry.
+	 * 	@param creator the creator to set.
+	 */
+	public void setCreator(BlogUser creator) {
+		this.creator = creator;
+	}
 
 	/**
 	 *	{@inheritDoc}

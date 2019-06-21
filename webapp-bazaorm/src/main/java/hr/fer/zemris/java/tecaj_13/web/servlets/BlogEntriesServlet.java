@@ -1,6 +1,7 @@
 package hr.fer.zemris.java.tecaj_13.web.servlets;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -9,10 +10,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import hr.fer.zemris.java.tecaj_13.dao.DAO;
 import hr.fer.zemris.java.tecaj_13.dao.DAOException;
 import hr.fer.zemris.java.tecaj_13.dao.DAOProvider;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
+import hr.fer.zemris.java.tecaj_13.model.BlogEntryForm;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
+import hr.fer.zemris.java.tecaj_13.model.RegisterUserForm;
 
 /**
  *	BlogEntriesServlet TODO javadoc
@@ -31,17 +35,77 @@ public class BlogEntriesServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	
-		String path = req.getPathInfo();
+		String path = req.getPathInfo().substring(1);
 		
-		BlogUser user = DAOProvider.getDAO().getBlogUserByName(path.substring(1));
+		String nick = (String) req.getSession().getAttribute("current.user.nick");
 		
-		List<BlogEntry> list = DAOProvider.getDAO().getBlogEntriesByAuthor(user);
-		req.setAttribute("blogEntries", list);
+		if(nick != null && path.matches(nick + "/new")) {
+			BlogEntry entry = new BlogEntry();
+			BlogEntryForm entryForm = new BlogEntryForm();
+			entryForm.fillFromBlogEntry(entry);
+			
+			req.setAttribute("blogEntryForm", entryForm);
+			
+			req.getRequestDispatcher("/WEB-INF/pages/BlogEntryPage.jsp").forward(req, resp);
+			return;
+		} else if(path.matches(".+/\\d+")){
+			Long entryId = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
+			BlogEntry entry = DAOProvider.getDAO().getBlogEntry(entryId);
+			req.setAttribute("blogEntry", entry);
+			
+			req.getRequestDispatcher("/WEB-INF/pages/readBlog.jsp").forward(req, resp);
+			return;
+		}else {
+			BlogUser user = DAOProvider.getDAO().getBlogUserByName(path);
+			
+			List<BlogEntry> list = DAOProvider.getDAO().getBlogEntriesByAuthor(user);
+			req.setAttribute("blogEntries", list);
+			req.setAttribute("currentPageAuthor", user);
+			
+			req.getRequestDispatcher("/WEB-INF/pages/listBlogs.jsp").forward(req, resp);
+			return;
+		}
+//		else {
+//			req.getRequestDispatcher("/WEB-INF/pages/Error.jsp").forward(req, resp);
+//			return;
+//		}
+//		
 		
-		req.getRequestDispatcher("/WEB-INF/pages/listBlogs.jsp").forward(req, resp);
+	}
+	
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.setCharacterEncoding("UTF-8");
 		
-		//TODO dodaj da ne mozes dodati blog ako nije pravi nick
-		req.setAttribute("currentPageAuthor", path.substring(1)); //TODO vidi zas ne radi ovak
+		String method = req.getParameter("method");
+		if(!"Save".equals(method)) {
+			resp.sendRedirect(req.getServletContext().getContextPath() + "/servleti/main");
+			return;
+		}
+
+		BlogEntryForm blogForm = new BlogEntryForm();
+		blogForm.fillFromHttpRequest(req);
+		blogForm.validate();
+		
+		if(blogForm.hasErrors()) {
+			req.setAttribute("blogForm", blogForm);
+			req.getRequestDispatcher("/WEB-INF/pages/BlogEntryPage.jsp").forward(req, resp);
+			return;
+		}
+		
+		BlogEntry entry = new BlogEntry();
+		blogForm.fillBlogEntry(entry);
+		entry.setCreatedAt(new Date());
+		entry.setLastModifiedAt(new Date());
+		String nick = (String) req.getSession().getAttribute("current.user.nick");
+		entry.setCreator(DAOProvider.getDAO().getBlogUserByName(nick));
+		
+		DAOProvider.getDAO().saveBlogEntry(entry);
+		
+		resp.sendRedirect(req.getServletContext().getContextPath() + "/servleti/main");
 	}
 	
 }

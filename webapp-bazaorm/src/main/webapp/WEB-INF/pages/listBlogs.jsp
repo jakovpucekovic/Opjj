@@ -18,7 +18,7 @@
 		</c:choose>   
 		</header>	
 	
-		<h1>List of blogs</h1>
+		<h1>Blogs of ${currentPageAuthor.nick}</h1>
 		<c:choose>
 			<c:when test="${blogEntries.isEmpty()}">
 				<p>There are no blogs by this author.</p>
@@ -27,16 +27,18 @@
 			<ol>
 			<c:forEach var="entry" items="${blogEntries}">
 			<li>
-			  <a href="${pageContext.request.contextPath}/servleti/author/${entry.creator}/${entry.id}">${entry.title}</a> 
+			  <a href="${pageContext.request.contextPath}/servleti/author/${entry.creator.nick}/${entry.id}">${entry.title}</a> 
 			</li>
 			</c:forEach>
 			</ol>
 			</c:otherwise>
 		</c:choose>
-		
-		<c:if test="${not empty sessionScope[\"current.user.id\"] and sessionScope[\"current.user.nick\"] == currentPageAuthor} ">
-			<a href="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/new">Create new blog</a>
+	
+		<c:if test="${sessionScope[\"current.user.nick\"].equals(currentPageAuthor.nick)}">
+			<h3><a href="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/new">Create new blog</a></h3>
 		</c:if>
 		
+		
+		<a href="${pageContext.request.contextPath}/servleti/main">Back to homepage</a>
 	</body>
 </html>
