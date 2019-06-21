@@ -25,7 +25,6 @@ public class BlogUser {
 	/**Last name of the blog user.*/
 	private String lastName;
 	
-	//TODO kako napraviti nick unique
 	/**Nickname of the blog user.*/
 	private String nick;
 
@@ -90,7 +89,7 @@ public class BlogUser {
 	 * 	Returns the nick of the {@link BlogUser}.
 	 * 	@return the nick of the {@link BlogUser}.
 	 */
-	@Column(length=20,nullable=false)
+	@Column(length=20,nullable=false,unique=true)
 	public String getNick() {
 		return nick;
 	}

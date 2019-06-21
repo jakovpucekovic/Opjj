@@ -60,7 +60,13 @@ public interface DAO {
 	 */
 	public void saveBlogComment(BlogComment comment) throws DAOException;
 	
-	//TODO javadoc
+	/**
+	 * Returns a {@link List} of {@link BlogEntry}s which are created by
+	 * the given {@link BlogUser}.
+	 * @param user Creator of the {@link BlogEntry}s.
+	 * @return {@link List} of {@link BlogEntry} which are created by the given user.
+	 * @throws DAOException if anything goes wrong.
+	 */
 	public List<BlogEntry> getBlogEntriesByAuthor(BlogUser user) throws DAOException;
 	
 }

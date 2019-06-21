@@ -40,7 +40,7 @@ public class RegistrationServlet extends HttpServlet {
 	}
 	
 	/**
-	 *	Method which does the actuall registration. 
+	 *	Method which does the actual registration. 
 	 */
 	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

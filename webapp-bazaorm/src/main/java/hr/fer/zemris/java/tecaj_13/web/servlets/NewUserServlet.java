@@ -36,5 +36,5 @@ public class NewUserServlet extends HttpServlet {
 		
 		req.getRequestDispatcher("/WEB-INF/pages/RegistrationForm.jsp").forward(req, resp);
 	}
-	
+	//TODO vidi jel ovo moze u RegistrationServlet u doGet
 }

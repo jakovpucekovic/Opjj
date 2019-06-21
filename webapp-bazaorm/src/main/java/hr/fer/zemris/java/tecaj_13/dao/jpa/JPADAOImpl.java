@@ -29,14 +29,22 @@ public class JPADAOImpl implements DAO {
 	 */
 	@Override
 	public BlogUser getBlogUserByName(String nick) throws DAOException {
-//		List<BlogUser> list = JPAEMProvider.getEntityManager().createQuery("Select bu from BlogUser bu where bu.nick=" + nick, BlogUser.class).getResultList(); TODO upit 
-		List<BlogUser> list = JPAEMProvider.getEntityManager().createQuery("Select bu from BlogUser bu", BlogUser.class).getResultList();
-		for(var u : list) {
-			if(u.getNick().equals(nick)) {
-				return u;
-			}
+		List<BlogUser> list = JPAEMProvider.getEntityManager()
+										   .createQuery("Select bu from BlogUser bu where bu.nick=:ni", BlogUser.class)
+										   .setParameter("ni", nick)
+										   .getResultList(); //TODO upit
+		if(list.isEmpty()) {
+			return null;
 		}
-		return null;
+		return list.get(0);
+		
+//		List<BlogUser> list = JPAEMProvider.getEntityManager().createQuery("Select bu from BlogUser bu", BlogUser.class).getResultList();
+//		for(var u : list) {
+//			if(u.getNick().equals(nick)) {
+//				return u;
+//			}
+//		}
+//		return null;
 	
 	}
 	
@@ -90,7 +98,10 @@ public class JPADAOImpl implements DAO {
 	 */
 	@Override
 	public List<BlogEntry> getBlogEntriesByAuthor(BlogUser user) throws DAOException {
-		List<BlogEntry> list = JPAEMProvider.getEntityManager().createQuery("Select be from BlogEntry be", BlogEntry.class).getResultList();//TODO where autor = nick
+		List<BlogEntry> list = JPAEMProvider.getEntityManager()
+											.createQuery("Select be from BlogEntry be where be.creator=:nick", BlogEntry.class)
+											.setParameter("nick", user.getNick())
+											.getResultList();//TODO where autor = nick ili autor = user???
 		return list;
 	}
 	

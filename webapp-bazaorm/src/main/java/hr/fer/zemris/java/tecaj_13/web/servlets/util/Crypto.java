@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  *	Class {@link Crypto} which allows user to hash input with sha-1
  *	hashing algorithm.
- *TODO javadoc prepraviti
+ *
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */

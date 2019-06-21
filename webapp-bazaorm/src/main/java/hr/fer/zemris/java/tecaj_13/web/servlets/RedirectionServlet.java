@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *	RedirectionServlet TODO javadoc
+ *	{@link HttpServlet} which redirects to the real starting page.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

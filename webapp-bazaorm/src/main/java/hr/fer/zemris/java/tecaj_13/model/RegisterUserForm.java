@@ -166,7 +166,7 @@ public class RegisterUserForm {
 		if(this.password.isEmpty()) {
 			errors.put("password", "Password is mandatory!"); 
 		} else if(this.password.length() < 8) {
-			errors.put("password", "Password must contain atleast 8 characters!");//TODO password
+			errors.put("password", "Password must contain atleast 8 characters!");
 		}
 		
 		
@@ -189,14 +189,6 @@ public class RegisterUserForm {
 	 * 	@return <code>true</code> if yes, <code>false</code> if no.
 	 */
 	private boolean usernameExists(String name) {
-//		List<BlogUser> users = DAOProvider.getDAO().getAllBlogUsers();
-//		for(var u : users) {
-//			if(u.getNick().equals(name)) {
-//				return true;
-//			}
-//		}
-//		return false; TODO obrisi
-		
 		if(DAOProvider.getDAO().getBlogUserByName(name) == null) {
 			return false;
 		}

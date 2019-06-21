@@ -121,20 +121,17 @@ public class LoginUserForm {
 	
 		if(this.password.isEmpty()) {
 			errors.put("password", "Password is mandatory!"); 
-		} else if(this.password.length() < 8) {
-			errors.put("password", "Password must contain atleast 8 characters!");//TODO password
 		} else {
 			List<BlogUser> users = DAOProvider.getDAO().getAllBlogUsers();
 			for(var u : users) {
 				if(u.getNick().equals(this.nick)) {
 					if(!u.getPasswordHash().equals(Crypto.bytetohex(Crypto.sha(this.password)))) {
-						errors.put("password", "Wrong password!");
+						errors.put("nick", "Invalid username or password!");
 					}
 					break;
 				}
 			}
 		}
-		
 	}
 	
 	/**
@@ -154,14 +151,6 @@ public class LoginUserForm {
 	 * 	@return <code>true</code> if yes, <code>false</code> if no.
 	 */
 	private boolean usernameExists(String name) {
-//		List<BlogUser> users = DAOProvider.getDAO().getAllBlogUsers();
-//		for(var u : users) {
-//			if(u.getNick().equals(name)) {
-//				return true;
-//			}
-//		}
-//		return false; TODO obrisi
-		
 		if(DAOProvider.getDAO().getBlogUserByName(name) == null) {
 			return false;
 		}

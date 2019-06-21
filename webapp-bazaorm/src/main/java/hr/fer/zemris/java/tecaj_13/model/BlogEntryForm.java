@@ -127,14 +127,15 @@ public class BlogEntryForm {
 			}
 		}
 //	TODO validacija
-//		if(this.nick.isEmpty()) {
-//			errors.put("nick", "Nick is mandatory!");
-//		} else if(this.nick.length() > 20) {
-//			errors.put("nick", "Nick cannot be longer than 20 characters!");
-//		} else if(!usernameExists(this.nick)) {
-//			errors.put("nick", "Username doesn't exist!");
-//		}
-//	
+		if(this.title.isEmpty()) {
+			errors.put("title", "Title is mandatory!");
+		} else if(this.title.length() > 200) {
+			errors.put("title", "Title cannot be longer than 20 characters!");
+		} 
+	
+		if(this.text.isEmpty()) {
+			errors.put("text", "Text is mandatory!");
+		} 
 		
 		
 	}

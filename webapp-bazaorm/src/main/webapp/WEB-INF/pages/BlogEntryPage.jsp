@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 	<head>
-		<title>New blog entry</title>
+		<title>Blog entry</title>
 	</head>
 
 	<body>
@@ -18,7 +18,7 @@
 		</c:choose>   
 		</header>	
 	
-		<h1>Add new blog entry</h1>
+		<h1>Add comment</h1>
 
 		<form action="${pageContext.request.contextPath}/servleti/author/NICK/new" method="post">
 
