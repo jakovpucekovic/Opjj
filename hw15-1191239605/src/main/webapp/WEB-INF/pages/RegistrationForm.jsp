@@ -8,55 +8,55 @@
 	<body>
 		<h1>New user</h1>
 
-		<form action="save" method="post">
+		<form action="${pageContext.request.contextPath}/servleti/register-save" method="post">
 
 		<div>
 		 <div>
-		  <span class="formLabel">First name</span><input type="text" name="firstName" value='<c:out value="${userForm.firstName}"/>' size="20">
+		  <span>First name</span><input type="text" name="firstName" value='<c:out value="${userForm.firstName}"/>' size="20">
 		 </div>
 		 <c:if test="${userForm.hasError('firstName')}">
-		 <div class="greska"><c:out value="${userForm.getError('firstName')}"/></div>
+		 <div><c:out value="${userForm.getError('firstName')}"/></div>
 		 </c:if>
 		</div>
 
 		<div>
 		 <div>
-		  <span class="formLabel">Last name</span><input type="text" name="lastName" value='<c:out value="${userForm.lastName}"/>' size="20">
+		  <span>Last name</span><input type="text" name="lastName" value='<c:out value="${userForm.lastName}"/>' size="20">
 		 </div>
 		 <c:if test="${userForm.hasError('lastName')}">
-		 <div class="greska"><c:out value="${userForm.getError('lastName')}"/></div>
+		 <div><c:out value="${userForm.getError('lastName')}"/></div>
 		 </c:if>
 		</div>
 
 		<div>
 		 <div>
-		  <span class="formLabel">Nick</span><input type="text" name="nick" value='<c:out value="${userForm.nick}"/>' size="20">
+		  <span>Nick</span><input type="text" name="nick" value='<c:out value="${userForm.nick}"/>' size="20">
 		 </div>
 		 <c:if test="${userForm.hasError('nick')}">
-		 <div class="greska"><c:out value="${userForm.getError('nick')}"/></div>
+		 <div><c:out value="${userForm.getError('nick')}"/></div>
 		 </c:if>
 		</div>
 
 		<div>
 		 <div>
-		  <span class="formLabel">EMail</span><input type="text" name="email" value='<c:out value="${userForm.email}"/>' size="50">
+		  <span>EMail</span><input type="text" name="email" value='<c:out value="${userForm.email}"/>' size="50">
 		 </div>
 		 <c:if test="${userForm.hasError('email')}">
-		 <div class="greska"><c:out value="${userForm.getError('email')}"/></div>
+		 <div><c:out value="${userForm.getError('email')}"/></div>
 		 </c:if>
 		</div>
 		
 		<div>
 		 <div>
-		  <span class="formLabel">Password</span><input type="text" name="password" value='<c:out value="${userForm.password}"/>' size="50">
+		  <span>Password</span><input type="text" name="password" value='<c:out value="${userForm.password}"/>' size="50">
 		 </div>
 		 <c:if test="${userForm.hasError('password')}">
-		 <div class="greska"><c:out value="${userForm.getError('password')}"/></div>
+		 <div><c:out value="${userForm.getError('password')}"/></div>
 		 </c:if>
 		</div>
 
-		<div class="formControls">
-		  <span class="formLabel">&nbsp;</span>
+		<div>
+		  <span>&nbsp;</span>
 		  <input type="submit" name="method" value="Register">
 		  <input type="submit" name="method" value="Back">
 		</div>

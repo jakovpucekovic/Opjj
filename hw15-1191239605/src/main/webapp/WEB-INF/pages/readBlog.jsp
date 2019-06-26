@@ -22,7 +22,7 @@
 	<p>${blogEntry.text}</p>
 	
 	<c:if test="${sessionScope[\"current.user.nick\"].equals(blogEntry.creator.nick)}">
-			<h3><a href="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/edit">Edit blog</a></h3>
+			<h3><a href="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/edit/${blogEntry.id}">Edit blog</a></h3>
 	</c:if>
 	
 	<c:forEach var="comment" items="${blogEntry.comments}">
@@ -31,8 +31,30 @@
     	<p>${comment.message}</p>
 	</c:forEach>
 	
+	<form action="${pageContext.request.contextPath}/servleti/author/${blogEntry.creator.nick}/${blogEntry.id}" method="post">
+
+		<div>
+		  <span>Add comment</span><textarea name="message" rows="40" cols="80"></textarea>
+		</div>
+
+		<c:if test="${empty sessionScope[\"current.user.id\"]}">
+		<div>
+		 <div>
+		  <span>EMail</span><input type="text" name="email" value='<c:out value="${commentForm.email}"/>' size="50">
+		 </div>
+		 <c:if test="${commentForm.hasError('email')}">
+		 <div><c:out value="${commentForm.getError('email')}"/></div>
+		 </c:if>
+		</div>
+		</c:if>
+
+		<div>
+		  <span>&nbsp;</span>
+		  <input type="submit" name="method" value="Add comment">
+		</div>
+		
+		</form>
 	
-	<p>Add comment</p>
 		
 	<a href="${pageContext.request.contextPath}/servleti/main">Back to homepage</a>
 		

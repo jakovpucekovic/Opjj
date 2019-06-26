@@ -12,8 +12,7 @@ public class JPADAOImpl implements DAO {
 
 	@Override
 	public BlogEntry getBlogEntry(Long id) throws DAOException {
-		BlogEntry blogEntry = JPAEMProvider.getEntityManager().find(BlogEntry.class, id);
-		return blogEntry;
+		return JPAEMProvider.getEntityManager().find(BlogEntry.class, id);
 	}
 
 	/**
@@ -23,6 +22,23 @@ public class JPADAOImpl implements DAO {
 	public BlogUser getBlogUser(Long id) throws DAOException {
 		BlogUser blogUser = JPAEMProvider.getEntityManager().find(BlogUser.class, id);
 		return blogUser;
+	}
+	
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public BlogUser getBlogUserByName(String nick) throws DAOException {
+		List<BlogUser> list = JPAEMProvider.getEntityManager()
+										   .createQuery("Select bu from BlogUser bu where bu.nick=:ni", BlogUser.class)
+										   .setParameter("ni", nick)
+										   .getResultList();
+		if(list.isEmpty()) {
+			return null;
+		}
+		return list.get(0);
+		
+	
 	}
 	
 	/**
@@ -68,6 +84,18 @@ public class JPADAOImpl implements DAO {
 		} else {
 			JPAEMProvider.getEntityManager().merge(comment);
 		}
+	}
+
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public List<BlogEntry> getBlogEntriesByAuthor(BlogUser user) throws DAOException {
+		List<BlogEntry> list = JPAEMProvider.getEntityManager()
+											.createQuery("Select be from BlogEntry be where be.creator=:user", BlogEntry.class)
+											.setParameter("user", user)
+											.getResultList();
+		return list;
 	}
 	
 }

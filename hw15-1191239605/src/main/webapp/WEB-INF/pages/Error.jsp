@@ -9,6 +9,6 @@
 		<h1>An error happened</h1>
 		<p><c:out value="${poruka}"/></p>
 
-		<p><a href="servleti/main">Return to homepage</a></p>
+		<p><a href="${pageContext.request.contextPath}/servleti/main">Return to homepage</a></p>
 	</body>
 </html>

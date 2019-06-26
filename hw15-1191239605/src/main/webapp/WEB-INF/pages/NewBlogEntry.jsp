@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 	<head>
-		<title>Blog entry</title>
+		<title>New blog entry</title>
 	</head>
 
 	<body>
@@ -18,9 +18,9 @@
 		</c:choose>   
 		</header>	
 	
-		<h1>Add comment</h1>
+		<h1>Add new blog entry</h1>
 
-		<form action="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/new" method="post">
+		<form action="${pageContext.request.contextPath}/servleti/author/NICK/new" method="post">
 
 		<div>
 		 <div>
@@ -35,8 +35,8 @@
 		 <div>
 		  <span>Body</span><textarea name="text" rows="40" cols="80">${userForm.text}</textarea>
 		 </div>
-		 <c:if test="${userForm.hasError('lastName')}">
-		 <div><c:out value="${userForm.getError('lastName')}"/></div>
+		 <c:if test="${userForm.hasError('text')}">
+		 <div><c:out value="${userForm.getError('text')}"/></div>
 		 </c:if>
 		</div>
 

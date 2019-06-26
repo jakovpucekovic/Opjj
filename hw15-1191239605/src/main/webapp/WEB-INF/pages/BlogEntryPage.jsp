@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 	<head>
-		<title>New blog entry</title>
+		<title>Blog entry</title>
 	</head>
 
 	<body>
@@ -18,25 +18,25 @@
 		</c:choose>   
 		</header>	
 	
-		<h1>Add new blog entry</h1>
+		<h1>Add comment</h1>
 
-		<form action="${pageContext.request.contextPath}/servleti/author/NICK/new" method="post">
+		<form action="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/new" method="post">
 
 		<div>
 		 <div>
-		  <span>Title</span><input type="text" name="title" value='<c:out value="${entryForm.title}"/>' size="20">
+		  <span>Title</span><input type="text" name="title" value='<c:out value="${blogEntryForm.title}"/>' size="20">
 		 </div>
-		 <c:if test="${entryForm.hasError('title')}">
-		 <div><c:out value="${userForm.getError('firstName')}"/></div>
+		 <c:if test="${blogEntryForm.hasError('title')}">
+		 <div><c:out value="${blogEntryForm.getError('title')}"/></div>
 		 </c:if>
 		</div>
 
 		<div>
 		 <div>
-		  <span>Body</span><textarea name="text" rows="40" cols="80">${userForm.text}</textarea>
+		  <span>Body</span><textarea name="text" rows="40" cols="80">${blogEntryForm.text}</textarea>
 		 </div>
-		 <c:if test="${userForm.hasError('lastName')}">
-		 <div><c:out value="${userForm.getError('lastName')}"/></div>
+		 <c:if test="${blogEntryForm.hasError('lastName')}">
+		 <div><c:out value="${blogEntryForm.getError('lastName')}"/></div>
 		 </c:if>
 		</div>
 
