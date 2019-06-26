@@ -10,18 +10,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import hr.fer.zemris.java.tecaj_13.dao.DAO;
-import hr.fer.zemris.java.tecaj_13.dao.DAOException;
 import hr.fer.zemris.java.tecaj_13.dao.DAOProvider;
 import hr.fer.zemris.java.tecaj_13.model.BlogComment;
 import hr.fer.zemris.java.tecaj_13.model.BlogCommentForm;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntry;
 import hr.fer.zemris.java.tecaj_13.model.BlogEntryForm;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
-import hr.fer.zemris.java.tecaj_13.model.RegisterUserForm;
 
 /**
- *	BlogEntriesServlet TODO javadoc
+ *	{@link HttpServlet} which shows user blogs, allows their update and
+ *	adds comments on the blogs.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -46,6 +44,7 @@ public class BlogEntriesServlet extends HttpServlet {
 			BlogEntryForm entryForm = new BlogEntryForm();
 			entryForm.fillFromBlogEntry(entry);
 			
+			req.setAttribute("addOrEdit", "Add");
 			req.setAttribute("blogEntryForm", entryForm);
 			
 			req.getRequestDispatcher("/WEB-INF/pages/BlogEntryPage.jsp").forward(req, resp);
@@ -56,15 +55,12 @@ public class BlogEntriesServlet extends HttpServlet {
 			BlogEntryForm entryForm = new BlogEntryForm();
 			entryForm.fillFromBlogEntry(entry);
 			
+			req.setAttribute("addOrEdit", "Edit");
 			req.setAttribute("blogEntryForm", entryForm);
 			
 			req.getRequestDispatcher("/WEB-INF/pages/BlogEntryPage.jsp").forward(req, resp);
 			return;
-		} else if(nick != null && path.matches(nick + "/\\d+")){	
-			
-			
-			
-		} else if(path.matches(".+/\\d+")){
+		}  else if(path.matches(".+/\\d+")){
 			Long entryId = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
 			BlogEntry entry = DAOProvider.getDAO().getBlogEntry(entryId);
 			req.setAttribute("blogEntry", entry);
@@ -80,12 +76,7 @@ public class BlogEntriesServlet extends HttpServlet {
 			
 			req.getRequestDispatcher("/WEB-INF/pages/listBlogs.jsp").forward(req, resp);
 			return;
-		}
-//		else {
-//			req.getRequestDispatcher("/WEB-INF/pages/Error.jsp").forward(req, resp);
-//			return;
-//		}
-//		
+		}	
 		
 	}
 	
@@ -108,9 +99,27 @@ public class BlogEntriesServlet extends HttpServlet {
 				return;
 			}
 			
-			BlogEntry entry = new BlogEntry();
-			blogForm.fillBlogEntry(entry);
-			entry.setCreatedAt(new Date());
+			BlogEntry entry;
+			String path = req.getPathInfo().substring(1);
+			if(path.endsWith("new")) {
+				entry = new BlogEntry();
+				blogForm.fillBlogEntry(entry);
+				entry.setCreatedAt(new Date());
+			} else {
+				Long id;
+				try {
+					id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
+					entry = DAOProvider.getDAO().getBlogEntry(id); 
+					entry.setTitle(blogForm.getTitle());
+					entry.setText(blogForm.getText());
+				} catch(NumberFormatException ex) {
+					entry = new BlogEntry();
+					blogForm.fillBlogEntry(entry);
+					entry.setCreatedAt(new Date());
+				}
+				
+			}
+			
 			entry.setLastModifiedAt(new Date());
 			String nick = (String) req.getSession().getAttribute("current.user.nick");
 			entry.setCreator(DAOProvider.getDAO().getBlogUserByName(nick));
@@ -130,6 +139,10 @@ public class BlogEntriesServlet extends HttpServlet {
 			BlogComment comment = new BlogComment();
 			commentForm.fillBlogComment(comment);
 			comment.setPostedOn(new Date());
+			
+			String path = req.getPathInfo().substring(1);
+			Long id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
+			comment.setBlogEntry(DAOProvider.getDAO().getBlogEntry(id));
 			DAOProvider.getDAO().saveBlogComment(comment);
 			
 		}

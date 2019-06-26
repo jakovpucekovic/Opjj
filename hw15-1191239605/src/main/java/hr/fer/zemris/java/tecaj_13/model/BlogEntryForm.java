@@ -8,9 +8,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import hr.fer.zemris.java.tecaj_13.dao.DAOProvider;
-import hr.fer.zemris.java.tecaj_13.web.servlets.util.Crypto;
-
 /**
  *	{@link BlogEntryForm} is used for creating and editing blogs.
  * 
@@ -65,11 +62,6 @@ public class BlogEntryForm {
 		this.id = setup(req.getParameter("id"));
 		this.title = setup(req.getParameter("title"));
 		this.text = setup(req.getParameter("text"));
-//		this.creator = setup(req.getParameter("creator")); TODO??
-//		this.comments = setup(req.getParameter("comments"));
-//		this.createdAt = setup(req.getParameter("createdAt"));
-//		this.lastModifiedAt = setup(req.getParameter("lastModifiedAt"));
-		
 	}
 
 	/**
@@ -126,11 +118,11 @@ public class BlogEntryForm {
 				errors.put("id", "Id not valid");
 			}
 		}
-//	TODO validacija
+
 		if(this.title.isEmpty()) {
 			errors.put("title", "Title is mandatory!");
 		} else if(this.title.length() > 200) {
-			errors.put("title", "Title cannot be longer than 20 characters!");
+			errors.put("title", "Title cannot be longer than 200 characters!");
 		} 
 	
 		if(this.text.isEmpty()) {

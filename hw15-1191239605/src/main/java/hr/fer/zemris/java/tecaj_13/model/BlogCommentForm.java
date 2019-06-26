@@ -1,14 +1,9 @@
 package hr.fer.zemris.java.tecaj_13.model;
 
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import hr.fer.zemris.java.tecaj_13.dao.DAOProvider;
-import hr.fer.zemris.java.tecaj_13.web.servlets.util.Crypto;
 
 /**
  *	{@link BlogCommentForm} is a class which allows for the registration
@@ -72,7 +67,7 @@ public class BlogCommentForm {
 	public void fillFromHttpRequest(HttpServletRequest req) {
 		this.id = setup(req.getParameter("id"));
 		this.blogEntry = setup(req.getParameter("blogEntry"));
-		this.usersEMail = setup(req.getParameter("usersEmail"));
+		this.usersEMail = setup(req.getParameter("usersEMail"));
 		this.message = setup(req.getParameter("message"));
 		this.postedOn = setup(req.getParameter("postedOn"));
 	}
@@ -104,6 +99,7 @@ public class BlogCommentForm {
 		}
 		
 		comment.setUsersEMail(this.usersEMail);
+		comment.setMessage(this.message);
 		
 	}
 	

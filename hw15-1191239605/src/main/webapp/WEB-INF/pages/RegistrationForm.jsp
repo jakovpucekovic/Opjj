@@ -8,7 +8,7 @@
 	<body>
 		<h1>New user</h1>
 
-		<form action="${pageContext.request.contextPath}/servleti/register-save" method="post">
+		<form action="${pageContext.request.contextPath}/servleti/register" method="post">
 
 		<div>
 		 <div>
@@ -48,7 +48,7 @@
 		
 		<div>
 		 <div>
-		  <span>Password</span><input type="text" name="password" value='<c:out value="${userForm.password}"/>' size="50">
+		  <span>Password</span><input type="password" name="password" value='<c:out value="${userForm.password}"/>' size="50">
 		 </div>
 		 <c:if test="${userForm.hasError('password')}">
 		 <div><c:out value="${userForm.getError('password')}"/></div>

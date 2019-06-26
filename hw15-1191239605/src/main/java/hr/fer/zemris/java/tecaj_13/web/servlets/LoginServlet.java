@@ -54,6 +54,7 @@ public class LoginServlet extends HttpServlet {
 		req.getSession().setAttribute("current.user.fn", user.getFirstName());
 		req.getSession().setAttribute("current.user.ln", user.getLastName());
 		req.getSession().setAttribute("current.user.nick", user.getNick());
+		req.getSession().setAttribute("current.user.email", user.getEmail());
 		
 		resp.sendRedirect(req.getServletContext().getContextPath() + "/servleti/main");
 	}

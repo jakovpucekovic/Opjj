@@ -26,30 +26,32 @@
 	</c:if>
 	
 	<c:forEach var="comment" items="${blogEntry.comments}">
-		<h3>${comment.l}</h3>
-    	<h4>${comment.postedOn}</h4>
+    	<h4>Comment from ${comment.usersEMail} posted on ${comment.postedOn}</h4>
     	<p>${comment.message}</p>
 	</c:forEach>
 	
 	<form action="${pageContext.request.contextPath}/servleti/author/${blogEntry.creator.nick}/${blogEntry.id}" method="post">
 
 		<div>
-		  <span>Add comment</span><textarea name="message" rows="40" cols="80"></textarea>
+		  <span>Add comment</span><textarea name="message" rows="20" cols="80"></textarea>
 		</div>
 
 		<c:if test="${empty sessionScope[\"current.user.id\"]}">
 		<div>
 		 <div>
-		  <span>EMail</span><input type="text" name="email" value='<c:out value="${commentForm.email}"/>' size="50">
+		  <span>EMail</span><input type="text" name="usersEMail" value='<c:out value="${commentForm.usersEMail}"/>' size="50">
 		 </div>
-		 <c:if test="${commentForm.hasError('email')}">
-		 <div><c:out value="${commentForm.getError('email')}"/></div>
+		 <c:if test="${commentForm.hasError('usersEMail')}">
+		 <div><c:out value="${commentForm.getError('usersEMail')}"/></div>
 		 </c:if>
 		</div>
 		</c:if>
 
 		<div>
 		  <span>&nbsp;</span>
+		   <c:if test="${not empty sessionScope[\"current.user.id\"]}">
+		  <input type="hidden" name="usersEMail" value="${sessionScope['current.user.email']}">
+		  </c:if>
 		  <input type="submit" name="method" value="Add comment">
 		</div>
 		

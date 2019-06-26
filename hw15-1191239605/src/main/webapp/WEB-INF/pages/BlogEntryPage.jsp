@@ -18,9 +18,16 @@
 		</c:choose>   
 		</header>	
 	
-		<h1>Add comment</h1>
-
-		<form action="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/new" method="post">
+		<h1>${addOrEdit} blog entry</h1>
+		
+		<c:choose>
+		<c:when test="${addOrEdit == 'add'}">
+			<form action="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/new" method="post">	
+		</c:when>
+		<c:otherwise>
+			<form action="${pageContext.request.contextPath}/servleti/author/${sessionScope['current.user.nick']}/edit/${blogEntryForm.id}" method="post">			
+		</c:otherwise>
+		</c:choose>
 
 		<div>
 		 <div>

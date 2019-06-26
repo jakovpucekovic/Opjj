@@ -13,7 +13,7 @@ import hr.fer.zemris.java.tecaj_13.dao.DAOProvider;
 import hr.fer.zemris.java.tecaj_13.model.BlogUser;
 
 /**
- *	LoginServlet TODO javadoc
+ *	{@link HttpServlet} which points to main.jsp page.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
