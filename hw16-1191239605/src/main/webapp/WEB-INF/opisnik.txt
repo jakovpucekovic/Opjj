@@ -1,0 +1,60 @@
+benediktiner-svijetlo.png
+German light beer Benediktiner
+germany, bottle, 0.5l
+benediktiner-tamno.jpg
+German dark beer Benediktiner
+germany, bottle, 0.5l, dark
+budweiser.jpg
+Original Czech beer Budweiser
+czech, bottle, 0.5l
+budweiser-tamno.jpg
+Original Czech beer Budweiser Dark
+czech, bottle, 0.5l, dark
+chimay.jpg
+Belgian beer Chimay
+belgium, bottle, 0.33l
+faxe.jpg
+Danish large beer Faxe
+denmark, 1.0l, can
+kozel.jpg
+Czech beer Kozel
+czech, bottle, 0.5l
+krusovice.jpg
+Czech beer Krusovice
+czech, bottle, 0.5l
+levic.jpg
+German beer Loewenbrau
+germany, can, 0.5l, cheap
+osjecko.jpg
+Croatian beer Osjecko
+croatia, bottle, 0.5l
+osjecko-radler.jpg
+Croatian radler beer Osjecko
+croatia, can, 0.5l, radler
+paulaner.jpg
+German beer Paulaner
+germany, bottle, 0.5l
+piraat.jpg
+Belgian beer Piraat
+belgium, bottle, 0.33l
+PIVO.jpg
+Worst Croatian beer(possibly ever made): K-PLUS PIVO
+croatia, can, 0.5l, bad, cheap
+sapporo.jpg
+Japanese premium beer Sapporo
+japan, bottle, 0.33l
+staropramen.jpg
+Czech beer Staropramen
+czech, can, 0.5l
+stiegl.jpg
+Austrian beer from Salzburg: Stiegl
+austria, can, 0.5l
+tomislav.jpg
+Croatian dark beer Tomislav
+croatia, bottle, 0.5l, dark
+zmajsko-svijetlo.jpg
+Croatian craft beer Zmajsko Pale Ale
+croatia, bottle, 0.33l, craft
+zmajsko-tamno.jpg
+Croatian dark craft beer Zmajsko Porter
+croatia, bottle, 0.33l, craft, dark
