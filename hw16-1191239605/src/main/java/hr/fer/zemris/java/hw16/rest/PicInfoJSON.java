@@ -19,19 +19,22 @@ import javax.ws.rs.core.Response.Status;
 
 import com.google.gson.Gson;
 
-import hr.fer.zemris.java.hw16.servlets.DBProvider;
-import hr.fer.zemris.java.hw16.servlets.PicInfo;
+import hr.fer.zemris.java.hw16.db.DBProvider;
+import hr.fer.zemris.java.hw16.db.PicInfo;
 
 /**
- * Razred koristi biblioteku org.json za rad s JSON formatom
- * (da vidite kako se s time radi; mogli smo koristiti i gson).
+ * 	Class which communicates with the frontend through JSON
+ * 	using the REST api.
  * 
- * @author marcupic
+ * 	@author Jakov Pucekovic
+ * 	@version 1.0
  */
 @Path("/picInfo")
 public class PicInfoJSON {
 	
-	
+	/**
+	 * 	Returns a {@link List} of all available tags wrapped as a JSON object.
+	 */
 	@GET
 	@Produces("application/json")
 	public Response getTagList() throws IOException {
@@ -40,14 +43,19 @@ public class PicInfoJSON {
 		return Response.status(Status.OK).entity(json.toJson(tags)).build();
 	}
 	
+	/**
+	 * 	Returns a {@link List} of pictures which have the given tag wrapped as a
+	 * 	JSON object.
+	 * 	@param tag Tag which the returned pictures should have.
+	 */
 	@Path("{tag}")
 	@GET
 	@Produces("application/json")
 	public Response getThumbnailsList(@Context ServletContext context, @PathParam("tag") String tag) throws IOException {
 		List<PicInfo> picsByTag = DBProvider.getDB().getPicsByTag(tag);
 		
-		makeThumbnails(context.getRealPath("/slike"), 
-					   context.getRealPath("/thumbnails"), 
+		makeThumbnails(context.getRealPath("WEB-INF/slike"), 
+					   context.getRealPath("WEB-INF/thumbnails"), 
 					   picsByTag);
 		
 		Gson json = new Gson();
@@ -55,6 +63,10 @@ public class PicInfoJSON {
 		return Response.status(Status.OK).entity(json.toJson(pics)).build();
 	}
 	
+	/**
+	 *  Returns a {@link PicInfo} with the given name wrapped as a JSON object.
+	 * 	@param name Name of the picture to return.
+	 */
 	@Path("/pic/{name}")
 	@GET
 	@Produces("application/json")
@@ -65,9 +77,13 @@ public class PicInfoJSON {
 	}
 
 	/**
-	 *	TODO javadoc 
+	 *	Makes the thumbnails of the pictures if the thumbnails don't exist.
+	 *	@param picsPath Path to the folder which contains the pictures.
+	 *	@param thumbnailsPath Path to the folder where the thumbnails should be created.
+	 *	@param thumbnails {@link List} of pictures for which the thumbnails should be created.
+	 *	@throws IOException If there are problems with reading or creating files.
 	 */
-	private void makeThumbnails(String picsPath ,String thumbnailsPath, List<PicInfo> thumbnails) throws IOException {
+	private void makeThumbnails(String picsPath, String thumbnailsPath, List<PicInfo> thumbnails) throws IOException {
 		java.nio.file.Path thumbnailsDir = Paths.get(thumbnailsPath);
 		java.nio.file.Path picsDir = Paths.get(picsPath);
 		

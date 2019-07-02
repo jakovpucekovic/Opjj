@@ -33,7 +33,7 @@ function getPicsByTag(tag){
 							html = "No pictures with the tag" + tag;
 						} else {
 							for(var i=0; i < pics.length; ++i) {
-								html += "<img id='thumbnail' src='thumbnails/" + htmlEscape(pics[i]) + "' onclick='getPicture(\"" + htmlEscape(pics[i]) + "\")'>";
+								html += "<img id='thumbnail' src='pic?tag=" + htmlEscape(pics[i]) + "' onclick='getPicture(\"" + htmlEscape(pics[i]) + "\")'>";
 							}
 						}
 						$("#pics").html(html);
@@ -51,7 +51,7 @@ function getPicture(name){
 				  dataType: "json",
 				  success: function(data) {
 						var pic = data;
-						var html = "<img id='thePic' src='slike/" + htmlEscape(pic.name) + "'>";
+						var html = "<img id='thePic' src='pic?name=" + htmlEscape(pic.name) + "'>";
 						html += "<p id='desc'>" + htmlEscape(pic.description) + "</p>";
 						html += "<p id='picTag'>" + htmlEscape(pic.tags) + "</p>";
 						$("#pics").html("");						

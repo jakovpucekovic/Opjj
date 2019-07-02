@@ -1,10 +1,11 @@
-package hr.fer.zemris.java.hw16.servlets;
+package hr.fer.zemris.java.hw16.db;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *	Tag TODO javadoc
+ *	Java-bean class which holds information about the
+ *	pictures.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
@@ -23,7 +24,6 @@ public class PicInfo {
 	
 	/**
 	 * 	Constructs a new {@link PicInfo}.
-	 * 	TODO javadoc
 	 */
 	public PicInfo() {
 		tags = new ArrayList<>();
