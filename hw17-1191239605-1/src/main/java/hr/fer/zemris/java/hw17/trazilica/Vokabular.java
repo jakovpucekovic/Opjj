@@ -16,27 +16,37 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *	Vokabular TODO javadoc
+ *	Class which represents all words that are used in all {@link Dokument}s and
+ *	the stop words which are ignored.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class Vokabular {
 
+	/**Path to the folder which contains the {@link Dokument}s.*/
 	private Path path;
-	private static final String stopWordsFile = "src/main/resources/hrvatski_stoprijeci.txt";
+	
+	/**Path to the file which contains the stop words.*/
+ 	private static final String stopWordsFile = "src/main/resources/hrvatski_stoprijeci.txt";
+	
+ 	/**Set which contains all stop words.*/
 	private static Set<String> stopWords = null;
 	
-	//mapa svih rijeci i broja dokumenata u kojima se ta rijec pojavljuje najmanje jednom
+	/**Inverse document frequency map which maps all word with their IDF value.*/
 	private Map<String,Double> idf = new HashMap<>();
+	
+	/**{@link List} of all {@link Dokument}s read in the given folder.*/
 	private List<Dokument> documents = new ArrayList<>();
 	
 	
 	/**
-	 * 	Constructs a new Vokabular.
-	 * 	TODO javadoc
-	 * @throws IOException 
+	 * 	Constructs a new {@link Vokabular}.
+	 * 	@param directory Path to the directory which contains files based on which
+	 * 					 the {@link Vokabular} is created.
+	 * 	@throws IllegalArgumentException If the given path isn't a directory or if
+	 * 									 the directory doesn't exist.
+	 * 	@throws IOException If there is an error while reading files.
 	 */
 	public Vokabular(String directory) throws IOException {
 		path = Paths.get(directory);
@@ -46,17 +56,22 @@ public class Vokabular {
 		} else if(!Files.isDirectory(path)) {
 			throw new IllegalArgumentException("Given argument isn't a directory.");
 		}
+		
 		if(stopWords == null) {
 			stopWords = new HashSet<>(Files.readAllLines(Paths.get(stopWordsFile), StandardCharsets.UTF_8));
 		}
+		
 		readDir();
 		calculateIDF();
+		
 		for(var doc : documents) {
 			doc.computeTFIDF(idf);
 		}
-		System.out.println(".");
 	}
 	
+	/**
+	 *	Calculates the IDF vector of all words in the {@link Vokabular}. 
+	 */
 	private void calculateIDF() {
 		int numberOfDocs = documents.size();
 		
@@ -83,6 +98,11 @@ public class Vokabular {
 		}
 	}
 	
+	/**
+	 * 	Reads all the files in the given directory structure and contructs a
+	 * 	{@link Dokument} for each file.
+	 * 	@throws IOException If there is an error reading files.
+	 */
 	private void readDir() throws IOException {
 		Files.walkFileTree(path, new FileVisitor<Path>() {
 
@@ -112,26 +132,48 @@ public class Vokabular {
 		});
 	}
 	
+	/**
+	 * 	Checks if the given word is in the {@link Vokabular}.	
+	 * 	@param word Word to check.
+	 * 	@return <code>true</code> if yes, <code>false</code> if not.	
+	 */
 	public boolean hasWord(String word) {
 		return idf.containsKey(word);
 	}
 	
+	/**
+	 * 	Returns the number of words in this {@link Vokabular}.
+	 * 	@return The number of words in this {@link Vokabular}.
+	 */
 	public int getWordListSize(){
 		return idf.keySet().size();
 	}
 	
+	/**
+	 * 	Returns the {@link List} of all {@link Dokument}s.
+	 * 	@return The {@link List} of all {@link Dokument}s.
+	 */
+	public List<Dokument> getDocuments(){
+		return documents;
+	}
+
+	/**
+	 * 	Returns the IDF map.
+	 * 	@return The IDF map.	
+	 */
+	public Map<String,Double> getIDF(){
+		return idf;
+	}
+
+	/**
+	 * 	Returns the {@link Set} which contains all of the stop words.
+	 * 	@return The {@link Set} which contains all of the stop words.
+	 * 	@throws IOException If there is an error while reading file.
+	 */
 	public static Set<String> getStopWords() throws IOException{
 		if(stopWords == null) {
 			stopWords = new HashSet<>(Files.readAllLines(Paths.get(stopWordsFile), StandardCharsets.UTF_8));
 		}
 		return stopWords;
-	}
-	
-	public List<Dokument> getDocuments(){
-		return documents;
-	}
-	
-	public Map<String,Double> getIDF(){
-		return idf;
 	}
 }

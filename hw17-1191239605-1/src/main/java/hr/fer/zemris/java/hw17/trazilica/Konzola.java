@@ -10,19 +10,28 @@ import java.util.stream.Collectors;
 import java.util.Scanner;
 
 /**
- *	Konzola TODO javadoc
+ *	Main class which handles communication with the user and execution
+ *	of different commands the user can submit.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class Konzola {
 	
+	/**{@link Vokabular} with which we're working.*/
 	private static Vokabular voc;
+
+	/**Flag which signals if the first query has been entered.*/
 	private static boolean queryEntered = false;
+	
+	/**Sorted list which holds the {@link Dokument}s and their similarity to the last executed query.*/
 	private static List<Entry<Dokument,Double>> resultList;
 	
-	
+	/**
+	 * 	Main method which communicates with the user.
+	 * 	@param args Path to directory which contains the documents based on which the {@link Vokabular}
+	 * 				is built.
+	 */
 	public static void main(String[] args) {
 		
 		if(args.length != 1) {
@@ -62,6 +71,11 @@ public class Konzola {
 		sc.close();
 	}
 	
+	/**
+	 * 	Executes the command <code>query</code> which prints the query, calculates the results
+	 * 	and prints the best 10.
+	 * 	@param input User input after the word query.	
+	 */
 	private static void query(String input) {
 		String[] params = input.trim().split(" ");
 		List<String> validParamWords = new ArrayList<>();
@@ -83,6 +97,7 @@ public class Konzola {
 		
 		Map<Dokument,Double> results = executeQuery(validParamWords);
 		
+		//create resultList
 		resultList = new ArrayList<>(results.entrySet());
 		resultList = resultList.stream()
 				   .filter(x -> x.getValue() != 0)
@@ -99,7 +114,11 @@ public class Konzola {
 		}
 	}
 	
-	
+	/**
+	 *  Private method which executes the query and caluclates the results of the query.
+	 *  @param queryWords {@link List} of the words in the query.
+	 * 	@return {@link Map} of {@link Dokument} and their similarity with the given query.	
+	 */
 	private static Map<Dokument,Double> executeQuery(List<String> queryWords) {
 		Dokument queryDoc = new Dokument(queryWords);
 		queryDoc.computeTFIDF(voc.getIDF());
@@ -115,21 +134,26 @@ public class Konzola {
 		return results;
 	}
 	
-	
+	/**
+	 * 	Executes the command <code>results</code> which prints the results of
+	 * 	the query.
+	 */
 	private static void results() {
 		if(!queryEntered) {
 			System.out.println("Nije unesen query.");
 			return;
 		}
-		System.out.println("Najboljih 10 rezultata:");
+		
 		for(int i = 0, s = resultList.size(); i < s; ++i) {
-			if(i == 10) {
-				break;
-			}
 			System.out.println(String.format("[%d](%.4f) %s", i, resultList.get(i).getValue(), resultList.get(i).getKey().getName()));
 		}
 	}
 	
+	/**
+	 *  Executes the command <code>type</code> which prints the contents
+	 *  of the {@link Dokument} in result with the given index.
+	 *  @param num Index of the {@link Dokument} to print.
+	 */
 	private static void type(int num) {
 		if(!queryEntered) {
 			System.out.println("Nije unesen query.");

@@ -13,19 +13,27 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- *	Dokument TODO javadoc
+ *	Class which represents a document.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class Dokument {
 
+	/**Path to the document*/
 	private Path path;
-	private Map<String,Double> tfidf = new HashMap<>();
+	
+	/**Term frequency map which maps each word to the number of times it's used.*/
 	private Map<String,Integer> tf  = new HashMap<>();
 	
+	/**Term frequency-inverse document frequency map.*/
+	private Map<String,Double> tfidf = new HashMap<>();
 	
+	/**
+	 * 	Constructs a new {@link Dokument} with the following words, each word
+	 * 	is put only once in the term frequency map.
+	 * 	@param words {@link List} of words to contruct the {@link Dokument} with.
+	 */
 	public Dokument(List<String> words) {
 		for(var w : words) {
 			tf.put(w, 1);
@@ -33,9 +41,13 @@ public class Dokument {
 	}
 	
 	/**
-	 * 	Constructs a new Dokument.
-	 * 	TODO javadoc
-	 * @throws IOException 
+	 * 	Constructs a new {@link Dokument} from a file on disk.
+	 * 	@param pathtoFile {@link Path} to the file from which the {@link Dokument}	
+	 * 					  should be read.
+	 * 	@throws NullPointerException If path is <code>null</code>.
+	 * 	@throws IllegalArgumentException If path points to non-existent file or if the
+	 * 									 file is not readable.
+	 * 	@throws IOException If there is an error while reading the file.
 	 */
 	public Dokument(Path pathtoFile) throws IOException {
 		Objects.requireNonNull(pathtoFile);
@@ -43,10 +55,12 @@ public class Dokument {
 		if(Files.notExists(path) || !Files.isReadable(path)) {
 			throw new IllegalArgumentException("Invalid path to document given");
 		}
-		tf = read();
+		read();
 	}
 	
-	//ispise dokument na system.out
+	/**
+	 *	Writes the contents of the {@link Dokument} on {@link System.out}. 
+	 */
 	public void write() {
 		try(BufferedReader in = Files.newBufferedReader(path)){
 			String line;
@@ -58,23 +72,41 @@ public class Dokument {
 		}
 	}
 
+	/**
+	 *	Calculates the TFIDF map based on the IDF map of the Vocabulary.
+	 *	@param idf IDF map based on which the TFIDF map is calculated. 
+	 */
 	public void computeTFIDF(Map<String,Double> idf) {
 		for(var word : tf.keySet()) {
 			tfidf.put(word, tf.get(word) * idf.get(word));
 		}
 	}
 	
+	/**
+	 * 	Returns the term frequnecy map of this {@link Dokument}.	
+	 * 	@return The term frequnecy map of this {@link Dokument}.	
+	 */
 	public Map<String,Integer> getTF(){
 		return tf;
 	} 
 	
+	/**
+	 *	Returns the name(full path) of the {@link Dokument}.
+	 *	@return The name of the {@link Dokument}.
+	 */
 	public String getName() {
 		return path.toString();
 	}
 	
-	//procita i vrati tf
-	private Map<String,Integer> read() throws IOException{
-		Map<String,Integer> tf = new HashMap<>();
+	/**
+	 *	Private method which reads the file from memory and contructs
+	 *	a term frequency map. Stop words from the {@link Vokabular} are ignored.
+	 *	Also, words are separated by {@link Character}s for which <code>Character.isAlphabetic()</code>
+	 *	returns <code>false</code>.
+	 *	@throws IOException If there is an error while reading the file. 
+	 */
+	private void read() throws IOException{
+		tf = new HashMap<>();
 		BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8);
 		StringBuilder sb = new StringBuilder();
 		int read = br.read();
@@ -90,11 +122,14 @@ public class Dokument {
 			}
 			read = br.read();
 		}
-		br.close();
-		
-		return tf;
+		br.close();		
 	} 
 
+	/**
+	 * 	Calculates the similarity of this and the given {@link Dokument}.
+	 * 	@param doc {@link Dokument} to calculate similarity with.
+	 * 	@return The similarity between documents.
+	 */
 	public double similarity(Dokument doc) {
 		double sim = 0.0, norm1 = 0.0, norm2 = 0.0;
 		Set<String> words = new HashSet<>(tfidf.keySet());
