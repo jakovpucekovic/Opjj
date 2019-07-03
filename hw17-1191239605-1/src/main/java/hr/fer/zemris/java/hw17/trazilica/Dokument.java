@@ -1,10 +1,7 @@
 package hr.fer.zemris.java.hw17.trazilica;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -99,7 +96,7 @@ public class Dokument {
 	} 
 
 	public double similarity(Dokument doc) {
-		double sim = 0, norm1 = 0, norm2 = 0;
+		double sim = 0.0, norm1 = 0.0, norm2 = 0.0;
 		Set<String> words = new HashSet<>(tfidf.keySet());
 		words.addAll(doc.tfidf.keySet());
 		
@@ -107,14 +104,22 @@ public class Dokument {
 		for(var w : words) {
 			v1 = tfidf.get(w);
 			v2 = doc.tfidf.get(w);
+			if(v1 != null) {
+				norm1 += v1*v1;
+			}
+			if(v2 != null) {
+				norm2 += v2*v2;
+			}
 			if(v1 == null || v2 == null) {
 				continue;
 			}
 			sim += v1*v2;
-			norm1 += v1*v1;
-			norm2 += v2*v2;
 		}
-		
+		if(sim == 0) {
+			return 0;
+		}
+		norm1 = Math.sqrt(norm1);
+		norm2 = Math.sqrt(norm2);
 		return sim / (norm1 * norm2);
 	}
 	

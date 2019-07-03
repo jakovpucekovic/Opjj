@@ -54,6 +54,7 @@ public class Vokabular {
 		for(var doc : documents) {
 			doc.computeTFIDF(idf);
 		}
+		System.out.println(".");
 	}
 	
 	private void calculateIDF() {
