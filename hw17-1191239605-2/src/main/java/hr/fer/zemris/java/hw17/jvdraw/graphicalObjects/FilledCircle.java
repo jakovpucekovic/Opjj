@@ -3,7 +3,7 @@ package hr.fer.zemris.java.hw17.jvdraw.graphicalObjects;
 import java.awt.Color;
 import java.awt.Point;
 
-import hr.fer.zemris.java.hw17.jvdraw.GeometricalObjectEditor;
+import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
 /**

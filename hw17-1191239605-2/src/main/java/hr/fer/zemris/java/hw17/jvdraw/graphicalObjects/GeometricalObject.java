@@ -4,8 +4,8 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-import hr.fer.zemris.java.hw17.jvdraw.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.GeometricalObjectListener;
+import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
 /**

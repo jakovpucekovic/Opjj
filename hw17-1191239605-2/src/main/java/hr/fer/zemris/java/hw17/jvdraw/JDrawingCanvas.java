@@ -2,6 +2,8 @@ package hr.fer.zemris.java.hw17.jvdraw;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.function.Supplier;
 
 import javax.swing.JComponent;
@@ -19,7 +21,7 @@ import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectPainter;
 public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 
 	private static final long serialVersionUID = 1L;
-
+	//TODO javadoc
 	private Supplier<Tool> toolGetter;
 	private DrawingModel model;
 	
@@ -31,6 +33,51 @@ public class JDrawingCanvas extends JComponent implements DrawingModelListener {
 		this.model = model;
 		this.toolGetter = toolGetter;
 		model.addDrawingModelListener(this);
+		
+		addMouseListener(new MouseAdapter() {
+			
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				toolGetter.get().mouseReleased(e);
+			}
+			
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void mousePressed(MouseEvent e) {
+				toolGetter.get().mousePressed(e);
+			}
+			
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				toolGetter.get().mouseClicked(e);
+			}
+		
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				toolGetter.get().mouseDragged(e);
+			}
+			
+			/**
+			 *	{@inheritDoc}
+			 */
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				toolGetter.get().mouseMoved(e);
+			}
+			
+		});
+		
 	}
 	
 	/**

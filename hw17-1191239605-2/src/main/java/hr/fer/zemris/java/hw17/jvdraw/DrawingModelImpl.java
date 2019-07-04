@@ -57,9 +57,11 @@ public class DrawingModelImpl implements DrawingModel {
 	@Override
 	public void remove(GeometricalObject object) {
 		int index = geomObjects.indexOf(object);
-		geomObjects.remove(index);
-		modified = true;
-		notifyRemoved(index, index);
+		if(index != -1) {
+			geomObjects.remove(index);
+			modified = true;
+			notifyRemoved(index, index);
+		}
 	}
 
 	/**
