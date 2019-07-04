@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import hr.fer.zemris.java.hw17.jvdraw.editor.CircleEditor;
 import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
@@ -62,6 +63,33 @@ public class Circle extends GeometricalObject{
 	}
 	
 	/**
+	 * 	Sets the center of the {@link Circle}.
+	 * 	@param center the center to set.
+	 */
+	public void setCenter(Point center) {
+		this.center = center;
+		notifyListeners();
+	}
+
+	/**
+	 * 	Sets the radius of the {@link Circle}.
+	 * 	@param radius the radius to set.
+	 */
+	public void setRadius(int radius) {
+		this.radius = radius;
+		notifyListeners();
+	}
+
+	/**
+	 * 	Sets the borderColor of the {@link Circle}.
+	 * 	@param borderColor the borderColor to set.
+	 */
+	public void setBorderColor(Color borderColor) {
+		this.borderColor = borderColor;
+		notifyListeners();
+	}
+
+	/**
 	 *	{@inheritDoc}
 	 */
 	@Override
@@ -74,8 +102,7 @@ public class Circle extends GeometricalObject{
 	 */
 	@Override
 	public GeometricalObjectEditor createGeometricalObjectEditor() {
-		// TODO Auto-generated method stub
-		return null;
+		return new CircleEditor(this);
 	}
 
 	/**

@@ -13,6 +13,8 @@ public abstract class GeometricalObjectEditor extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	
+	//TODO javadoc
 	public abstract void checkEditing();
 	
 	public abstract void acceptEditing();

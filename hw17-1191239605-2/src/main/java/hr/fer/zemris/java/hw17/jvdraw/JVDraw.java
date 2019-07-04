@@ -19,12 +19,15 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import hr.fer.zemris.java.hw17.jvdraw.colorArea.JColorArea;
 import hr.fer.zemris.java.hw17.jvdraw.colorArea.JColorInfo;
+import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.tools.CircleTool;
 import hr.fer.zemris.java.hw17.jvdraw.tools.CurrentTool;
@@ -58,7 +61,7 @@ public class JVDraw extends JFrame {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setTitle("JVDraw");
 		setLocation(10, 10);
-		setSize(600, 800);
+		setSize(800, 800);
 		
 		initGUI();
 		setClosingOperations();
@@ -126,13 +129,16 @@ public class JVDraw extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				switch(e.getKeyCode()) {
 					case(KeyEvent.VK_DELETE):{
-						//TODO
+						model.remove(list.getSelectedValue());
+						break;
 					}
 					case(KeyEvent.VK_PLUS):{
-						
+						model.changeOrder(list.getSelectedValue(), -1);//TODO ne radi
+						break;
 					}
 					case(KeyEvent.VK_MINUS):{
-						
+						model.changeOrder(list.getSelectedValue(), 1);
+						break;
 					}
 				}
 			}
@@ -147,7 +153,19 @@ public class JVDraw extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount() == 2) {
-					//TODO
+					GeometricalObjectEditor editor = list.getSelectedValue().createGeometricalObjectEditor();
+					if(JOptionPane.showConfirmDialog(JVDraw.this, editor, "Edit object", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+						try {
+							editor.checkEditing();
+							editor.acceptEditing();
+						} catch(Exception ex) {
+							JOptionPane.showConfirmDialog(JVDraw.this,
+														 "An unexpected error happened. Object couldn't be edited.", 
+														 "Error", 
+														 JOptionPane.OK_CANCEL_OPTION, 
+														 JOptionPane.ERROR_MESSAGE);
+						}
+					}
 				}
 			}
 		

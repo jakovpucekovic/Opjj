@@ -3,6 +3,7 @@ package hr.fer.zemris.java.hw17.jvdraw.graphicalObjects;
 import java.awt.Color;
 import java.awt.Point;
 
+import hr.fer.zemris.java.hw17.jvdraw.editor.FilledCircleEditor;
 import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
@@ -39,6 +40,15 @@ public class FilledCircle extends Circle {
 	}
 
 	/**
+	 * 	Sets the fillColor of the {@link FilledCircle}.
+	 * 	@param fillColor the fillColor to set.
+	 */
+	public void setFillColor(Color fillColor) {
+		this.fillColor = fillColor;
+		notifyListeners();
+	}
+
+	/**
 	 *	{@inheritDoc}
 	 */
 	@Override
@@ -51,8 +61,7 @@ public class FilledCircle extends Circle {
 	 */
 	@Override
 	public GeometricalObjectEditor createGeometricalObjectEditor() {
-		// TODO Auto-generated method stub
-		return null;
+		return new FilledCircleEditor(this);
 	}
 
 	/**
