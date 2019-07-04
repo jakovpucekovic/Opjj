@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw17.jvdraw;
+package hr.fer.zemris.java.hw17.jvdraw.tools;
 
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;

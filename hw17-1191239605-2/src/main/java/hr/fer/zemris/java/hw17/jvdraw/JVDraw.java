@@ -10,6 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import hr.fer.zemris.java.hw17.jvdraw.colorarea.JColorArea;
+import hr.fer.zemris.java.hw17.jvdraw.colorarea.JColorInfo;
+
 /**
  *	JVDraw TODO javadoc
  * 
