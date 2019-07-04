@@ -3,7 +3,9 @@ package hr.fer.zemris.java.hw17.jvdraw.tools;
 import java.util.function.Supplier;
 
 /**
- *	CurrentTool TODO javadoc
+ *	Class which implements the {@link Supplier} interface and the State
+ *	designer pattern by having its current {@link Tool} changed and supplying
+ *	the current {@link Tool}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

@@ -10,7 +10,6 @@ import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class DrawingObjectListModel extends AbstractListModel<GeometricalObject> implements DrawingModelListener{
 
 	private static final long serialVersionUID = 1L;

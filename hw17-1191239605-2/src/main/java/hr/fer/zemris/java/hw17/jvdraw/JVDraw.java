@@ -10,11 +10,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeListener;
-import java.util.function.Supplier;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -32,7 +30,6 @@ import hr.fer.zemris.java.hw17.jvdraw.tools.CircleTool;
 import hr.fer.zemris.java.hw17.jvdraw.tools.CurrentTool;
 import hr.fer.zemris.java.hw17.jvdraw.tools.FilledCircleTool;
 import hr.fer.zemris.java.hw17.jvdraw.tools.LineTool;
-import hr.fer.zemris.java.hw17.jvdraw.tools.Tool;
 
 /**
  *	JVDraw TODO javadoc
@@ -110,14 +107,15 @@ public class JVDraw extends JFrame {
 	}
 	
 	private void createTools() {
-		lineTool = new LineTool(model, canvas, fgColor);
-		circleTool = new CircleTool(model, canvas, fgColor);
-		filledCircleTool = new FilledCircleTool(model, canvas, fgColor, bgColor);
+		lineTool = new LineTool(model, fgColor);
+		circleTool = new CircleTool(model, fgColor);
+		filledCircleTool = new FilledCircleTool(model, fgColor, bgColor);
 		currentTool = new CurrentTool(lineTool);
 	}
 	
 	private JList<GeometricalObject> createList(){
 		JList<GeometricalObject> list = new JList<GeometricalObject>(new DrawingObjectListModel(model));
+		list.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		
 		list.addKeyListener(new KeyAdapter() {
 			
@@ -155,7 +153,6 @@ public class JVDraw extends JFrame {
 		
 		});
 		
-		
 		return list;
 	}
 	
@@ -166,7 +163,8 @@ public class JVDraw extends JFrame {
 		ButtonGroup buttons = new ButtonGroup();
 		
 		JToggleButton line = new JToggleButton(new AbstractAction("Line") {
-			
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				currentTool.changeToolTo(lineTool);
@@ -176,6 +174,7 @@ public class JVDraw extends JFrame {
 		buttons.add(line);
 		
 		JToggleButton circle = new JToggleButton(new AbstractAction("Circle") {
+			private static final long serialVersionUID = 1L;
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -185,6 +184,7 @@ public class JVDraw extends JFrame {
 		buttons.add(circle);
 		
 		JToggleButton filledCircle = new JToggleButton(new AbstractAction("Filled Circle") {
+			private static final long serialVersionUID = 1L;
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {

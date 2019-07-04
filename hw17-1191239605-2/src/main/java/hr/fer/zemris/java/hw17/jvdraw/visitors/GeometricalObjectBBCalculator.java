@@ -5,10 +5,12 @@ import java.awt.Rectangle;
 
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.Circle;
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.FilledCircle;
+import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.Line;
 
 /**
- *	GeometricalObjectBBCalculator TODO javadoc
+ *	A {@link GeometricalObjectVisitor} which calculates the union of all bounding boxes
+ *	of all {@link GeometricalObject}s it visits.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

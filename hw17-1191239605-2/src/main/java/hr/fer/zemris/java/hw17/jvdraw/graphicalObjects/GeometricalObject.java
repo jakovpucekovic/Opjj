@@ -9,12 +9,13 @@ import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
 /**
- *	GeometricalObject TODO javadoc
+ *	Class which represents a {@link GeometricalObject} which has a bounding box,
+ *	accepts {@link GeometricalObjectVisitor}s and can register {@link GeometricalObjectListener}s
+ *	which it notifies then the object changes.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public abstract class GeometricalObject {
 
 	/**List of {@link GeometricalObjectListener}s that need to be notified if the object changes.*/
@@ -27,7 +28,7 @@ public abstract class GeometricalObject {
 	public abstract void accept(GeometricalObjectVisitor v);
 	
 	/**
-	 *  TODO 
+	 *  TODO javadoc
 	 */	
 	public abstract GeometricalObjectEditor createGeometricalObjectEditor();
 

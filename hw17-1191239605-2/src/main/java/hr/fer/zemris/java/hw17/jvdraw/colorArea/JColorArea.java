@@ -13,12 +13,13 @@ import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 
 /**
- *	JColorArea TODO javadoc
+ *	Class which implements the {@link IColorProvider} interface and extend 
+ *	{@link JComponent}. It's a 15x15 pixels square Swing component which enables
+ *	the selection of {@link Color}s. It also displays the selected {@link Color}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class JColorArea extends JComponent implements IColorProvider{
 
 	private static final long serialVersionUID = 1L;
@@ -28,7 +29,6 @@ public class JColorArea extends JComponent implements IColorProvider{
 	
 	/**List of all {@link ColorChangeListener}s.*/
 	private List<ColorChangeListener> colorChangeListeners = new ArrayList<>();
-	
 	
 	/**
 	 * 	Constructs a new {@link JColorArea} of the selected {@link Color}.

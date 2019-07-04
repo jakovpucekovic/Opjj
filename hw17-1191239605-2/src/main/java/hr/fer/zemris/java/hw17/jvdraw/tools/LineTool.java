@@ -1,42 +1,47 @@
 package hr.fer.zemris.java.hw17.jvdraw.tools;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import hr.fer.zemris.java.hw17.jvdraw.DrawingModel;
-import hr.fer.zemris.java.hw17.jvdraw.JDrawingCanvas;
 import hr.fer.zemris.java.hw17.jvdraw.colorArea.IColorProvider;
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.Line;
+import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectPainter;
 
 /**
- *	LineTool TODO javadoc
+ *	{@link Tool} which enables the creation of a {@link Line}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class LineTool implements Tool {
 
+	/**Starting point of the line.*/
 	private Point start = null;
+	
+	/**End point of the line.*/
 	private Point end = null;
+	
+	/**{@link Line} which is being created.*/
 	private Line line = null;
 	
+	/**{@link DrawingModel} in which the constructed {@link Line} should be added*/
 	private DrawingModel model;
-	private JDrawingCanvas canvas;
+	
+	/**{@link IColorProvider} which provides the {@link Color} of the {@link Line}.*/
 	private IColorProvider colorProvider;
 	
 	/**
-	 * 	Constructs a new LineTool.
-	 * 	TODO javadoc
+	 * 	Constructs a new {@link LineTool}.
+	 * 	@param model {@link DrawingModel} in which the constructed {@link Line} should be added.
+	 * 	@param colorProvider {@link IColorProvider} which provides the {@link Color} of the line.
 	 */
-	public LineTool(DrawingModel model, JDrawingCanvas canvas, IColorProvider colorProvider) {
+	public LineTool(DrawingModel model, IColorProvider colorProvider) {
 		this.model = model;
-		this.canvas = canvas;
 		this.colorProvider = colorProvider;
 	}
-	
-	
 	
 	/**
 	 *	{@inheritDoc}
@@ -67,7 +72,6 @@ public class LineTool implements Tool {
 			line = null;
 			start = null;
 			end = null;
-			
 		}
 	}
 
@@ -95,7 +99,9 @@ public class LineTool implements Tool {
 	 */
 	@Override
 	public void paint(Graphics2D g2d) {
-//TODO
+		if(line != null) {
+			line.accept(new GeometricalObjectPainter(g2d));
+		}
 	}
 
 }

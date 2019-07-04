@@ -3,7 +3,8 @@ package hr.fer.zemris.java.hw17.jvdraw.colorArea;
 import java.awt.Color;
 
 /**
- *	ColorChangeListener TODO javadoc
+ *	Interface which models listeners which wait on the color change and when 
+ *	that happens their <code>newColorSelected()</code> method should be called.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

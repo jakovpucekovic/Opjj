@@ -8,12 +8,12 @@ import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.Line;
 
 /**
- *	GeometricalObjectPainter TODO javadoc
+ *	A {@link GeometricalObjectVisitor} which paints the {@link GeometricalObject}s it
+ *	visits onto the given {@link Graphics2D}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class GeometricalObjectPainter implements GeometricalObjectVisitor {
 
 	/**Graphics used to draw {@link GeometricalObject}s.*/
@@ -45,6 +45,7 @@ public class GeometricalObjectPainter implements GeometricalObjectVisitor {
 	 */
 	@Override
 	public void visit(Circle circle) {
+		g2d.setColor(circle.getBorderColor());
 		g2d.drawOval(circle.getCenter().x - circle.getRadius(),
 					 circle.getCenter().y - circle.getRadius(),
 					 circle.getRadius() * 2,
@@ -62,7 +63,7 @@ public class GeometricalObjectPainter implements GeometricalObjectVisitor {
 				 filledCircle.getRadius() * 2,
 				 filledCircle.getRadius() * 2);
 		g2d.setColor(filledCircle.getFillColor());
-		g2d.drawOval(filledCircle.getCenter().x - filledCircle.getRadius(),
+		g2d.fillOval(filledCircle.getCenter().x - filledCircle.getRadius(),
 				 filledCircle.getCenter().y - filledCircle.getRadius(),
 				 filledCircle.getRadius() * 2,
 				 filledCircle.getRadius() * 2);

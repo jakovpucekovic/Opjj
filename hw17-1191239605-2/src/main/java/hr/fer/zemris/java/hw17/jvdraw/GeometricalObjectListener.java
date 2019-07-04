@@ -3,12 +3,13 @@ package hr.fer.zemris.java.hw17.jvdraw;
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
 
 /**
- *	GeometricalObjectListener TODO javadoc
+ *	A listener which listens for changes on {@link GeometricalObject}s and 
+ *	whose method <code>geometricalObjectChanged()</code> should be called when
+ *	the observed {@link GeometricalObject} changes.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public interface GeometricalObjectListener {
 
 	/**

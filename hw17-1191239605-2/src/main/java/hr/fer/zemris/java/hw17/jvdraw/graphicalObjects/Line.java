@@ -8,12 +8,11 @@ import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
 /**
- *	Line TODO javadoc
+ *	Class which represents a line which is a {@link GeometricalObject}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class Line extends GeometricalObject {
 
 	/**Starting point of the line.*/

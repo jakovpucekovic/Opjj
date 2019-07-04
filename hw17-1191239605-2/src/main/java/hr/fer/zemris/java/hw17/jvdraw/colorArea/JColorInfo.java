@@ -5,12 +5,13 @@ import java.awt.Color;
 import javax.swing.JLabel;
 
 /**
- *	JColorInfo TODO javadoc
+ *	Class which extends {@link JLabel} and displays the following text:
+ * 	<code>Foreground color: (r,g,b), backgroung color: (r,g,b)</code> where the 
+ * 	r,g,b letters are replaced by the RGB values of the 2 given {@link IColorProvider}s.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class JColorInfo extends JLabel implements ColorChangeListener{
 
 	private static final long serialVersionUID = 1L;

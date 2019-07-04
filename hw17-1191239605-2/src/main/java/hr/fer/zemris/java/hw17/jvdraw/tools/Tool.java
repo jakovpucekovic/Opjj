@@ -3,8 +3,10 @@ package hr.fer.zemris.java.hw17.jvdraw.tools;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 
+import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
+
 /**
- *	Tool TODO javadoc
+ *	Interface which models tools used for creation of various {@link GeometricalObject}s.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

@@ -7,12 +7,11 @@ import java.util.List;
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
 
 /**
- *	DrawingModelImpl TODO javadoc
+ *	An implementation of the {@link DrawingModel}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class DrawingModelImpl implements DrawingModel {
 
 	/**{@link List} of all {@link GeometricalObject}s.*/
@@ -129,19 +128,33 @@ public class DrawingModelImpl implements DrawingModel {
 		listeners.remove(l);
 	}
 	
-	//TODO javadoc
+	/**
+	 *  Notifies all registered listeners that an array of {@link GeometricalObject}s has been added.
+	 *  @param index0 Index of the first added {@link GeometricalObject}.
+	 *  @param index1 Index of the last added {@link GeometricalObject}.
+	 */
 	public void notifyAdded(int index0, int index1) {
 		for(var l : listeners) {
 			l.objectsAdded(this, index0, index1);
 		}
 	}
 	
+	/**
+	 *  Notifies all registered listeners that an array of {@link GeometricalObject}s has been removed.
+	 *  @param index0 Index of the first removed {@link GeometricalObject}.
+	 *  @param index1 Index of the last removed {@link GeometricalObject}.
+	 */
 	public void notifyRemoved(int index0, int index1) {
 		for(var l : listeners) {
 			l.objectsRemoved(this, index0, index1);
 		}
 	}
 	
+	/**
+	 *  Notifies all registered listeners that an array of {@link GeometricalObject}s has been changed.
+	 *  @param index0 Index of the first changed {@link GeometricalObject}.
+	 *  @param index1 Index of the last changed {@link GeometricalObject}.
+	 */
 	public void notifyChanged(int index0, int index1) {
 		for(var l : listeners) {
 			l.objectsChanged(this, index0, index1);

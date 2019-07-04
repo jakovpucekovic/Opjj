@@ -3,12 +3,12 @@ package hr.fer.zemris.java.hw17.jvdraw.colorArea;
 import java.awt.Color;
 
 /**
- *	IColorProvider TODO javadoc
+ *	Interface which models an object which provides {@link Color}s and
+ *	is able to notify registered {@link ColorChangeListener}s of changes.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public interface IColorProvider {
 
 	/**

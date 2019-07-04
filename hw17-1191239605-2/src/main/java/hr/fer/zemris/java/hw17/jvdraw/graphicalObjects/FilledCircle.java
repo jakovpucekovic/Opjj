@@ -7,12 +7,11 @@ import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
 /**
- *	FilledCircle TODO javadoc
+ *	Class which represents a {@link Circle} filled with a color.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class FilledCircle extends Circle {
 
 	/**Fill color of the circle.*/

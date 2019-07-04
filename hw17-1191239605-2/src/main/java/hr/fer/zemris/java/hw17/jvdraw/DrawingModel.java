@@ -36,7 +36,10 @@ public interface DrawingModel extends GeometricalObjectListener {
 	public void remove(GeometricalObject object);
 	
 	/**
-	 * TODO
+	 * 	Changes the order of the {@link GeometricalObject}s by moving the given object
+	 * 	for the given offset.
+	 * 	@param object {@link GeometricalObject} to move.
+	 * 	@param offset Offset for which to move the {@link GeometricalObject}.
 	 */
 	public void changeOrder(GeometricalObject object, int offset);
 	
@@ -52,7 +55,7 @@ public interface DrawingModel extends GeometricalObjectListener {
 	public void clear();
 	
 	/**
-	 *  TODO
+	 *  Sets the modified flag back to <code>false</code>.
 	 */
 	public void clearModifiedFlag();
 	

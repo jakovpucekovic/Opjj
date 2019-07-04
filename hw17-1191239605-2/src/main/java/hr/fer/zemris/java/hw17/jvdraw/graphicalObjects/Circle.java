@@ -8,12 +8,11 @@ import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
 /**
- *	Circle TODO javadoc
+ *	Class which represents a circle which is a {@link GeometricalObject}.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-
 public class Circle extends GeometricalObject{
 
 	/**Center of the circle.*/
