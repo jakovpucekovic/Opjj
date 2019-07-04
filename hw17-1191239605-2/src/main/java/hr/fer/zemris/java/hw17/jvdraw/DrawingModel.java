@@ -1,12 +1,14 @@
 package hr.fer.zemris.java.hw17.jvdraw;
 
+import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
+
 /**
  *	DrawingModel TODO javadoc
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0
  */
-public interface DrawingModel {
+public interface DrawingModel extends GeometricalObjectListener {
 
 	/**
 	 *  Returns the size of the {@link DrawingModel}.

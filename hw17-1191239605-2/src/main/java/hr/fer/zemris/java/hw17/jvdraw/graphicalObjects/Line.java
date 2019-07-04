@@ -1,7 +1,11 @@
-package hr.fer.zemris.java.hw17.jvdraw;
+package hr.fer.zemris.java.hw17.jvdraw.graphicalObjects;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
+
+import hr.fer.zemris.java.hw17.jvdraw.GeometricalObjectEditor;
+import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
 /**
  *	Line TODO javadoc
@@ -73,6 +77,29 @@ public class Line extends GeometricalObject {
 	public GeometricalObjectEditor createGeometricalObjectEditor() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public Rectangle getBoundingBox() {
+		int x = start.x < end.x ? start.x : end.x;
+		int y = start.y < end.y ? start.y : end.y;
+		int width = start.x - end.x;
+		int height = start.y - end.y;
+		return new Rectangle(x,
+							 y,
+							 width > 0 ? width : -width,
+ 							 height > 0 ? height : - height);
+	}
+	
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return String.format("Line (%d,%d)-(%d,%d)", start.x, start.y, end.x, end.y);
 	}
 
 }

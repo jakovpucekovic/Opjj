@@ -62,7 +62,6 @@ public class LineTool implements Tool {
 	 */
 	@Override
 	public void paint(Graphics2D g2d) {
-		// TODO Auto-generated method stub
 
 	}
 

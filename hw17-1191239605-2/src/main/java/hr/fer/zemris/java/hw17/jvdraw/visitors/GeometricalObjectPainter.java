@@ -1,6 +1,11 @@
-package hr.fer.zemris.java.hw17.jvdraw;
+package hr.fer.zemris.java.hw17.jvdraw.visitors;
 
 import java.awt.Graphics2D;
+
+import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.Circle;
+import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.FilledCircle;
+import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
+import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.Line;
 
 /**
  *	GeometricalObjectPainter TODO javadoc

@@ -1,7 +1,10 @@
-package hr.fer.zemris.java.hw17.jvdraw;
+package hr.fer.zemris.java.hw17.jvdraw.graphicalObjects;
 
 import java.awt.Color;
 import java.awt.Point;
+
+import hr.fer.zemris.java.hw17.jvdraw.GeometricalObjectEditor;
+import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
 /**
  *	FilledCircle TODO javadoc
@@ -14,9 +17,6 @@ public class FilledCircle extends Circle {
 
 	/**Fill color of the circle.*/
 	private Color fillColor;
-
-	/**Border color of the circle.*/
-	private Color borderColor;
 	
 	/**
 	 * 	Constructs a new FilledCircle with the given radius at the given
@@ -26,10 +26,9 @@ public class FilledCircle extends Circle {
 	 * 	@param fillColor Fill color of the circle.
 	 * 	@param borderColor Border color of the circle.
 	 */
-	public FilledCircle(Point center, int radius, Color fillColor, Color borderColor) {
-		super(center, radius);
+	public FilledCircle(Point center, int radius, Color borderColor, Color fillColor) {
+		super(center, radius, borderColor);
 		this.fillColor = fillColor;
-		this.borderColor = borderColor;
 	}
 	
 	/**
@@ -38,14 +37,6 @@ public class FilledCircle extends Circle {
 	 */
 	public Color getFillColor() {
 		return fillColor;
-	}
-
-	/**
-	 * 	Returns the border {@link Color} of the {@link FilledCircle}.
-	 * 	@return the border {@link Color} of the {@link FilledCircle}.
-	 */
-	public Color getBorderColor() {
-		return borderColor;
 	}
 
 	/**
@@ -65,4 +56,12 @@ public class FilledCircle extends Circle {
 		return null;
 	}
 
+	/**
+	 *	{@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return String.format("Filled circle (%d,%d), %d, #%d", center.x, center.y, radius, fillColor.getRGB());
+	}
+	
 }

@@ -1,5 +1,7 @@
 package hr.fer.zemris.java.hw17.jvdraw;
 
+import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
+
 /**
  *	GeometricalObjectListener TODO javadoc
  * 

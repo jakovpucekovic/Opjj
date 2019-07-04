@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw17.jvdraw.colorarea;
+package hr.fer.zemris.java.hw17.jvdraw.colorArea;
 
 import java.awt.Color;
 
