@@ -18,22 +18,47 @@ import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.FilledCircle;
 public class FilledCircleEditor extends GeometricalObjectEditor {
 
 	private static final long serialVersionUID = 1L;
-//TODO javadoc
+
+	/**X coordinate of circle center.*/
 	JTextField centerx;
+	
+	/**Y coordinate of circle center.*/
 	JTextField centery;
+	
+	/**Radius of the circle.*/
 	JTextField radius;
+	
+	/**Red value of the RGB color scheme for border color.*/
 	JTextField borderColorR;
+	
+	/**Green value of the RGB color scheme for the border color.*/
 	JTextField borderColorG;
+	
+	/**Blue value of the RGB color scheme for the border color.*/
 	JTextField borderColorB;	
+	
+	/**Red value of the RGB color scheme for the fill color.*/
 	JTextField fillColorR;
+	
+	/**Green value of the RGB color scheme for the fill color.*/
 	JTextField fillColorG;
+	
+	/**Blue value of the RGB color scheme for the fill color.*/
 	JTextField fillColorB;
 	
+	/**New border color.*/
 	private Color borderColor;
+
+	/**New fill color.*/
 	private Color fillColor;
+	
+	/**New center of the circle.*/
 	private Point center;
+	
+	/**New radius of the circle.*/
 	private int rad;
 	
+	/**The filled circle which is being edited.*/
 	private FilledCircle filledCircle;
 	
 	/**

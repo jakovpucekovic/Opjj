@@ -47,28 +47,20 @@ public class Circle extends GeometricalObject{
 	}
 
 	/**
-	 * 	Returns the radius of the {@link Circle}.
-	 * 	@return the radius of the {@link Circle}.
-	 */
-	public int getRadius() {
-		return radius;
-	}
-
-	/**
-	 * 	Returns the border {@link Color} of the {@link FilledCircle}.
-	 * 	@return the border {@link Color} of the {@link FilledCircle}.
-	 */
-	public Color getBorderColor() {
-		return borderColor;
-	}
-	
-	/**
 	 * 	Sets the center of the {@link Circle}.
 	 * 	@param center the center to set.
 	 */
 	public void setCenter(Point center) {
 		this.center = center;
 		notifyListeners();
+	}
+
+	/**
+	 * 	Returns the radius of the {@link Circle}.
+	 * 	@return the radius of the {@link Circle}.
+	 */
+	public int getRadius() {
+		return radius;
 	}
 
 	/**
@@ -80,6 +72,14 @@ public class Circle extends GeometricalObject{
 		notifyListeners();
 	}
 
+	/**
+	 * 	Returns the border {@link Color} of the {@link FilledCircle}.
+	 * 	@return the border {@link Color} of the {@link FilledCircle}.
+	 */
+	public Color getBorderColor() {
+		return borderColor;
+	}
+	
 	/**
 	 * 	Sets the borderColor of the {@link Circle}.
 	 * 	@param borderColor the borderColor to set.

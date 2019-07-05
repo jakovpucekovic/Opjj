@@ -6,7 +6,7 @@ import javax.swing.JLabel;
 
 /**
  *	Class which extends {@link JLabel} and displays the following text:
- * 	<code>Foreground color: (r,g,b), backgroung color: (r,g,b)</code> where the 
+ * 	<code>Foreground color: (r,g,b), background color: (r,g,b)</code> where the 
  * 	r,g,b letters are replaced by the RGB values of the 2 given {@link IColorProvider}s.
  * 
  * 	@author Jakov Pucekovic

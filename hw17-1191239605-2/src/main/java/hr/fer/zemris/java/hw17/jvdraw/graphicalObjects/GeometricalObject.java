@@ -4,8 +4,8 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-import hr.fer.zemris.java.hw17.jvdraw.GeometricalObjectListener;
 import hr.fer.zemris.java.hw17.jvdraw.editor.GeometricalObjectEditor;
+import hr.fer.zemris.java.hw17.jvdraw.model.GeometricalObjectListener;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectVisitor;
 
 /**
@@ -28,7 +28,8 @@ public abstract class GeometricalObject {
 	public abstract void accept(GeometricalObjectVisitor v);
 	
 	/**
-	 *  TODO javadoc
+	 * 	Creates a {@link GeometricalObjectEditor} used for editing of this {@link GeometricalObject}.
+	 * 	@return A {@link GeometricalObjectEditor} used for editing of this {@link GeometricalObject}.
 	 */	
 	public abstract GeometricalObjectEditor createGeometricalObjectEditor();
 

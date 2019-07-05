@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw17.jvdraw;
+package hr.fer.zemris.java.hw17.jvdraw.model;
 
 /**
  *	A listener which observes for changes in a {@link DrawingModel} and should be

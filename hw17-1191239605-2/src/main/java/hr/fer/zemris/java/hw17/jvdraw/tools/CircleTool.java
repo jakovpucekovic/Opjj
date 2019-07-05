@@ -5,9 +5,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import hr.fer.zemris.java.hw17.jvdraw.DrawingModel;
 import hr.fer.zemris.java.hw17.jvdraw.colorArea.IColorProvider;
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.Circle;
+import hr.fer.zemris.java.hw17.jvdraw.model.DrawingModel;
 import hr.fer.zemris.java.hw17.jvdraw.visitors.GeometricalObjectPainter;
 
 /**

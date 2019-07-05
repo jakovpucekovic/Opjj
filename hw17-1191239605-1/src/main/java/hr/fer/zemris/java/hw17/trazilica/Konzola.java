@@ -60,7 +60,7 @@ public class Konzola {
 				results();
 			} else if(input.matches("type \\d+")) {
 				type(Integer.parseInt(input.split(" ")[1]));
-			} else if(input.startsWith("query ")) { //TODO popraviti uvjet za query
+			} else if(input.startsWith("query ")) {
 				queryEntered = true;
 				query(input.substring(5));
 			} else {

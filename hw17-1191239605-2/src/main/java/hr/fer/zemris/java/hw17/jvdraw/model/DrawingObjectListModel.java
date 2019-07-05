@@ -1,11 +1,11 @@
-package hr.fer.zemris.java.hw17.jvdraw;
+package hr.fer.zemris.java.hw17.jvdraw.model;
 
 import javax.swing.AbstractListModel;
 
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
 
 /**
- *	ObjectList TODO javadoc
+ *	Class which extends {@link AbstractListModel} for {@link GeometricalObject}s.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

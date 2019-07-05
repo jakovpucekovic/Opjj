@@ -47,29 +47,20 @@ public class Line extends GeometricalObject {
 	}
 
 	/**
-	 * 	Returns the end point of the {@link Line}.
-	 * 	@return the end point of the {@link Line}.
-	 */
-	public Point getEnd() {
-		return end;
-	}
-
-	/**
-	 * 	Returns the {@link Color} of the Line.
-	 * 	@return the {@link Color} of the Line.
-	 */
-	public Color getColor() {
-		return color;
-	}
-	
-
-	/**
 	 * 	Sets the start of the {@link Line}.
 	 * 	@param start the start to set.
 	 */
 	public void setStart(Point start) {
 		this.start = start;
 		notifyListeners();
+	}
+
+	/**
+	 * 	Returns the end point of the {@link Line}.
+	 * 	@return the end point of the {@link Line}.
+	 */
+	public Point getEnd() {
+		return end;
 	}
 
 	/**
@@ -81,6 +72,14 @@ public class Line extends GeometricalObject {
 		notifyListeners();
 	}
 
+	/**
+	 * 	Returns the {@link Color} of the Line.
+	 * 	@return the {@link Color} of the Line.
+	 */
+	public Color getColor() {
+		return color;
+	}
+	
 	/**
 	 * 	Sets the color of the {@link Line}.
 	 * 	@param color the color to set.

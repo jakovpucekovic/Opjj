@@ -1,4 +1,4 @@
-package hr.fer.zemris.java.hw17.jvdraw;
+package hr.fer.zemris.java.hw17.jvdraw.model;
 
 import java.util.ArrayList;
 import java.util.Collections;

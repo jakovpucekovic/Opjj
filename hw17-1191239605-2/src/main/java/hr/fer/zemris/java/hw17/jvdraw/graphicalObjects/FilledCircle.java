@@ -69,7 +69,13 @@ public class FilledCircle extends Circle {
 	 */
 	@Override
 	public String toString() {
-		return String.format("Filled circle (%d,%d), %d, #%d", center.x, center.y, radius, fillColor.getRGB());
+		return String.format("Filled circle (%d,%d), %d, #%02X%02X%02X", 
+							  center.x, 
+							  center.y, 
+							  radius, 
+							  fillColor.getRed(), 
+							  fillColor.getGreen(), 
+							  fillColor.getBlue());
 	}
 	
 }

@@ -1,9 +1,10 @@
-package hr.fer.zemris.java.hw17.jvdraw;
+package hr.fer.zemris.java.hw17.jvdraw.model;
 
 import hr.fer.zemris.java.hw17.jvdraw.graphicalObjects.GeometricalObject;
 
 /**
- *	DrawingModel TODO javadoc
+ *	Interface which models an object capable of tracking different
+ *	{@link GeometricalObject}s.
  * 
  * 	@author Jakov Pucekovic
  * 	@version 1.0

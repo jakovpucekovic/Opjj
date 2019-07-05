@@ -19,18 +19,37 @@ public class LineEditor extends GeometricalObjectEditor {
 
 	private static final long serialVersionUID = 1L;
 
+	/**X coordinate of starting point.*/
 	private JTextField startx;
-	private JTextField starty;
-	private JTextField endx;
-	private JTextField endy;
-	private JTextField colorR;
-	private JTextField colorG;
-	private JTextField colorB;
-	//TODO javadoc
-	private Color color;
-	private Point start;
-	private Point end;
 	
+	/**Y coordinate of starting point.*/
+	private JTextField starty;
+	
+	/**X coordinate of ending point.*/
+	private JTextField endx;
+	
+	/**Y coordinate of ending point.*/
+	private JTextField endy;
+	
+	/**Red value of RGB color scheme.*/
+	private JTextField colorR;
+	
+	/**Green value of RGB color scheme.*/
+	private JTextField colorG;
+	
+	/**Blue value of RGB color scheme.*/
+	private JTextField colorB;
+	
+	/**{@link Color} to set.*/
+	private Color color;
+	
+	/**New start point for the line.*/
+	private Point start;
+	
+	/**New end point for the line.*/
+	private Point end;
+
+	/***/
 	private Line line;
 	
 	/**
@@ -39,13 +58,12 @@ public class LineEditor extends GeometricalObjectEditor {
 	 */
 	public LineEditor(Line line) {
 		this.line = line;
-		
 		setLayout(new GridLayout(0, 2));
 		
 		startx = new JTextField(String.valueOf(line.getStart().x));
 		starty = new JTextField(String.valueOf(line.getStart().y));
-		endx = new JTextField(String.valueOf(line.getEnd().x));
-		endy = new JTextField(String.valueOf(line.getEnd().y));
+		endx   = new JTextField(String.valueOf(line.getEnd().x));
+		endy   = new JTextField(String.valueOf(line.getEnd().y));
 		colorR = new JTextField(String.valueOf(line.getColor().getRed()));
 		colorG = new JTextField(String.valueOf(line.getColor().getGreen()));
 		colorB = new JTextField(String.valueOf(line.getColor().getBlue()));
@@ -70,6 +88,7 @@ public class LineEditor extends GeometricalObjectEditor {
 	
 	/**
 	 *	{@inheritDoc}
+	 *	@throws RuntimeException if the data is wrong.
 	 */
 	@Override
 	public void checkEditing() {

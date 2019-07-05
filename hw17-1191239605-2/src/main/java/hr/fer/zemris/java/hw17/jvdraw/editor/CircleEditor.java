@@ -19,17 +19,34 @@ public class CircleEditor extends GeometricalObjectEditor {
 
 	private static final long serialVersionUID = 1L;
 
+	/**X coordinate of circle center.*/
 	JTextField centerx;
+	
+	/**Y coordinate of circle center.*/
 	JTextField centery;
+	
+	/**Radius of the circle.*/
 	JTextField radius;
+	
+	/**Red value of the RGB color scheme for border color.*/
 	JTextField colorR;
+	
+	/**Green value of the RGB color scheme for the border color.*/
 	JTextField colorG;
-	JTextField colorB;
-	//TODO javadoc
+	
+	/**Blue value of the RGB color scheme for the border color.*/
+	JTextField colorB;	
+	
+	/**New border color.*/
 	private Color color;
+	
+	/**New center of the circle.*/
 	private Point center;
+	
+	/**New radius of the circle.*/
 	private int rad;
 	
+	/**Circle which is being edited.*/
 	private Circle circle;
 	
 	/**
