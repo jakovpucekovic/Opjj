@@ -9,10 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -33,8 +31,11 @@ public class Vokabular {
  	/**Set which contains all stop words.*/
 	private static Set<String> stopWords = null;
 	
-	/**Inverse document frequency map which maps all word with their IDF value.*/
-	private Map<String,Double> idf = new HashMap<>();
+	/**List of words in the {@link Vokabular}*/
+	private List<String> words = new ArrayList<>();
+
+	/**Inverse document frequency list.*/
+	private List<Double> idf = new ArrayList<>();
 	
 	/**{@link List} of all {@link Dokument}s read in the given folder.*/
 	private List<Dokument> documents = new ArrayList<>();
@@ -65,7 +66,7 @@ public class Vokabular {
 		calculateIDF();
 		
 		for(var doc : documents) {
-			doc.computeTFIDF(idf);
+			doc.computeTFIDF(this);
 		}
 	}
 	
@@ -79,22 +80,22 @@ public class Vokabular {
 		for(var doc : documents) {
 			//go through all words in a document
 			for(var word : doc.getTF().keySet()) {
-				//add all words to idf map
-				if(!idf.containsKey(word)) {
-					idf.put(word, null);
+				//add all words to words list
+				if(!words.contains(word)) {
+					words.add(word);
 				}
 			}
 		}
 		
 		//calculate idf value for every word
-		for(var word : idf.keySet()) {
+		for(var word : words) {
 			int numberOfDocsWithWord = 0;
 			for(var doc : documents) {
 				if(doc.getTF().containsKey(word)) {
 					++numberOfDocsWithWord;
 				}
 			}
-			idf.put(word, Math.log((double)numberOfDocs/numberOfDocsWithWord));
+			idf.add(Math.log((double)numberOfDocs/numberOfDocsWithWord));
 		}
 	}
 	
@@ -138,7 +139,7 @@ public class Vokabular {
 	 * 	@return <code>true</code> if yes, <code>false</code> if not.	
 	 */
 	public boolean hasWord(String word) {
-		return idf.containsKey(word);
+		return words.contains(word);
 	}
 	
 	/**
@@ -146,7 +147,7 @@ public class Vokabular {
 	 * 	@return The number of words in this {@link Vokabular}.
 	 */
 	public int getWordListSize(){
-		return idf.keySet().size();
+		return words.size();
 	}
 	
 	/**
@@ -158,11 +159,15 @@ public class Vokabular {
 	}
 
 	/**
-	 * 	Returns the IDF map.
-	 * 	@return The IDF map.	
+	 * 	Returns the IDF list.
+	 * 	@return The IDF list.	
 	 */
-	public Map<String,Double> getIDF(){
+	public List<Double> getIDF(){
 		return idf;
+	}
+	
+	public List<String> getWords(){
+		return words;
 	}
 
 	/**

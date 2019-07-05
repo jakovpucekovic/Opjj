@@ -5,12 +5,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  *	Class which represents a document.
@@ -26,8 +25,8 @@ public class Dokument {
 	/**Term frequency map which maps each word to the number of times it's used.*/
 	private Map<String,Integer> tf  = new HashMap<>();
 	
-	/**Term frequency-inverse document frequency map.*/
-	private Map<String,Double> tfidf = new HashMap<>();
+	/**Term frequency-inverse document frequency list.*/
+	private List<Double> tfidf = new ArrayList<>();
 	
 	/**
 	 * 	Constructs a new {@link Dokument} with the following words, each word
@@ -73,12 +72,16 @@ public class Dokument {
 	}
 
 	/**
-	 *	Calculates the TFIDF map based on the IDF map of the Vocabulary.
-	 *	@param idf IDF map based on which the TFIDF map is calculated. 
+	 *	Calculates the TFIDF list based on the {@link Vokabular}.
+	 *	@param vokabular {@link Vokabular} based on which the TFIDF list is calculated. 
 	 */
-	public void computeTFIDF(Map<String,Double> idf) {
-		for(var word : tf.keySet()) {
-			tfidf.put(word, tf.get(word) * idf.get(word));
+	public void computeTFIDF(Vokabular vokabular) {
+		for(int i = 0, s = vokabular.getWords().size(); i < s; ++i) {
+			if(tf.get(vokabular.getWords().get(i))== null) {
+				tfidf.add(0.0);
+			}else {
+				tfidf.add(tf.get(vokabular.getWords().get(i)) * vokabular.getIDF().get(i));
+			}
 		}
 	}
 	
@@ -132,22 +135,12 @@ public class Dokument {
 	 */
 	public double similarity(Dokument doc) {
 		double sim = 0.0, norm1 = 0.0, norm2 = 0.0;
-		Set<String> words = new HashSet<>(tfidf.keySet());
-		words.addAll(doc.tfidf.keySet());
-		
 		Double v1,v2;
-		for(var w : words) {
-			v1 = tfidf.get(w);
-			v2 = doc.tfidf.get(w);
-			if(v1 != null) {
-				norm1 += v1*v1;
-			}
-			if(v2 != null) {
-				norm2 += v2*v2;
-			}
-			if(v1 == null || v2 == null) {
-				continue;
-			}
+		for(int i = 0, s = tfidf.size(); i < s; ++i) {
+			v1 = tfidf.get(i);
+			v2 = doc.tfidf.get(i);
+			norm1 += v1*v1;
+			norm2 += v2*v2;
 			sim += v1*v2;
 		}
 		if(sim == 0) {

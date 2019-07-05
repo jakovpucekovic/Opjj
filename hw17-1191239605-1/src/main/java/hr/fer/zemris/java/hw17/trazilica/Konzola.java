@@ -41,7 +41,6 @@ public class Konzola {
 		
 		try {
 			voc = new Vokabular(args[0]);
-			System.out.println(voc.getIDF());
 			System.out.println("Velicina rjecnika je " + voc.getWordListSize() + " rijeci.");
 		} catch(IOException ex) {
 			System.out.println("Doslo je do pogreske pri ucitavanju vokabulara.");
@@ -121,7 +120,7 @@ public class Konzola {
 	 */
 	private static Map<Dokument,Double> executeQuery(List<String> queryWords) {
 		Dokument queryDoc = new Dokument(queryWords);
-		queryDoc.computeTFIDF(voc.getIDF());
+		queryDoc.computeTFIDF(voc);
 		
 		double res;
 		Map<Dokument,Double> results = new HashMap<>();
