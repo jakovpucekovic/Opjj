@@ -31,7 +31,7 @@ public class DBProvider {
 	 */
 	public static Database getDB() throws IOException {
 		if(db == null) {
-			db = new Database("src/main/webapp/WEB-INF/opisnik.txt");
+			db = new Database(DBProvider.class.getClassLoader().getResource("../opisnik.txt").getPath());
 		}
 		return db;
 	}
