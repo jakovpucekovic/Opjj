@@ -28,6 +28,11 @@ public class GeometricalObjectSave implements GeometricalObjectVisitor{
 	 */
 	public GeometricalObjectSave(Path path) {
 		this.path = path;
+		try {
+			Files.writeString(path, "", StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	/**
