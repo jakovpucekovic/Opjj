@@ -166,6 +166,8 @@ public class SmartScriptLexer {
 				return token;
 			} else if(parseEnd()) {
 				return token;
+			} else if(parseNow()) {
+				return token;
 			} else if(parseEqual()) {
 				return token;
 			} else if(parseFor()) {
@@ -473,6 +475,21 @@ public class SmartScriptLexer {
 			
 			if( Character.toUpperCase(c1) == 'E' && Character.toUpperCase(c2) == 'N' && Character.toUpperCase(c3) == 'D' ) {  
 				token = new SmartScriptToken(SmartScriptTokenType.END, String.format("%c%c%c", c1, c2, c3));
+				currentIndex += 3;
+				return true;
+			} 
+		}
+		return false;
+	}
+	
+	private boolean parseNow() {
+		if(currentIndex + 2 < data.length) {
+			char c1 = data[currentIndex];
+			char c2 = data[currentIndex + 1];
+			char c3 = data[currentIndex + 2];
+			
+			if( Character.toUpperCase(c1) == 'N' && Character.toUpperCase(c2) == 'O' && Character.toUpperCase(c3) == 'W' ) {  
+				token = new SmartScriptToken(SmartScriptTokenType.NOW, String.format("%c%c%c", c1, c2, c3));
 				currentIndex += 3;
 				return true;
 			} 

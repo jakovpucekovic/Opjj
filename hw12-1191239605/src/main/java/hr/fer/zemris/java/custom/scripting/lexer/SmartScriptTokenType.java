@@ -33,5 +33,6 @@ public enum SmartScriptTokenType {
 	/**Token describing keyword end.*/
 	END,
 	/**Token describing key symbol =*/
-	EQUALS
+	EQUALS,
+	NOW
 }

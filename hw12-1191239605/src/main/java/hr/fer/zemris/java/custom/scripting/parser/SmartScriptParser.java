@@ -1,5 +1,10 @@
 package hr.fer.zemris.java.custom.scripting.parser;
 
+import java.awt.TextArea;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.List;
@@ -97,6 +102,9 @@ public class SmartScriptParser {
 		} else if(token.getType() == SmartScriptTokenType.EQUALS) {
 			EchoNode echoNode = parseEcho(lexer);
 			((Node)nodeStack.peek()).addChildNode(echoNode);
+		} else if(token.getType() == SmartScriptTokenType.NOW) {
+				TextNode textNode = parseNow(lexer);
+				((Node)nodeStack.peek()).addChildNode(textNode);
 		} else if(token.getType() == SmartScriptTokenType.END) {
 			try{
 				Object node = nodeStack.pop();
@@ -218,6 +226,26 @@ public class SmartScriptParser {
 		return new EchoNode(objectArrayToElementArray(elements.toArray()));
 		
 	}
+	
+	private TextNode parseNow(SmartScriptLexer lexer) {
+		LocalDateTime date = LocalDateTime.now();
+		String format = null;
+		lexer.nextToken();
+		
+		if(lexer.getToken().getType() == SmartScriptTokenType.STRING) {
+			format = (String) lexer.getToken().getValue();
+		}
+		
+		if(format != null) {
+			try{
+				return new TextNode(date.format(DateTimeFormatter.ofPattern(format)));
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		return new TextNode(date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+	}
+	
 	
 	/**
 	 *	Helper method to cast Object[] into Element[].

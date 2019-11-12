@@ -2,6 +2,8 @@ package hr.fer.zemris.java.custom.scripting.exec;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Stack;
 
 import hr.fer.zemris.java.custom.scripting.elems.ElementConstantDouble;
@@ -249,6 +251,10 @@ public class SmartScriptEngine {
 			case "tparamDel":
 				name = stack.pop().toString();
 				requestContext.removeTemporaryParameter(name);
+				return;
+			case "now":
+				String formatt = stack.pop().toString();
+				stack.push(LocalDate.now().format(DateTimeFormatter.ofPattern(formatt)));
 				return;
 			default:
 				throw new UnsupportedOperationException("Function " + elFunction.asText() + " is not supported.");

@@ -27,7 +27,7 @@ public class Demo1 {
 	 * 	@param args None.
 	 */
 	public static void main(String[] args) {
-		String documentBody = readFromDisk("./webroot/scripts/osnovni.smscr");
+		String documentBody = readFromDisk("./webroot/scripts/ispit.smscr");
 		Map<String,String> parameters = new HashMap<String, String>();
 		Map<String,String> persistentParameters = new HashMap<String, String>();
 		List<RCCookie> cookies = new ArrayList<>();
